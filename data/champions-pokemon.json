@@ -1,0 +1,9886 @@
+{
+  "source": "https://www.smogon.com/dex/champions/pokemon/",
+  "generatedAt": "2026-05-25T15:50:43.017Z",
+  "counts": {
+    "pokemon": 362,
+    "moves": 495,
+    "abilities": 314,
+    "items": 121
+  },
+  "pokemon": [
+    {
+      "name": "Syclar",
+      "hp": 40,
+      "atk": 76,
+      "def": 45,
+      "spa": 74,
+      "spd": 39,
+      "spe": 91,
+      "bst": 365,
+      "weight": 4,
+      "height": 0.2,
+      "types": [
+        "Ice",
+        "Bug"
+      ],
+      "abilities": [
+        "Compound Eyes",
+        "Snow Cloak",
+        "Ice Body"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -1,
+      "evos": [
+        "Syclant"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Tactite",
+      "hp": 70,
+      "atk": 40,
+      "def": 65,
+      "spa": 100,
+      "spd": 65,
+      "spe": 95,
+      "bst": 435,
+      "weight": 16,
+      "height": 0.6,
+      "types": [
+        "Rock"
+      ],
+      "abilities": [
+        "Levitate",
+        "Technician",
+        "Sniper"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -10,
+      "evos": [
+        "Stratagem"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Stratagem",
+      "hp": 90,
+      "atk": 60,
+      "def": 65,
+      "spa": 120,
+      "spd": 70,
+      "spe": 130,
+      "bst": 535,
+      "weight": 45,
+      "height": 0.9,
+      "types": [
+        "Rock"
+      ],
+      "abilities": [
+        "Levitate",
+        "Technician",
+        "Sniper"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -11,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Privatyke",
+      "hp": 65,
+      "atk": 75,
+      "def": 65,
+      "spa": 40,
+      "spd": 60,
+      "spe": 45,
+      "bst": 350,
+      "weight": 35,
+      "height": 1,
+      "types": [
+        "Water",
+        "Fighting"
+      ],
+      "abilities": [
+        "Unaware",
+        "Technician"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -12,
+      "evos": [
+        "Arghonaut"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Arghonaut",
+      "hp": 105,
+      "atk": 110,
+      "def": 95,
+      "spa": 70,
+      "spd": 100,
+      "spe": 75,
+      "bst": 555,
+      "weight": 151,
+      "height": 1.7,
+      "types": [
+        "Water",
+        "Fighting"
+      ],
+      "abilities": [
+        "Unaware",
+        "Technician"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -13,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Kitsunoh",
+      "hp": 80,
+      "atk": 103,
+      "def": 85,
+      "spa": 55,
+      "spd": 80,
+      "spe": 120,
+      "bst": 523,
+      "weight": 51,
+      "height": 1.1,
+      "types": [
+        "Ghost",
+        "Steel"
+      ],
+      "abilities": [
+        "Frisk",
+        "Limber",
+        "Trace"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -14,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Cyclohm",
+      "hp": 108,
+      "atk": 60,
+      "def": 118,
+      "spa": 112,
+      "spd": 70,
+      "spe": 80,
+      "bst": 548,
+      "weight": 59,
+      "height": 1.6,
+      "types": [
+        "Electric",
+        "Dragon"
+      ],
+      "abilities": [
+        "Shield Dust",
+        "Static",
+        "Damp"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -15,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Colossoil",
+      "hp": 133,
+      "atk": 122,
+      "def": 72,
+      "spa": 71,
+      "spd": 72,
+      "spe": 95,
+      "bst": 565,
+      "weight": 683.6,
+      "height": 2.6,
+      "types": [
+        "Ground",
+        "Dark"
+      ],
+      "abilities": [
+        "Guts",
+        "Unnerve"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -16,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Krilowatt",
+      "hp": 151,
+      "atk": 84,
+      "def": 73,
+      "spa": 83,
+      "spd": 74,
+      "spe": 105,
+      "bst": 570,
+      "weight": 10.6,
+      "height": 0.7,
+      "types": [
+        "Electric",
+        "Water"
+      ],
+      "abilities": [
+        "Trace",
+        "Magic Guard",
+        "Minus"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -17,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Voodoll",
+      "hp": 55,
+      "atk": 40,
+      "def": 55,
+      "spa": 75,
+      "spd": 50,
+      "spe": 70,
+      "bst": 345,
+      "weight": 25,
+      "height": 1,
+      "types": [
+        "Normal",
+        "Dark"
+      ],
+      "abilities": [
+        "Volt Absorb",
+        "Lightning Rod",
+        "Cursed Body"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -18,
+      "evos": [
+        "Voodoom"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Voodoom",
+      "hp": 90,
+      "atk": 85,
+      "def": 80,
+      "spa": 130,
+      "spd": 80,
+      "spe": 110,
+      "bst": 575,
+      "weight": 75.5,
+      "height": 2,
+      "types": [
+        "Fighting",
+        "Dark"
+      ],
+      "abilities": [
+        "Volt Absorb",
+        "Lightning Rod",
+        "Cursed Body"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -19,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Syclant",
+      "hp": 70,
+      "atk": 116,
+      "def": 70,
+      "spa": 114,
+      "spd": 64,
+      "spe": 121,
+      "bst": 555,
+      "weight": 52,
+      "height": 1.7,
+      "types": [
+        "Ice",
+        "Bug"
+      ],
+      "abilities": [
+        "Compound Eyes",
+        "Ice Body"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -2,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Scratchet",
+      "hp": 55,
+      "atk": 85,
+      "def": 80,
+      "spa": 20,
+      "spd": 70,
+      "spe": 40,
+      "bst": 350,
+      "weight": 20,
+      "height": 0.5,
+      "types": [
+        "Normal",
+        "Fighting"
+      ],
+      "abilities": [
+        "Scrappy",
+        "Prankster",
+        "Vital Spirit"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -20,
+      "evos": [
+        "Tomohawk"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Tomohawk",
+      "hp": 105,
+      "atk": 60,
+      "def": 90,
+      "spa": 115,
+      "spd": 80,
+      "spe": 85,
+      "bst": 535,
+      "weight": 37.2,
+      "height": 1.27,
+      "types": [
+        "Flying",
+        "Fighting"
+      ],
+      "abilities": [
+        "Intimidate",
+        "Prankster",
+        "Justified"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -21,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Necturine",
+      "hp": 49,
+      "atk": 55,
+      "def": 60,
+      "spa": 50,
+      "spd": 75,
+      "spe": 51,
+      "bst": 340,
+      "weight": 1.8,
+      "height": 0.3,
+      "types": [
+        "Grass",
+        "Ghost"
+      ],
+      "abilities": [
+        "Anticipation",
+        "Telepathy"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -22,
+      "evos": [
+        "Necturna"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Necturna",
+      "hp": 64,
+      "atk": 120,
+      "def": 100,
+      "spa": 85,
+      "spd": 120,
+      "spe": 58,
+      "bst": 547,
+      "weight": 49.6,
+      "height": 1.65,
+      "types": [
+        "Grass",
+        "Ghost"
+      ],
+      "abilities": [
+        "Forewarn",
+        "Telepathy"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -23,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Mollux",
+      "hp": 95,
+      "atk": 45,
+      "def": 83,
+      "spa": 131,
+      "spd": 105,
+      "spe": 76,
+      "bst": 535,
+      "weight": 41,
+      "height": 1.2,
+      "types": [
+        "Fire",
+        "Poison"
+      ],
+      "abilities": [
+        "Dry Skin",
+        "Illuminate"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -24,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Cupra",
+      "hp": 50,
+      "atk": 60,
+      "def": 49,
+      "spa": 67,
+      "spd": 30,
+      "spe": 44,
+      "bst": 300,
+      "weight": 4.8,
+      "height": 0.5,
+      "types": [
+        "Bug",
+        "Psychic"
+      ],
+      "abilities": [
+        "Shield Dust",
+        "Keen Eye",
+        "Magic Guard"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -25,
+      "evos": [
+        "Argalis"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Argalis",
+      "hp": 60,
+      "atk": 90,
+      "def": 89,
+      "spa": 87,
+      "spd": 40,
+      "spe": 54,
+      "bst": 420,
+      "weight": 341.4,
+      "height": 1.3,
+      "types": [
+        "Bug",
+        "Psychic"
+      ],
+      "abilities": [
+        "Shed Skin",
+        "Compound Eyes",
+        "Overcoat"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -26,
+      "evos": [
+        "Aurumoth"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Aurumoth",
+      "hp": 110,
+      "atk": 120,
+      "def": 99,
+      "spa": 117,
+      "spd": 60,
+      "spe": 94,
+      "bst": 600,
+      "weight": 193,
+      "height": 2.1,
+      "types": [
+        "Bug",
+        "Psychic"
+      ],
+      "abilities": [
+        "Weak Armor",
+        "No Guard",
+        "Light Metal"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -27,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Brattler",
+      "hp": 80,
+      "atk": 70,
+      "def": 40,
+      "spa": 20,
+      "spd": 90,
+      "spe": 30,
+      "bst": 330,
+      "weight": 11.5,
+      "height": 1.8,
+      "types": [
+        "Dark",
+        "Grass"
+      ],
+      "abilities": [
+        "Harvest",
+        "Infiltrator",
+        "Rattled"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -28,
+      "evos": [
+        "Malaconda"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Malaconda",
+      "hp": 115,
+      "atk": 100,
+      "def": 60,
+      "spa": 40,
+      "spd": 130,
+      "spe": 55,
+      "bst": 500,
+      "weight": 108.8,
+      "height": 5.5,
+      "types": [
+        "Dark",
+        "Grass"
+      ],
+      "abilities": [
+        "Harvest",
+        "Infiltrator",
+        "Drought"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -29,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Revenankh",
+      "hp": 90,
+      "atk": 105,
+      "def": 90,
+      "spa": 65,
+      "spd": 110,
+      "spe": 65,
+      "bst": 525,
+      "weight": 44,
+      "height": 1.8,
+      "types": [
+        "Ghost",
+        "Fighting"
+      ],
+      "abilities": [
+        "Air Lock",
+        "Triage",
+        "Shed Skin"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -3,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Cawdet",
+      "hp": 35,
+      "atk": 72,
+      "def": 85,
+      "spa": 40,
+      "spd": 55,
+      "spe": 88,
+      "bst": 375,
+      "weight": 25,
+      "height": 0.76,
+      "types": [
+        "Steel",
+        "Flying"
+      ],
+      "abilities": [
+        "Keen Eye",
+        "Volt Absorb",
+        "Big Pecks"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -30,
+      "evos": [
+        "Cawmodore"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Cawmodore",
+      "hp": 50,
+      "atk": 92,
+      "def": 130,
+      "spa": 65,
+      "spd": 75,
+      "spe": 118,
+      "bst": 530,
+      "weight": 37,
+      "height": 1.7,
+      "types": [
+        "Steel",
+        "Flying"
+      ],
+      "abilities": [
+        "Intimidate",
+        "Volt Absorb",
+        "Big Pecks"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -31,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Volkritter",
+      "hp": 60,
+      "atk": 30,
+      "def": 50,
+      "spa": 80,
+      "spd": 60,
+      "spe": 70,
+      "bst": 350,
+      "weight": 15,
+      "height": 0.3,
+      "types": [
+        "Water",
+        "Fire"
+      ],
+      "abilities": [
+        "Anticipation",
+        "Infiltrator",
+        "Unnerve"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -32,
+      "evos": [
+        "Volkraken"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Volkraken",
+      "hp": 100,
+      "atk": 45,
+      "def": 80,
+      "spa": 135,
+      "spd": 100,
+      "spe": 95,
+      "bst": 555,
+      "weight": 44.5,
+      "height": 1.3,
+      "types": [
+        "Water",
+        "Fire"
+      ],
+      "abilities": [
+        "Analytic",
+        "Infiltrator",
+        "Pressure"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -33,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Snugglow",
+      "hp": 40,
+      "atk": 37,
+      "def": 79,
+      "spa": 91,
+      "spd": 68,
+      "spe": 70,
+      "bst": 385,
+      "weight": 6,
+      "height": 1.2,
+      "types": [
+        "Electric",
+        "Poison"
+      ],
+      "abilities": [
+        "Storm Drain",
+        "Vital Spirit",
+        "Telepathy"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -34,
+      "evos": [
+        "Plasmanta"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Plasmanta",
+      "hp": 60,
+      "atk": 57,
+      "def": 119,
+      "spa": 131,
+      "spd": 98,
+      "spe": 100,
+      "bst": 565,
+      "weight": 460,
+      "height": 7,
+      "types": [
+        "Electric",
+        "Poison"
+      ],
+      "abilities": [
+        "Storm Drain",
+        "Vital Spirit",
+        "Telepathy"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -35,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Floatoy",
+      "hp": 48,
+      "atk": 70,
+      "def": 40,
+      "spa": 70,
+      "spd": 30,
+      "spe": 77,
+      "bst": 335,
+      "weight": 1.9,
+      "height": 0.8,
+      "types": [
+        "Water"
+      ],
+      "abilities": [
+        "Water Veil",
+        "Heatproof",
+        "Swift Swim"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -36,
+      "evos": [
+        "Caimanoe"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Caimanoe",
+      "hp": 73,
+      "atk": 85,
+      "def": 65,
+      "spa": 80,
+      "spd": 40,
+      "spe": 87,
+      "bst": 430,
+      "weight": 72.5,
+      "height": 1.4,
+      "types": [
+        "Water",
+        "Steel"
+      ],
+      "abilities": [
+        "Water Veil",
+        "Heatproof",
+        "Light Metal"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -37,
+      "evos": [
+        "Naviathan"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Naviathan",
+      "hp": 103,
+      "atk": 110,
+      "def": 90,
+      "spa": 95,
+      "spd": 65,
+      "spe": 97,
+      "bst": 560,
+      "weight": 510,
+      "height": 3,
+      "types": [
+        "Water",
+        "Steel"
+      ],
+      "abilities": [
+        "Guts",
+        "Heatproof",
+        "Light Metal"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -38,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Crucibelle",
+      "hp": 106,
+      "atk": 105,
+      "def": 65,
+      "spa": 75,
+      "spd": 85,
+      "spe": 104,
+      "bst": 540,
+      "weight": 23.6,
+      "height": 1.3,
+      "types": [
+        "Rock",
+        "Poison"
+      ],
+      "abilities": [
+        "Regenerator",
+        "Mold Breaker",
+        "Liquid Ooze"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -39,
+      "evos": [],
+      "alts": [
+        "Crucibelle-Mega"
+      ]
+    },
+    {
+      "name": "Embirch",
+      "hp": 60,
+      "atk": 40,
+      "def": 55,
+      "spa": 65,
+      "spd": 40,
+      "spe": 60,
+      "bst": 320,
+      "weight": 15,
+      "height": 0.6,
+      "types": [
+        "Fire",
+        "Grass"
+      ],
+      "abilities": [
+        "Reckless",
+        "Leaf Guard",
+        "Chlorophyll"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -4,
+      "evos": [
+        "Flarelm"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Pluffle",
+      "hp": 74,
+      "atk": 38,
+      "def": 51,
+      "spa": 65,
+      "spd": 78,
+      "spe": 49,
+      "bst": 355,
+      "weight": 1.8,
+      "height": 0.8,
+      "types": [
+        "Fairy"
+      ],
+      "abilities": [
+        "Natural Cure",
+        "Aroma Veil",
+        "Friend Guard"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -40,
+      "evos": [
+        "Kerfluffle"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Kerfluffle",
+      "hp": 84,
+      "atk": 78,
+      "def": 86,
+      "spa": 115,
+      "spd": 88,
+      "spe": 119,
+      "bst": 570,
+      "weight": 24.2,
+      "height": 2.1,
+      "types": [
+        "Fairy",
+        "Fighting"
+      ],
+      "abilities": [
+        "Natural Cure",
+        "Aroma Veil",
+        "Friend Guard"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -41,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Pajantom",
+      "hp": 84,
+      "atk": 133,
+      "def": 71,
+      "spa": 51,
+      "spd": 111,
+      "spe": 101,
+      "bst": 551,
+      "weight": 3.1,
+      "height": 1.1,
+      "types": [
+        "Dragon",
+        "Ghost"
+      ],
+      "abilities": [
+        "Comatose"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -42,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Mumbao",
+      "hp": 55,
+      "atk": 30,
+      "def": 64,
+      "spa": 87,
+      "spd": 73,
+      "spe": 66,
+      "bst": 375,
+      "weight": 83,
+      "height": 1,
+      "types": [
+        "Grass",
+        "Fairy"
+      ],
+      "abilities": [
+        "Trace",
+        "Overcoat",
+        "Solar Power"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -43,
+      "evos": [
+        "Jumbao"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Jumbao",
+      "hp": 92,
+      "atk": 63,
+      "def": 97,
+      "spa": 124,
+      "spd": 104,
+      "spe": 96,
+      "bst": 576,
+      "weight": 200,
+      "height": 2.4,
+      "types": [
+        "Grass",
+        "Fairy"
+      ],
+      "abilities": [
+        "Trace",
+        "Overcoat",
+        "Drought"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -44,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Fawnifer",
+      "hp": 49,
+      "atk": 61,
+      "def": 42,
+      "spa": 52,
+      "spd": 40,
+      "spe": 76,
+      "bst": 320,
+      "weight": 6.9,
+      "height": 0.7,
+      "types": [
+        "Grass"
+      ],
+      "abilities": [
+        "Overgrow",
+        "Lightning Rod"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -45,
+      "evos": [
+        "Electrelk"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Electrelk",
+      "hp": 59,
+      "atk": 81,
+      "def": 67,
+      "spa": 57,
+      "spd": 55,
+      "spe": 101,
+      "bst": 420,
+      "weight": 41.5,
+      "height": 1.4,
+      "types": [
+        "Grass",
+        "Electric"
+      ],
+      "abilities": [
+        "Overgrow",
+        "Galvanize"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -46,
+      "evos": [
+        "Caribolt"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Caribolt",
+      "hp": 84,
+      "atk": 106,
+      "def": 82,
+      "spa": 77,
+      "spd": 80,
+      "spe": 106,
+      "bst": 535,
+      "weight": 140,
+      "height": 2.5,
+      "types": [
+        "Grass",
+        "Electric"
+      ],
+      "abilities": [
+        "Overgrow",
+        "Galvanize"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -47,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Smogecko",
+      "hp": 48,
+      "atk": 66,
+      "def": 43,
+      "spa": 58,
+      "spd": 48,
+      "spe": 56,
+      "bst": 319,
+      "weight": 8.5,
+      "height": 0.5,
+      "types": [
+        "Fire"
+      ],
+      "abilities": [
+        "Blaze",
+        "Technician"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -48,
+      "evos": [
+        "Smoguana"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Smoguana",
+      "hp": 68,
+      "atk": 86,
+      "def": 53,
+      "spa": 68,
+      "spd": 68,
+      "spe": 76,
+      "bst": 419,
+      "weight": 22.2,
+      "height": 1.5,
+      "types": [
+        "Fire",
+        "Ground"
+      ],
+      "abilities": [
+        "Blaze",
+        "Technician"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -49,
+      "evos": [
+        "Smokomodo"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Flarelm",
+      "hp": 90,
+      "atk": 50,
+      "def": 95,
+      "spa": 75,
+      "spd": 70,
+      "spe": 40,
+      "bst": 420,
+      "weight": 73,
+      "height": 1.4,
+      "types": [
+        "Fire",
+        "Grass"
+      ],
+      "abilities": [
+        "Rock Head",
+        "Battle Armor",
+        "White Smoke"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -5,
+      "evos": [
+        "Pyroak"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Smokomodo",
+      "hp": 88,
+      "atk": 116,
+      "def": 67,
+      "spa": 88,
+      "spd": 78,
+      "spe": 97,
+      "bst": 534,
+      "weight": 205,
+      "height": 2.2,
+      "types": [
+        "Fire",
+        "Ground"
+      ],
+      "abilities": [
+        "Blaze",
+        "Technician"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -50,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Swirlpool",
+      "hp": 61,
+      "atk": 49,
+      "def": 70,
+      "spa": 50,
+      "spd": 62,
+      "spe": 28,
+      "bst": 320,
+      "weight": 7,
+      "height": 0.5,
+      "types": [
+        "Water"
+      ],
+      "abilities": [
+        "Torrent",
+        "Poison Heal"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -51,
+      "evos": [
+        "Coribalis"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Coribalis",
+      "hp": 76,
+      "atk": 69,
+      "def": 90,
+      "spa": 65,
+      "spd": 77,
+      "spe": 43,
+      "bst": 420,
+      "weight": 24.5,
+      "height": 1.4,
+      "types": [
+        "Water",
+        "Bug"
+      ],
+      "abilities": [
+        "Torrent",
+        "Poison Heal"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -52,
+      "evos": [
+        "Snaelstrom"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Snaelstrom",
+      "hp": 91,
+      "atk": 94,
+      "def": 110,
+      "spa": 80,
+      "spd": 97,
+      "spe": 63,
+      "bst": 535,
+      "weight": 120,
+      "height": 2,
+      "types": [
+        "Water",
+        "Bug"
+      ],
+      "abilities": [
+        "Torrent",
+        "Poison Heal"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -53,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Justyke",
+      "hp": 72,
+      "atk": 70,
+      "def": 56,
+      "spa": 83,
+      "spd": 68,
+      "spe": 30,
+      "bst": 379,
+      "weight": 36.5,
+      "height": 0.4,
+      "types": [
+        "Steel",
+        "Ground"
+      ],
+      "abilities": [
+        "Levitate",
+        "Bulletproof",
+        "Justified"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -54,
+      "evos": [
+        "Equilibra"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Equilibra",
+      "hp": 102,
+      "atk": 50,
+      "def": 96,
+      "spa": 133,
+      "spd": 118,
+      "spe": 60,
+      "bst": 559,
+      "weight": 51.3,
+      "height": 0.8,
+      "types": [
+        "Steel",
+        "Ground"
+      ],
+      "abilities": [
+        "Levitate",
+        "Bulletproof",
+        "Justified"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -55,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Solotl",
+      "hp": 68,
+      "atk": 48,
+      "def": 34,
+      "spa": 72,
+      "spd": 24,
+      "spe": 84,
+      "bst": 330,
+      "weight": 11.8,
+      "height": 0.6,
+      "types": [
+        "Fire",
+        "Dragon"
+      ],
+      "abilities": [
+        "Regenerator",
+        "Vital Spirit",
+        "Magician"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -56,
+      "evos": [
+        "Astrolotl"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Astrolotl",
+      "hp": 108,
+      "atk": 108,
+      "def": 74,
+      "spa": 92,
+      "spd": 64,
+      "spe": 114,
+      "bst": 560,
+      "weight": 50,
+      "height": 1.9,
+      "types": [
+        "Fire",
+        "Dragon"
+      ],
+      "abilities": [
+        "Regenerator",
+        "Vital Spirit",
+        "Magician"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -57,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Miasmite",
+      "hp": 40,
+      "atk": 85,
+      "def": 60,
+      "spa": 52,
+      "spd": 52,
+      "spe": 44,
+      "bst": 333,
+      "weight": 10.1,
+      "height": 0.6,
+      "types": [
+        "Bug",
+        "Dragon"
+      ],
+      "abilities": [
+        "Neutralizing Gas",
+        "Hyper Cutter",
+        "Compound Eyes"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -58,
+      "evos": [
+        "Miasmaw"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Miasmaw",
+      "hp": 85,
+      "atk": 135,
+      "def": 60,
+      "spa": 88,
+      "spd": 105,
+      "spe": 99,
+      "bst": 572,
+      "weight": 57,
+      "height": 1.2,
+      "types": [
+        "Bug",
+        "Dragon"
+      ],
+      "abilities": [
+        "Neutralizing Gas",
+        "Hyper Cutter",
+        "Compound Eyes"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -59,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Pyroak",
+      "hp": 120,
+      "atk": 70,
+      "def": 105,
+      "spa": 70,
+      "spd": 65,
+      "spe": 60,
+      "bst": 490,
+      "weight": 168,
+      "height": 2.1,
+      "types": [
+        "Fire",
+        "Grass"
+      ],
+      "abilities": [
+        "Rock Head",
+        "Battle Armor",
+        "Contrary"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -6,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Chromera",
+      "hp": 85,
+      "atk": 85,
+      "def": 115,
+      "spa": 115,
+      "spd": 100,
+      "spe": 100,
+      "bst": 600,
+      "weight": 215,
+      "height": 2.5,
+      "types": [
+        "Dark",
+        "Normal"
+      ],
+      "abilities": [
+        "Color Change"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -60,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Nohface",
+      "hp": 50,
+      "atk": 73,
+      "def": 50,
+      "spa": 30,
+      "spd": 50,
+      "spe": 80,
+      "bst": 333,
+      "weight": 5.9,
+      "height": 0.5,
+      "types": [
+        "Ghost"
+      ],
+      "abilities": [
+        "Frisk",
+        "Limber",
+        "Unnerve"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -61,
+      "evos": [
+        "Kitsunoh"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Monohm",
+      "hp": 53,
+      "atk": 40,
+      "def": 58,
+      "spa": 67,
+      "spd": 55,
+      "spe": 55,
+      "bst": 328,
+      "weight": 4.1,
+      "height": 0.6,
+      "types": [
+        "Electric"
+      ],
+      "abilities": [
+        "Shield Dust",
+        "Static",
+        "Damp"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -62,
+      "evos": [
+        "Duohm"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Duohm",
+      "hp": 88,
+      "atk": 40,
+      "def": 103,
+      "spa": 77,
+      "spd": 60,
+      "spe": 60,
+      "bst": 428,
+      "weight": 19.2,
+      "height": 1.1,
+      "types": [
+        "Electric",
+        "Dragon"
+      ],
+      "abilities": [
+        "Shield Dust",
+        "Static",
+        "Damp"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -63,
+      "evos": [
+        "Cyclohm"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Dorsoil",
+      "hp": 103,
+      "atk": 72,
+      "def": 52,
+      "spa": 61,
+      "spd": 52,
+      "spe": 65,
+      "bst": 405,
+      "weight": 145,
+      "height": 1.3,
+      "types": [
+        "Ground"
+      ],
+      "abilities": [
+        "Oblivious",
+        "Guts",
+        "Unnerve"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -64,
+      "evos": [
+        "Colossoil"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Protowatt",
+      "hp": 51,
+      "atk": 44,
+      "def": 33,
+      "spa": 43,
+      "spd": 34,
+      "spe": 65,
+      "bst": 270,
+      "weight": 0.1,
+      "height": 0.1,
+      "types": [
+        "Electric",
+        "Water"
+      ],
+      "abilities": [
+        "Trace",
+        "Magic Guard",
+        "Minus"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -65,
+      "evos": [
+        "Krilowatt"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Venomicon",
+      "hp": 85,
+      "atk": 50,
+      "def": 113,
+      "spa": 118,
+      "spd": 90,
+      "spe": 64,
+      "bst": 520,
+      "weight": 11.5,
+      "height": 0.8,
+      "types": [
+        "Poison",
+        "Flying"
+      ],
+      "abilities": [
+        "Stamina",
+        "Power of Alchemy"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -66,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Venomicon-Epilogue",
+      "hp": 85,
+      "atk": 102,
+      "def": 85,
+      "spa": 62,
+      "spd": 85,
+      "spe": 101,
+      "bst": 520,
+      "weight": 12.4,
+      "height": 0.8,
+      "types": [
+        "Poison",
+        "Flying"
+      ],
+      "abilities": [
+        "Tinted Lens"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -66,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Saharascal",
+      "hp": 50,
+      "atk": 80,
+      "def": 65,
+      "spa": 45,
+      "spd": 90,
+      "spe": 70,
+      "bst": 400,
+      "weight": 48,
+      "height": 1.2,
+      "types": [
+        "Ground"
+      ],
+      "abilities": [
+        "Water Absorb",
+        "Pickpocket",
+        "Sand Spit"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -67,
+      "evos": [
+        "Saharaja"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Saharaja",
+      "hp": 70,
+      "atk": 112,
+      "def": 105,
+      "spa": 65,
+      "spd": 123,
+      "spe": 78,
+      "bst": 553,
+      "weight": 303.9,
+      "height": 2.3,
+      "types": [
+        "Ground"
+      ],
+      "abilities": [
+        "Water Absorb",
+        "Serene Grace",
+        "Sand Spit"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -68,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Ababo",
+      "hp": 42,
+      "atk": 35,
+      "def": 27,
+      "spa": 35,
+      "spd": 35,
+      "spe": 38,
+      "bst": 212,
+      "weight": 3.5,
+      "height": 0.5,
+      "types": [
+        "Fairy"
+      ],
+      "abilities": [
+        "Pixilate",
+        "Rattled",
+        "Own Tempo"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -69,
+      "evos": [
+        "Scattervein"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Breezi",
+      "hp": 50,
+      "atk": 46,
+      "def": 69,
+      "spa": 60,
+      "spd": 50,
+      "spe": 75,
+      "bst": 350,
+      "weight": 0.6,
+      "height": 0.4,
+      "types": [
+        "Poison",
+        "Flying"
+      ],
+      "abilities": [
+        "Unburden",
+        "Own Tempo",
+        "Frisk"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -7,
+      "evos": [
+        "Fidgit"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Scattervein",
+      "hp": 75,
+      "atk": 74,
+      "def": 87,
+      "spa": 62,
+      "spd": 89,
+      "spe": 63,
+      "bst": 450,
+      "weight": 25,
+      "height": 1.5,
+      "types": [
+        "Fairy"
+      ],
+      "abilities": [
+        "Pixilate",
+        "Intimidate",
+        "Own Tempo"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -70,
+      "evos": [
+        "Hemogoblin"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Hemogoblin",
+      "hp": 90,
+      "atk": 96,
+      "def": 87,
+      "spa": 96,
+      "spd": 89,
+      "spe": 55,
+      "bst": 513,
+      "weight": 85,
+      "height": 1.4,
+      "types": [
+        "Fairy",
+        "Fire"
+      ],
+      "abilities": [
+        "Pixilate",
+        "Intimidate",
+        "Own Tempo"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -71,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Cresceidon",
+      "hp": 80,
+      "atk": 32,
+      "def": 111,
+      "spa": 88,
+      "spd": 99,
+      "spe": 124,
+      "bst": 534,
+      "weight": 999.9,
+      "height": 10,
+      "types": [
+        "Water",
+        "Fairy"
+      ],
+      "abilities": [
+        "Multiscale",
+        "Rough Skin",
+        "Water Veil"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -72,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Chuggon",
+      "hp": 30,
+      "atk": 23,
+      "def": 77,
+      "spa": 55,
+      "spd": 65,
+      "spe": 30,
+      "bst": 280,
+      "weight": 50,
+      "height": 1,
+      "types": [
+        "Dragon",
+        "Poison"
+      ],
+      "abilities": [
+        "Shell Armor",
+        "White Smoke",
+        "Slow Start"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -73,
+      "evos": [
+        "Draggalong"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Draggalong",
+      "hp": 40,
+      "atk": 33,
+      "def": 92,
+      "spa": 95,
+      "spd": 80,
+      "spe": 85,
+      "bst": 425,
+      "weight": 110,
+      "height": 2.5,
+      "types": [
+        "Dragon",
+        "Poison"
+      ],
+      "abilities": [
+        "Armor Tail",
+        "White Smoke",
+        "Slow Start"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -74,
+      "evos": [
+        "Chuggalong"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Chuggalong",
+      "hp": 45,
+      "atk": 43,
+      "def": 117,
+      "spa": 120,
+      "spd": 110,
+      "spe": 108,
+      "bst": 543,
+      "weight": 201.6,
+      "height": 6.2,
+      "types": [
+        "Dragon",
+        "Poison"
+      ],
+      "abilities": [
+        "Armor Tail",
+        "White Smoke",
+        "Slow Start"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -75,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Flox",
+      "hp": 96,
+      "atk": 25,
+      "def": 67,
+      "spa": 73,
+      "spd": 68,
+      "spe": 61,
+      "bst": 390,
+      "weight": 66.6,
+      "height": 0.9,
+      "types": [
+        "Normal",
+        "Electric"
+      ],
+      "abilities": [
+        "Static",
+        "Sticky Hold",
+        "Cud Chew"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -76,
+      "evos": [
+        "Shox"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Shox",
+      "hp": 136,
+      "atk": 55,
+      "def": 87,
+      "spa": 108,
+      "spd": 108,
+      "spe": 56,
+      "bst": 550,
+      "weight": 99.9,
+      "height": 3,
+      "types": [
+        "Normal",
+        "Electric"
+      ],
+      "abilities": [
+        "Electromorphosis",
+        "Sticky Hold",
+        "Cud Chew"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -77,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Ramnarok",
+      "hp": 110,
+      "atk": 56,
+      "def": 104,
+      "spa": 111,
+      "spd": 134,
+      "spe": 85,
+      "bst": 600,
+      "weight": 250,
+      "height": 2.2,
+      "types": [
+        "Fire",
+        "Steel"
+      ],
+      "abilities": [
+        "No Guard"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -78,
+      "evos": [],
+      "alts": [
+        "Ramnarok-Radiant"
+      ]
+    },
+    {
+      "name": "Fidgit",
+      "hp": 95,
+      "atk": 76,
+      "def": 109,
+      "spa": 90,
+      "spd": 80,
+      "spe": 105,
+      "bst": 555,
+      "weight": 53,
+      "height": 0.9,
+      "types": [
+        "Poison",
+        "Ground"
+      ],
+      "abilities": [
+        "Vital Spirit",
+        "Frisk"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -8,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Rebble",
+      "hp": 45,
+      "atk": 25,
+      "def": 65,
+      "spa": 75,
+      "spd": 55,
+      "spe": 80,
+      "bst": 345,
+      "weight": 7,
+      "height": 0.3,
+      "types": [
+        "Rock"
+      ],
+      "abilities": [
+        "Levitate",
+        "Solid Rock",
+        "Sniper"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": -9,
+      "evos": [
+        "Tactite"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Sinistcha",
+      "hp": 71,
+      "atk": 60,
+      "def": 106,
+      "spa": 121,
+      "spd": 80,
+      "spe": 70,
+      "bst": 508,
+      "weight": 2.2,
+      "height": 0.2,
+      "types": [
+        "Grass",
+        "Ghost"
+      ],
+      "abilities": [
+        "Hospitality",
+        "Heatproof"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 1013,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Sinistcha-Masterpiece",
+      "hp": 71,
+      "atk": 60,
+      "def": 106,
+      "spa": 121,
+      "spd": 80,
+      "spe": 70,
+      "bst": 508,
+      "weight": 2.2,
+      "height": 0.2,
+      "types": [
+        "Grass",
+        "Ghost"
+      ],
+      "abilities": [
+        "Hospitality",
+        "Heatproof"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 1013,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Archaludon",
+      "hp": 90,
+      "atk": 105,
+      "def": 130,
+      "spa": 125,
+      "spd": 65,
+      "spe": 85,
+      "bst": 600,
+      "weight": 60,
+      "height": 2,
+      "types": [
+        "Steel",
+        "Dragon"
+      ],
+      "abilities": [
+        "Stamina",
+        "Sturdy",
+        "Stalwart"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 1018,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Hydrapple",
+      "hp": 106,
+      "atk": 80,
+      "def": 110,
+      "spa": 120,
+      "spd": 80,
+      "spe": 44,
+      "bst": 540,
+      "weight": 93,
+      "height": 1.8,
+      "types": [
+        "Grass",
+        "Dragon"
+      ],
+      "abilities": [
+        "Supersweet Syrup",
+        "Regenerator",
+        "Sticky Hold"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 1019,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Kangaskhan",
+      "hp": 105,
+      "atk": 95,
+      "def": 80,
+      "spa": 40,
+      "spd": 80,
+      "spe": 90,
+      "bst": 490,
+      "weight": 80,
+      "height": 2.2,
+      "types": [
+        "Normal"
+      ],
+      "abilities": [
+        "Early Bird",
+        "Scrappy",
+        "Inner Focus"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 115,
+      "evos": [],
+      "alts": [
+        "Kangaskhan-Mega"
+      ]
+    },
+    {
+      "name": "Starmie",
+      "hp": 60,
+      "atk": 75,
+      "def": 85,
+      "spa": 100,
+      "spd": 85,
+      "spe": 115,
+      "bst": 520,
+      "weight": 80,
+      "height": 1.1,
+      "types": [
+        "Water",
+        "Psychic"
+      ],
+      "abilities": [
+        "Illuminate",
+        "Natural Cure",
+        "Analytic"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 121,
+      "evos": [],
+      "alts": [
+        "Starmie-Mega"
+      ]
+    },
+    {
+      "name": "Pinsir",
+      "hp": 65,
+      "atk": 125,
+      "def": 100,
+      "spa": 55,
+      "spd": 70,
+      "spe": 85,
+      "bst": 500,
+      "weight": 55,
+      "height": 1.5,
+      "types": [
+        "Bug"
+      ],
+      "abilities": [
+        "Hyper Cutter",
+        "Mold Breaker",
+        "Moxie"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 127,
+      "evos": [],
+      "alts": [
+        "Pinsir-Mega"
+      ]
+    },
+    {
+      "name": "Tauros",
+      "hp": 75,
+      "atk": 100,
+      "def": 95,
+      "spa": 40,
+      "spd": 70,
+      "spe": 110,
+      "bst": 490,
+      "weight": 88.4,
+      "height": 1.4,
+      "types": [
+        "Normal"
+      ],
+      "abilities": [
+        "Intimidate",
+        "Anger Point",
+        "Sheer Force"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 128,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Tauros-Paldea-Aqua",
+      "hp": 75,
+      "atk": 110,
+      "def": 105,
+      "spa": 30,
+      "spd": 70,
+      "spe": 100,
+      "bst": 490,
+      "weight": 110,
+      "height": 1.4,
+      "types": [
+        "Fighting",
+        "Water"
+      ],
+      "abilities": [
+        "Intimidate",
+        "Anger Point",
+        "Cud Chew"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 128,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Tauros-Paldea-Blaze",
+      "hp": 75,
+      "atk": 110,
+      "def": 105,
+      "spa": 30,
+      "spd": 70,
+      "spe": 100,
+      "bst": 490,
+      "weight": 85,
+      "height": 1.4,
+      "types": [
+        "Fighting",
+        "Fire"
+      ],
+      "abilities": [
+        "Intimidate",
+        "Anger Point",
+        "Cud Chew"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 128,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Tauros-Paldea-Combat",
+      "hp": 75,
+      "atk": 110,
+      "def": 105,
+      "spa": 30,
+      "spd": 70,
+      "spe": 100,
+      "bst": 490,
+      "weight": 115,
+      "height": 1.4,
+      "types": [
+        "Fighting"
+      ],
+      "abilities": [
+        "Intimidate",
+        "Anger Point",
+        "Cud Chew"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 128,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Gyarados",
+      "hp": 95,
+      "atk": 125,
+      "def": 79,
+      "spa": 60,
+      "spd": 100,
+      "spe": 81,
+      "bst": 540,
+      "weight": 235,
+      "height": 6.5,
+      "types": [
+        "Water",
+        "Flying"
+      ],
+      "abilities": [
+        "Intimidate",
+        "Moxie"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 130,
+      "evos": [],
+      "alts": [
+        "Gyarados-Mega"
+      ]
+    },
+    {
+      "name": "Ditto",
+      "hp": 48,
+      "atk": 48,
+      "def": 48,
+      "spa": 48,
+      "spd": 48,
+      "spe": 48,
+      "bst": 288,
+      "weight": 4,
+      "height": 0.3,
+      "types": [
+        "Normal"
+      ],
+      "abilities": [
+        "Limber",
+        "Imposter"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 132,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Vaporeon",
+      "hp": 130,
+      "atk": 65,
+      "def": 60,
+      "spa": 110,
+      "spd": 95,
+      "spe": 65,
+      "bst": 525,
+      "weight": 29,
+      "height": 1,
+      "types": [
+        "Water"
+      ],
+      "abilities": [
+        "Water Absorb",
+        "Hydration"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 134,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Jolteon",
+      "hp": 65,
+      "atk": 65,
+      "def": 60,
+      "spa": 110,
+      "spd": 95,
+      "spe": 130,
+      "bst": 525,
+      "weight": 24.5,
+      "height": 0.8,
+      "types": [
+        "Electric"
+      ],
+      "abilities": [
+        "Volt Absorb",
+        "Quick Feet"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 135,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Flareon",
+      "hp": 65,
+      "atk": 130,
+      "def": 60,
+      "spa": 95,
+      "spd": 110,
+      "spe": 65,
+      "bst": 525,
+      "weight": 25,
+      "height": 0.9,
+      "types": [
+        "Fire"
+      ],
+      "abilities": [
+        "Flash Fire",
+        "Guts"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 136,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Aerodactyl",
+      "hp": 80,
+      "atk": 105,
+      "def": 65,
+      "spa": 60,
+      "spd": 75,
+      "spe": 130,
+      "bst": 515,
+      "weight": 59,
+      "height": 1.8,
+      "types": [
+        "Rock",
+        "Flying"
+      ],
+      "abilities": [
+        "Rock Head",
+        "Pressure",
+        "Unnerve"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 142,
+      "evos": [],
+      "alts": [
+        "Aerodactyl-Mega"
+      ]
+    },
+    {
+      "name": "Snorlax",
+      "hp": 160,
+      "atk": 110,
+      "def": 65,
+      "spa": 65,
+      "spd": 110,
+      "spe": 30,
+      "bst": 540,
+      "weight": 460,
+      "height": 2.1,
+      "types": [
+        "Normal"
+      ],
+      "abilities": [
+        "Immunity",
+        "Thick Fat",
+        "Gluttony"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 143,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Dragonite",
+      "hp": 91,
+      "atk": 134,
+      "def": 95,
+      "spa": 100,
+      "spd": 100,
+      "spe": 80,
+      "bst": 600,
+      "weight": 210,
+      "height": 2.2,
+      "types": [
+        "Dragon",
+        "Flying"
+      ],
+      "abilities": [
+        "Inner Focus",
+        "Multiscale"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 149,
+      "evos": [],
+      "alts": [
+        "Dragonite-Mega"
+      ]
+    },
+    {
+      "name": "Beedrill",
+      "hp": 65,
+      "atk": 90,
+      "def": 40,
+      "spa": 45,
+      "spd": 80,
+      "spe": 75,
+      "bst": 395,
+      "weight": 29.5,
+      "height": 1,
+      "types": [
+        "Bug",
+        "Poison"
+      ],
+      "abilities": [
+        "Swarm",
+        "Sniper"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 15,
+      "evos": [],
+      "alts": [
+        "Beedrill-Mega"
+      ]
+    },
+    {
+      "name": "Meganium",
+      "hp": 80,
+      "atk": 82,
+      "def": 100,
+      "spa": 83,
+      "spd": 100,
+      "spe": 80,
+      "bst": 525,
+      "weight": 100.5,
+      "height": 1.8,
+      "types": [
+        "Grass"
+      ],
+      "abilities": [
+        "Overgrow",
+        "Leaf Guard"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 154,
+      "evos": [],
+      "alts": [
+        "Meganium-Mega"
+      ]
+    },
+    {
+      "name": "Typhlosion",
+      "hp": 78,
+      "atk": 84,
+      "def": 78,
+      "spa": 109,
+      "spd": 85,
+      "spe": 100,
+      "bst": 534,
+      "weight": 79.5,
+      "height": 1.7,
+      "types": [
+        "Fire"
+      ],
+      "abilities": [
+        "Blaze",
+        "Flash Fire"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 157,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Typhlosion-Hisui",
+      "hp": 73,
+      "atk": 84,
+      "def": 78,
+      "spa": 119,
+      "spd": 85,
+      "spe": 95,
+      "bst": 534,
+      "weight": 69.8,
+      "height": 1.6,
+      "types": [
+        "Fire",
+        "Ghost"
+      ],
+      "abilities": [
+        "Blaze",
+        "Frisk"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 157,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Feraligatr",
+      "hp": 85,
+      "atk": 105,
+      "def": 100,
+      "spa": 79,
+      "spd": 83,
+      "spe": 78,
+      "bst": 530,
+      "weight": 88.8,
+      "height": 2.3,
+      "types": [
+        "Water"
+      ],
+      "abilities": [
+        "Torrent",
+        "Sheer Force"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 160,
+      "evos": [],
+      "alts": [
+        "Feraligatr-Mega"
+      ]
+    },
+    {
+      "name": "Ariados",
+      "hp": 70,
+      "atk": 90,
+      "def": 70,
+      "spa": 60,
+      "spd": 70,
+      "spe": 40,
+      "bst": 400,
+      "weight": 33.5,
+      "height": 1.1,
+      "types": [
+        "Bug",
+        "Poison"
+      ],
+      "abilities": [
+        "Swarm",
+        "Insomnia",
+        "Sniper"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 168,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Pidgeot",
+      "hp": 83,
+      "atk": 80,
+      "def": 75,
+      "spa": 70,
+      "spd": 70,
+      "spe": 101,
+      "bst": 479,
+      "weight": 39.5,
+      "height": 1.5,
+      "types": [
+        "Normal",
+        "Flying"
+      ],
+      "abilities": [
+        "Keen Eye",
+        "Tangled Feet",
+        "Big Pecks"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 18,
+      "evos": [],
+      "alts": [
+        "Pidgeot-Mega"
+      ]
+    },
+    {
+      "name": "Ampharos",
+      "hp": 90,
+      "atk": 75,
+      "def": 85,
+      "spa": 115,
+      "spd": 90,
+      "spe": 55,
+      "bst": 510,
+      "weight": 61.5,
+      "height": 1.4,
+      "types": [
+        "Electric"
+      ],
+      "abilities": [
+        "Static",
+        "Plus"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 181,
+      "evos": [],
+      "alts": [
+        "Ampharos-Mega"
+      ]
+    },
+    {
+      "name": "Azumarill",
+      "hp": 100,
+      "atk": 50,
+      "def": 80,
+      "spa": 60,
+      "spd": 80,
+      "spe": 50,
+      "bst": 420,
+      "weight": 28.5,
+      "height": 0.8,
+      "types": [
+        "Water",
+        "Fairy"
+      ],
+      "abilities": [
+        "Thick Fat",
+        "Huge Power",
+        "Sap Sipper"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 184,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Politoed",
+      "hp": 90,
+      "atk": 75,
+      "def": 75,
+      "spa": 90,
+      "spd": 100,
+      "spe": 70,
+      "bst": 500,
+      "weight": 33.9,
+      "height": 1.1,
+      "types": [
+        "Water"
+      ],
+      "abilities": [
+        "Water Absorb",
+        "Damp",
+        "Drizzle"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 186,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Espeon",
+      "hp": 65,
+      "atk": 65,
+      "def": 60,
+      "spa": 130,
+      "spd": 95,
+      "spe": 110,
+      "bst": 525,
+      "weight": 26.5,
+      "height": 0.9,
+      "types": [
+        "Psychic"
+      ],
+      "abilities": [
+        "Synchronize",
+        "Magic Bounce"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 196,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Umbreon",
+      "hp": 95,
+      "atk": 65,
+      "def": 110,
+      "spa": 60,
+      "spd": 130,
+      "spe": 65,
+      "bst": 525,
+      "weight": 27,
+      "height": 1,
+      "types": [
+        "Dark"
+      ],
+      "abilities": [
+        "Synchronize",
+        "Inner Focus"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 197,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Slowking",
+      "hp": 95,
+      "atk": 75,
+      "def": 80,
+      "spa": 100,
+      "spd": 110,
+      "spe": 30,
+      "bst": 490,
+      "weight": 79.5,
+      "height": 2,
+      "types": [
+        "Water",
+        "Psychic"
+      ],
+      "abilities": [
+        "Oblivious",
+        "Own Tempo",
+        "Regenerator"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 199,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Slowking-Galar",
+      "hp": 95,
+      "atk": 65,
+      "def": 80,
+      "spa": 110,
+      "spd": 110,
+      "spe": 30,
+      "bst": 490,
+      "weight": 79.5,
+      "height": 1.8,
+      "types": [
+        "Poison",
+        "Psychic"
+      ],
+      "abilities": [
+        "Curious Medicine",
+        "Own Tempo",
+        "Regenerator"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 199,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Forretress",
+      "hp": 75,
+      "atk": 90,
+      "def": 140,
+      "spa": 60,
+      "spd": 60,
+      "spe": 40,
+      "bst": 465,
+      "weight": 125.8,
+      "height": 1.2,
+      "types": [
+        "Bug",
+        "Steel"
+      ],
+      "abilities": [
+        "Sturdy",
+        "Overcoat"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 205,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Steelix",
+      "hp": 75,
+      "atk": 85,
+      "def": 200,
+      "spa": 55,
+      "spd": 65,
+      "spe": 30,
+      "bst": 510,
+      "weight": 400,
+      "height": 9.2,
+      "types": [
+        "Steel",
+        "Ground"
+      ],
+      "abilities": [
+        "Rock Head",
+        "Sturdy",
+        "Sheer Force"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 208,
+      "evos": [],
+      "alts": [
+        "Steelix-Mega"
+      ]
+    },
+    {
+      "name": "Scizor",
+      "hp": 70,
+      "atk": 130,
+      "def": 100,
+      "spa": 55,
+      "spd": 80,
+      "spe": 65,
+      "bst": 500,
+      "weight": 118,
+      "height": 1.8,
+      "types": [
+        "Bug",
+        "Steel"
+      ],
+      "abilities": [
+        "Swarm",
+        "Technician",
+        "Light Metal"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 212,
+      "evos": [],
+      "alts": [
+        "Scizor-Mega"
+      ]
+    },
+    {
+      "name": "Heracross",
+      "hp": 80,
+      "atk": 125,
+      "def": 75,
+      "spa": 40,
+      "spd": 95,
+      "spe": 85,
+      "bst": 500,
+      "weight": 54,
+      "height": 1.5,
+      "types": [
+        "Bug",
+        "Fighting"
+      ],
+      "abilities": [
+        "Swarm",
+        "Guts",
+        "Moxie"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 214,
+      "evos": [],
+      "alts": [
+        "Heracross-Mega"
+      ]
+    },
+    {
+      "name": "Skarmory",
+      "hp": 65,
+      "atk": 80,
+      "def": 140,
+      "spa": 40,
+      "spd": 70,
+      "spe": 70,
+      "bst": 465,
+      "weight": 50.5,
+      "height": 1.7,
+      "types": [
+        "Steel",
+        "Flying"
+      ],
+      "abilities": [
+        "Keen Eye",
+        "Sturdy",
+        "Weak Armor"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 227,
+      "evos": [],
+      "alts": [
+        "Skarmory-Mega"
+      ]
+    },
+    {
+      "name": "Houndoom",
+      "hp": 75,
+      "atk": 90,
+      "def": 50,
+      "spa": 110,
+      "spd": 80,
+      "spe": 95,
+      "bst": 500,
+      "weight": 35,
+      "height": 1.4,
+      "types": [
+        "Dark",
+        "Fire"
+      ],
+      "abilities": [
+        "Early Bird",
+        "Flash Fire",
+        "Unnerve"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 229,
+      "evos": [],
+      "alts": [
+        "Houndoom-Mega"
+      ]
+    },
+    {
+      "name": "Arbok",
+      "hp": 60,
+      "atk": 95,
+      "def": 69,
+      "spa": 65,
+      "spd": 79,
+      "spe": 80,
+      "bst": 448,
+      "weight": 65,
+      "height": 3.5,
+      "types": [
+        "Poison"
+      ],
+      "abilities": [
+        "Intimidate",
+        "Shed Skin",
+        "Unnerve"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 24,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Tyranitar",
+      "hp": 100,
+      "atk": 134,
+      "def": 110,
+      "spa": 95,
+      "spd": 100,
+      "spe": 61,
+      "bst": 600,
+      "weight": 202,
+      "height": 2,
+      "types": [
+        "Rock",
+        "Dark"
+      ],
+      "abilities": [
+        "Sand Stream",
+        "Unnerve"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 248,
+      "evos": [],
+      "alts": [
+        "Tyranitar-Mega"
+      ]
+    },
+    {
+      "name": "Pikachu",
+      "hp": 35,
+      "atk": 55,
+      "def": 40,
+      "spa": 50,
+      "spd": 50,
+      "spe": 90,
+      "bst": 320,
+      "weight": 6,
+      "height": 0.4,
+      "types": [
+        "Electric"
+      ],
+      "abilities": [
+        "Static",
+        "Lightning Rod"
+      ],
+      "formats": [
+        "NFE"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 25,
+      "evos": [
+        "Raichu",
+        "Raichu-Alola"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Raichu",
+      "hp": 60,
+      "atk": 90,
+      "def": 55,
+      "spa": 90,
+      "spd": 80,
+      "spe": 110,
+      "bst": 485,
+      "weight": 30,
+      "height": 0.8,
+      "types": [
+        "Electric"
+      ],
+      "abilities": [
+        "Static",
+        "Lightning Rod"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 26,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Raichu-Alola",
+      "hp": 60,
+      "atk": 85,
+      "def": 50,
+      "spa": 95,
+      "spd": 85,
+      "spe": 110,
+      "bst": 485,
+      "weight": 21,
+      "height": 0.7,
+      "types": [
+        "Electric",
+        "Psychic"
+      ],
+      "abilities": [
+        "Surge Surfer"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 26,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Pelipper",
+      "hp": 60,
+      "atk": 50,
+      "def": 100,
+      "spa": 95,
+      "spd": 70,
+      "spe": 65,
+      "bst": 440,
+      "weight": 28,
+      "height": 1.2,
+      "types": [
+        "Water",
+        "Flying"
+      ],
+      "abilities": [
+        "Keen Eye",
+        "Drizzle",
+        "Rain Dish"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 279,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Gardevoir",
+      "hp": 68,
+      "atk": 65,
+      "def": 65,
+      "spa": 125,
+      "spd": 115,
+      "spe": 80,
+      "bst": 518,
+      "weight": 48.4,
+      "height": 1.6,
+      "types": [
+        "Psychic",
+        "Fairy"
+      ],
+      "abilities": [
+        "Synchronize",
+        "Trace",
+        "Telepathy"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 282,
+      "evos": [],
+      "alts": [
+        "Gardevoir-Mega"
+      ]
+    },
+    {
+      "name": "Venusaur",
+      "hp": 80,
+      "atk": 82,
+      "def": 83,
+      "spa": 100,
+      "spd": 100,
+      "spe": 80,
+      "bst": 525,
+      "weight": 100,
+      "height": 2,
+      "types": [
+        "Grass",
+        "Poison"
+      ],
+      "abilities": [
+        "Overgrow",
+        "Chlorophyll"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 3,
+      "evos": [],
+      "alts": [
+        "Venusaur-Mega"
+      ]
+    },
+    {
+      "name": "Sableye",
+      "hp": 50,
+      "atk": 75,
+      "def": 75,
+      "spa": 65,
+      "spd": 65,
+      "spe": 50,
+      "bst": 380,
+      "weight": 11,
+      "height": 0.5,
+      "types": [
+        "Dark",
+        "Ghost"
+      ],
+      "abilities": [
+        "Keen Eye",
+        "Stall",
+        "Prankster"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 302,
+      "evos": [],
+      "alts": [
+        "Sableye-Mega"
+      ]
+    },
+    {
+      "name": "Aggron",
+      "hp": 70,
+      "atk": 110,
+      "def": 180,
+      "spa": 60,
+      "spd": 60,
+      "spe": 50,
+      "bst": 530,
+      "weight": 360,
+      "height": 2.1,
+      "types": [
+        "Steel",
+        "Rock"
+      ],
+      "abilities": [
+        "Sturdy",
+        "Rock Head",
+        "Heavy Metal"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 306,
+      "evos": [],
+      "alts": [
+        "Aggron-Mega"
+      ]
+    },
+    {
+      "name": "Medicham",
+      "hp": 60,
+      "atk": 60,
+      "def": 75,
+      "spa": 60,
+      "spd": 75,
+      "spe": 80,
+      "bst": 410,
+      "weight": 31.5,
+      "height": 1.3,
+      "types": [
+        "Fighting",
+        "Psychic"
+      ],
+      "abilities": [
+        "Pure Power",
+        "Telepathy"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 308,
+      "evos": [],
+      "alts": [
+        "Medicham-Mega"
+      ]
+    },
+    {
+      "name": "Manectric",
+      "hp": 70,
+      "atk": 75,
+      "def": 60,
+      "spa": 105,
+      "spd": 60,
+      "spe": 105,
+      "bst": 475,
+      "weight": 40.2,
+      "height": 1.5,
+      "types": [
+        "Electric"
+      ],
+      "abilities": [
+        "Static",
+        "Lightning Rod",
+        "Minus"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 310,
+      "evos": [],
+      "alts": [
+        "Manectric-Mega"
+      ]
+    },
+    {
+      "name": "Sharpedo",
+      "hp": 70,
+      "atk": 120,
+      "def": 40,
+      "spa": 95,
+      "spd": 40,
+      "spe": 95,
+      "bst": 460,
+      "weight": 88.8,
+      "height": 1.8,
+      "types": [
+        "Water",
+        "Dark"
+      ],
+      "abilities": [
+        "Rough Skin",
+        "Speed Boost"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 319,
+      "evos": [],
+      "alts": [
+        "Sharpedo-Mega"
+      ]
+    },
+    {
+      "name": "Camerupt",
+      "hp": 70,
+      "atk": 100,
+      "def": 70,
+      "spa": 105,
+      "spd": 75,
+      "spe": 40,
+      "bst": 460,
+      "weight": 220,
+      "height": 1.9,
+      "types": [
+        "Fire",
+        "Ground"
+      ],
+      "abilities": [
+        "Magma Armor",
+        "Solid Rock",
+        "Anger Point"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 323,
+      "evos": [],
+      "alts": [
+        "Camerupt-Mega"
+      ]
+    },
+    {
+      "name": "Torkoal",
+      "hp": 70,
+      "atk": 85,
+      "def": 140,
+      "spa": 85,
+      "spd": 70,
+      "spe": 20,
+      "bst": 470,
+      "weight": 80.4,
+      "height": 0.5,
+      "types": [
+        "Fire"
+      ],
+      "abilities": [
+        "White Smoke",
+        "Drought",
+        "Shell Armor"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 324,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Altaria",
+      "hp": 75,
+      "atk": 70,
+      "def": 90,
+      "spa": 70,
+      "spd": 105,
+      "spe": 80,
+      "bst": 490,
+      "weight": 20.6,
+      "height": 1.1,
+      "types": [
+        "Dragon",
+        "Flying"
+      ],
+      "abilities": [
+        "Natural Cure",
+        "Cloud Nine"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 334,
+      "evos": [],
+      "alts": [
+        "Altaria-Mega"
+      ]
+    },
+    {
+      "name": "Milotic",
+      "hp": 95,
+      "atk": 60,
+      "def": 79,
+      "spa": 100,
+      "spd": 125,
+      "spe": 81,
+      "bst": 540,
+      "weight": 162,
+      "height": 6.2,
+      "types": [
+        "Water"
+      ],
+      "abilities": [
+        "Marvel Scale",
+        "Competitive",
+        "Cute Charm"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 350,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Castform",
+      "hp": 70,
+      "atk": 70,
+      "def": 70,
+      "spa": 70,
+      "spd": 70,
+      "spe": 70,
+      "bst": 420,
+      "weight": 0.8,
+      "height": 0.3,
+      "types": [
+        "Normal"
+      ],
+      "abilities": [
+        "Forecast"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 351,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Banette",
+      "hp": 64,
+      "atk": 115,
+      "def": 65,
+      "spa": 83,
+      "spd": 63,
+      "spe": 65,
+      "bst": 455,
+      "weight": 12.5,
+      "height": 1.1,
+      "types": [
+        "Ghost"
+      ],
+      "abilities": [
+        "Insomnia",
+        "Frisk",
+        "Cursed Body"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 354,
+      "evos": [],
+      "alts": [
+        "Banette-Mega"
+      ]
+    },
+    {
+      "name": "Chimecho",
+      "hp": 75,
+      "atk": 50,
+      "def": 80,
+      "spa": 95,
+      "spd": 90,
+      "spe": 65,
+      "bst": 455,
+      "weight": 1,
+      "height": 0.6,
+      "types": [
+        "Psychic"
+      ],
+      "abilities": [
+        "Levitate"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 358,
+      "evos": [],
+      "alts": [
+        "Chimecho-Mega"
+      ]
+    },
+    {
+      "name": "Absol",
+      "hp": 65,
+      "atk": 130,
+      "def": 60,
+      "spa": 75,
+      "spd": 60,
+      "spe": 75,
+      "bst": 465,
+      "weight": 47,
+      "height": 1.2,
+      "types": [
+        "Dark"
+      ],
+      "abilities": [
+        "Pressure",
+        "Super Luck",
+        "Justified"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 359,
+      "evos": [],
+      "alts": [
+        "Absol-Mega"
+      ]
+    },
+    {
+      "name": "Clefable",
+      "hp": 95,
+      "atk": 70,
+      "def": 73,
+      "spa": 95,
+      "spd": 90,
+      "spe": 60,
+      "bst": 483,
+      "weight": 40,
+      "height": 1.3,
+      "types": [
+        "Fairy"
+      ],
+      "abilities": [
+        "Cute Charm",
+        "Magic Guard",
+        "Unaware"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 36,
+      "evos": [],
+      "alts": [
+        "Clefable-Mega"
+      ]
+    },
+    {
+      "name": "Glalie",
+      "hp": 80,
+      "atk": 80,
+      "def": 80,
+      "spa": 80,
+      "spd": 80,
+      "spe": 80,
+      "bst": 480,
+      "weight": 256.5,
+      "height": 1.5,
+      "types": [
+        "Ice"
+      ],
+      "abilities": [
+        "Inner Focus",
+        "Ice Body",
+        "Moody"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 362,
+      "evos": [],
+      "alts": [
+        "Glalie-Mega"
+      ]
+    },
+    {
+      "name": "Ninetales",
+      "hp": 73,
+      "atk": 76,
+      "def": 75,
+      "spa": 81,
+      "spd": 100,
+      "spe": 100,
+      "bst": 505,
+      "weight": 19.9,
+      "height": 1.1,
+      "types": [
+        "Fire"
+      ],
+      "abilities": [
+        "Flash Fire",
+        "Drought"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 38,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Ninetales-Alola",
+      "hp": 73,
+      "atk": 67,
+      "def": 75,
+      "spa": 81,
+      "spd": 100,
+      "spe": 109,
+      "bst": 505,
+      "weight": 19.9,
+      "height": 1.1,
+      "types": [
+        "Ice",
+        "Fairy"
+      ],
+      "abilities": [
+        "Snow Cloak",
+        "Snow Warning"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 38,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Torterra",
+      "hp": 95,
+      "atk": 109,
+      "def": 105,
+      "spa": 75,
+      "spd": 85,
+      "spe": 56,
+      "bst": 525,
+      "weight": 310,
+      "height": 2.2,
+      "types": [
+        "Grass",
+        "Ground"
+      ],
+      "abilities": [
+        "Overgrow",
+        "Shell Armor"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 389,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Infernape",
+      "hp": 76,
+      "atk": 104,
+      "def": 71,
+      "spa": 104,
+      "spd": 71,
+      "spe": 108,
+      "bst": 534,
+      "weight": 55,
+      "height": 1.2,
+      "types": [
+        "Fire",
+        "Fighting"
+      ],
+      "abilities": [
+        "Blaze",
+        "Iron Fist"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 392,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Empoleon",
+      "hp": 84,
+      "atk": 86,
+      "def": 88,
+      "spa": 111,
+      "spd": 101,
+      "spe": 60,
+      "bst": 530,
+      "weight": 84.5,
+      "height": 1.7,
+      "types": [
+        "Water",
+        "Steel"
+      ],
+      "abilities": [
+        "Torrent",
+        "Competitive"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 395,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Luxray",
+      "hp": 80,
+      "atk": 120,
+      "def": 79,
+      "spa": 95,
+      "spd": 79,
+      "spe": 70,
+      "bst": 523,
+      "weight": 42,
+      "height": 1.4,
+      "types": [
+        "Electric"
+      ],
+      "abilities": [
+        "Rivalry",
+        "Intimidate",
+        "Guts"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 405,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Roserade",
+      "hp": 60,
+      "atk": 70,
+      "def": 65,
+      "spa": 125,
+      "spd": 105,
+      "spe": 90,
+      "bst": 515,
+      "weight": 14.5,
+      "height": 0.9,
+      "types": [
+        "Grass",
+        "Poison"
+      ],
+      "abilities": [
+        "Natural Cure",
+        "Poison Point",
+        "Technician"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 407,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Rampardos",
+      "hp": 97,
+      "atk": 165,
+      "def": 60,
+      "spa": 65,
+      "spd": 50,
+      "spe": 58,
+      "bst": 495,
+      "weight": 102.5,
+      "height": 1.6,
+      "types": [
+        "Rock"
+      ],
+      "abilities": [
+        "Mold Breaker",
+        "Sheer Force"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 409,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Bastiodon",
+      "hp": 60,
+      "atk": 52,
+      "def": 168,
+      "spa": 47,
+      "spd": 138,
+      "spe": 30,
+      "bst": 495,
+      "weight": 149.5,
+      "height": 1.3,
+      "types": [
+        "Rock",
+        "Steel"
+      ],
+      "abilities": [
+        "Sturdy",
+        "Soundproof"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 411,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Lopunny",
+      "hp": 65,
+      "atk": 76,
+      "def": 84,
+      "spa": 54,
+      "spd": 96,
+      "spe": 105,
+      "bst": 480,
+      "weight": 33.3,
+      "height": 1.2,
+      "types": [
+        "Normal"
+      ],
+      "abilities": [
+        "Cute Charm",
+        "Klutz",
+        "Limber"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 428,
+      "evos": [],
+      "alts": [
+        "Lopunny-Mega"
+      ]
+    },
+    {
+      "name": "Spiritomb",
+      "hp": 50,
+      "atk": 92,
+      "def": 108,
+      "spa": 92,
+      "spd": 108,
+      "spe": 35,
+      "bst": 485,
+      "weight": 108,
+      "height": 1,
+      "types": [
+        "Ghost",
+        "Dark"
+      ],
+      "abilities": [
+        "Pressure",
+        "Infiltrator"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 442,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Garchomp",
+      "hp": 108,
+      "atk": 130,
+      "def": 95,
+      "spa": 80,
+      "spd": 85,
+      "spe": 102,
+      "bst": 600,
+      "weight": 95,
+      "height": 1.9,
+      "types": [
+        "Dragon",
+        "Ground"
+      ],
+      "abilities": [
+        "Sand Veil",
+        "Rough Skin"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 445,
+      "evos": [],
+      "alts": [
+        "Garchomp-Mega"
+      ]
+    },
+    {
+      "name": "Lucario",
+      "hp": 70,
+      "atk": 110,
+      "def": 70,
+      "spa": 115,
+      "spd": 70,
+      "spe": 90,
+      "bst": 525,
+      "weight": 54,
+      "height": 1.2,
+      "types": [
+        "Fighting",
+        "Steel"
+      ],
+      "abilities": [
+        "Steadfast",
+        "Inner Focus",
+        "Justified"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 448,
+      "evos": [],
+      "alts": [
+        "Lucario-Mega"
+      ]
+    },
+    {
+      "name": "Hippowdon",
+      "hp": 108,
+      "atk": 112,
+      "def": 118,
+      "spa": 68,
+      "spd": 72,
+      "spe": 47,
+      "bst": 525,
+      "weight": 300,
+      "height": 2,
+      "types": [
+        "Ground"
+      ],
+      "abilities": [
+        "Sand Stream",
+        "Sand Force"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 450,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Toxicroak",
+      "hp": 83,
+      "atk": 106,
+      "def": 65,
+      "spa": 86,
+      "spd": 65,
+      "spe": 85,
+      "bst": 490,
+      "weight": 44.4,
+      "height": 1.3,
+      "types": [
+        "Poison",
+        "Fighting"
+      ],
+      "abilities": [
+        "Anticipation",
+        "Dry Skin",
+        "Poison Touch"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 454,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Abomasnow",
+      "hp": 90,
+      "atk": 92,
+      "def": 75,
+      "spa": 92,
+      "spd": 85,
+      "spe": 60,
+      "bst": 494,
+      "weight": 135.5,
+      "height": 2.2,
+      "types": [
+        "Grass",
+        "Ice"
+      ],
+      "abilities": [
+        "Snow Warning",
+        "Soundproof"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 460,
+      "evos": [],
+      "alts": [
+        "Abomasnow-Mega"
+      ]
+    },
+    {
+      "name": "Weavile",
+      "hp": 70,
+      "atk": 120,
+      "def": 65,
+      "spa": 45,
+      "spd": 85,
+      "spe": 125,
+      "bst": 510,
+      "weight": 34,
+      "height": 1.1,
+      "types": [
+        "Dark",
+        "Ice"
+      ],
+      "abilities": [
+        "Pressure",
+        "Pickpocket"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 461,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Rhyperior",
+      "hp": 115,
+      "atk": 140,
+      "def": 130,
+      "spa": 55,
+      "spd": 55,
+      "spe": 40,
+      "bst": 535,
+      "weight": 282.8,
+      "height": 2.4,
+      "types": [
+        "Ground",
+        "Rock"
+      ],
+      "abilities": [
+        "Lightning Rod",
+        "Solid Rock",
+        "Reckless"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 464,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Leafeon",
+      "hp": 65,
+      "atk": 110,
+      "def": 130,
+      "spa": 60,
+      "spd": 65,
+      "spe": 95,
+      "bst": 525,
+      "weight": 25.5,
+      "height": 1,
+      "types": [
+        "Grass"
+      ],
+      "abilities": [
+        "Leaf Guard",
+        "Chlorophyll"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 470,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Glaceon",
+      "hp": 65,
+      "atk": 60,
+      "def": 110,
+      "spa": 130,
+      "spd": 95,
+      "spe": 65,
+      "bst": 525,
+      "weight": 25.9,
+      "height": 0.8,
+      "types": [
+        "Ice"
+      ],
+      "abilities": [
+        "Snow Cloak",
+        "Ice Body"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 471,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Gliscor",
+      "hp": 75,
+      "atk": 95,
+      "def": 125,
+      "spa": 45,
+      "spd": 75,
+      "spe": 95,
+      "bst": 510,
+      "weight": 42.5,
+      "height": 2,
+      "types": [
+        "Ground",
+        "Flying"
+      ],
+      "abilities": [
+        "Hyper Cutter",
+        "Sand Veil",
+        "Poison Heal"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 472,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Mamoswine",
+      "hp": 110,
+      "atk": 130,
+      "def": 80,
+      "spa": 70,
+      "spd": 60,
+      "spe": 80,
+      "bst": 530,
+      "weight": 291,
+      "height": 2.5,
+      "types": [
+        "Ice",
+        "Ground"
+      ],
+      "abilities": [
+        "Oblivious",
+        "Snow Cloak",
+        "Thick Fat"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 473,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Gallade",
+      "hp": 68,
+      "atk": 125,
+      "def": 65,
+      "spa": 65,
+      "spd": 115,
+      "spe": 80,
+      "bst": 518,
+      "weight": 52,
+      "height": 1.6,
+      "types": [
+        "Psychic",
+        "Fighting"
+      ],
+      "abilities": [
+        "Steadfast",
+        "Sharpness",
+        "Justified"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 475,
+      "evos": [],
+      "alts": [
+        "Gallade-Mega"
+      ]
+    },
+    {
+      "name": "Froslass",
+      "hp": 70,
+      "atk": 80,
+      "def": 70,
+      "spa": 80,
+      "spd": 70,
+      "spe": 110,
+      "bst": 480,
+      "weight": 26.6,
+      "height": 1.3,
+      "types": [
+        "Ice",
+        "Ghost"
+      ],
+      "abilities": [
+        "Snow Cloak",
+        "Cursed Body"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 478,
+      "evos": [],
+      "alts": [
+        "Froslass-Mega"
+      ]
+    },
+    {
+      "name": "Rotom",
+      "hp": 50,
+      "atk": 50,
+      "def": 77,
+      "spa": 95,
+      "spd": 77,
+      "spe": 91,
+      "bst": 440,
+      "weight": 0.3,
+      "height": 0.3,
+      "types": [
+        "Electric",
+        "Ghost"
+      ],
+      "abilities": [
+        "Levitate"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 479,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Rotom-Fan",
+      "hp": 50,
+      "atk": 65,
+      "def": 107,
+      "spa": 105,
+      "spd": 107,
+      "spe": 86,
+      "bst": 520,
+      "weight": 0.3,
+      "height": 0.3,
+      "types": [
+        "Electric",
+        "Flying"
+      ],
+      "abilities": [
+        "Levitate"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 479,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Rotom-Frost",
+      "hp": 50,
+      "atk": 65,
+      "def": 107,
+      "spa": 105,
+      "spd": 107,
+      "spe": 86,
+      "bst": 520,
+      "weight": 0.3,
+      "height": 0.3,
+      "types": [
+        "Electric",
+        "Ice"
+      ],
+      "abilities": [
+        "Levitate"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 479,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Rotom-Heat",
+      "hp": 50,
+      "atk": 65,
+      "def": 107,
+      "spa": 105,
+      "spd": 107,
+      "spe": 86,
+      "bst": 520,
+      "weight": 0.3,
+      "height": 0.3,
+      "types": [
+        "Electric",
+        "Fire"
+      ],
+      "abilities": [
+        "Levitate"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 479,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Rotom-Mow",
+      "hp": 50,
+      "atk": 65,
+      "def": 107,
+      "spa": 105,
+      "spd": 107,
+      "spe": 86,
+      "bst": 520,
+      "weight": 0.3,
+      "height": 0.3,
+      "types": [
+        "Electric",
+        "Grass"
+      ],
+      "abilities": [
+        "Levitate"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 479,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Rotom-Wash",
+      "hp": 50,
+      "atk": 65,
+      "def": 107,
+      "spa": 105,
+      "spd": 107,
+      "spe": 86,
+      "bst": 520,
+      "weight": 0.3,
+      "height": 0.3,
+      "types": [
+        "Electric",
+        "Water"
+      ],
+      "abilities": [
+        "Levitate"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 479,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Serperior",
+      "hp": 75,
+      "atk": 75,
+      "def": 95,
+      "spa": 75,
+      "spd": 95,
+      "spe": 113,
+      "bst": 528,
+      "weight": 63,
+      "height": 3.3,
+      "types": [
+        "Grass"
+      ],
+      "abilities": [
+        "Overgrow",
+        "Contrary"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 497,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Emboar",
+      "hp": 110,
+      "atk": 123,
+      "def": 65,
+      "spa": 100,
+      "spd": 65,
+      "spe": 65,
+      "bst": 528,
+      "weight": 150,
+      "height": 1.6,
+      "types": [
+        "Fire",
+        "Fighting"
+      ],
+      "abilities": [
+        "Blaze",
+        "Reckless"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 500,
+      "evos": [],
+      "alts": [
+        "Emboar-Mega"
+      ]
+    },
+    {
+      "name": "Samurott",
+      "hp": 95,
+      "atk": 100,
+      "def": 85,
+      "spa": 108,
+      "spd": 70,
+      "spe": 70,
+      "bst": 528,
+      "weight": 94.6,
+      "height": 1.5,
+      "types": [
+        "Water"
+      ],
+      "abilities": [
+        "Torrent",
+        "Shell Armor"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 503,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Samurott-Hisui",
+      "hp": 90,
+      "atk": 108,
+      "def": 80,
+      "spa": 100,
+      "spd": 65,
+      "spe": 85,
+      "bst": 528,
+      "weight": 58.2,
+      "height": 1.5,
+      "types": [
+        "Water",
+        "Dark"
+      ],
+      "abilities": [
+        "Torrent",
+        "Sharpness"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 503,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Watchog",
+      "hp": 60,
+      "atk": 85,
+      "def": 69,
+      "spa": 60,
+      "spd": 69,
+      "spe": 77,
+      "bst": 420,
+      "weight": 27,
+      "height": 1.1,
+      "types": [
+        "Normal"
+      ],
+      "abilities": [
+        "Illuminate",
+        "Keen Eye",
+        "Analytic"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 505,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Liepard",
+      "hp": 64,
+      "atk": 88,
+      "def": 50,
+      "spa": 88,
+      "spd": 50,
+      "spe": 106,
+      "bst": 446,
+      "weight": 37.5,
+      "height": 1.1,
+      "types": [
+        "Dark"
+      ],
+      "abilities": [
+        "Limber",
+        "Unburden",
+        "Prankster"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 510,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Simisage",
+      "hp": 75,
+      "atk": 98,
+      "def": 63,
+      "spa": 98,
+      "spd": 63,
+      "spe": 101,
+      "bst": 498,
+      "weight": 30.5,
+      "height": 1.1,
+      "types": [
+        "Grass"
+      ],
+      "abilities": [
+        "Gluttony",
+        "Overgrow"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 512,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Simisear",
+      "hp": 75,
+      "atk": 98,
+      "def": 63,
+      "spa": 98,
+      "spd": 63,
+      "spe": 101,
+      "bst": 498,
+      "weight": 28,
+      "height": 1,
+      "types": [
+        "Fire"
+      ],
+      "abilities": [
+        "Gluttony",
+        "Blaze"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 514,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Simipour",
+      "hp": 75,
+      "atk": 98,
+      "def": 63,
+      "spa": 98,
+      "spd": 63,
+      "spe": 101,
+      "bst": 498,
+      "weight": 29,
+      "height": 1,
+      "types": [
+        "Water"
+      ],
+      "abilities": [
+        "Gluttony",
+        "Torrent"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 516,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Excadrill",
+      "hp": 110,
+      "atk": 135,
+      "def": 60,
+      "spa": 50,
+      "spd": 65,
+      "spe": 88,
+      "bst": 508,
+      "weight": 40.4,
+      "height": 0.7,
+      "types": [
+        "Ground",
+        "Steel"
+      ],
+      "abilities": [
+        "Sand Rush",
+        "Sand Force",
+        "Mold Breaker"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 530,
+      "evos": [],
+      "alts": [
+        "Excadrill-Mega"
+      ]
+    },
+    {
+      "name": "Audino",
+      "hp": 103,
+      "atk": 60,
+      "def": 86,
+      "spa": 60,
+      "spd": 86,
+      "spe": 50,
+      "bst": 445,
+      "weight": 31,
+      "height": 1.1,
+      "types": [
+        "Normal"
+      ],
+      "abilities": [
+        "Healer",
+        "Regenerator",
+        "Klutz"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 531,
+      "evos": [],
+      "alts": [
+        "Audino-Mega"
+      ]
+    },
+    {
+      "name": "Conkeldurr",
+      "hp": 105,
+      "atk": 140,
+      "def": 95,
+      "spa": 55,
+      "spd": 65,
+      "spe": 45,
+      "bst": 505,
+      "weight": 87,
+      "height": 1.4,
+      "types": [
+        "Fighting"
+      ],
+      "abilities": [
+        "Guts",
+        "Sheer Force",
+        "Iron Fist"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 534,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Whimsicott",
+      "hp": 60,
+      "atk": 67,
+      "def": 85,
+      "spa": 77,
+      "spd": 75,
+      "spe": 116,
+      "bst": 480,
+      "weight": 6.6,
+      "height": 0.7,
+      "types": [
+        "Grass",
+        "Fairy"
+      ],
+      "abilities": [
+        "Prankster",
+        "Infiltrator",
+        "Chlorophyll"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 547,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Krookodile",
+      "hp": 95,
+      "atk": 117,
+      "def": 80,
+      "spa": 65,
+      "spd": 70,
+      "spe": 92,
+      "bst": 519,
+      "weight": 96.3,
+      "height": 1.5,
+      "types": [
+        "Ground",
+        "Dark"
+      ],
+      "abilities": [
+        "Intimidate",
+        "Moxie",
+        "Anger Point"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 553,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Cofagrigus",
+      "hp": 58,
+      "atk": 50,
+      "def": 145,
+      "spa": 95,
+      "spd": 105,
+      "spe": 30,
+      "bst": 483,
+      "weight": 76.5,
+      "height": 1.7,
+      "types": [
+        "Ghost"
+      ],
+      "abilities": [
+        "Mummy"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 563,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Garbodor",
+      "hp": 80,
+      "atk": 95,
+      "def": 82,
+      "spa": 60,
+      "spd": 82,
+      "spe": 75,
+      "bst": 474,
+      "weight": 107.3,
+      "height": 1.9,
+      "types": [
+        "Poison"
+      ],
+      "abilities": [
+        "Stench",
+        "Weak Armor",
+        "Aftermath"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 569,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Zoroark",
+      "hp": 60,
+      "atk": 105,
+      "def": 60,
+      "spa": 120,
+      "spd": 60,
+      "spe": 105,
+      "bst": 510,
+      "weight": 81.1,
+      "height": 1.6,
+      "types": [
+        "Dark"
+      ],
+      "abilities": [
+        "Illusion"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 571,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Zoroark-Hisui",
+      "hp": 55,
+      "atk": 100,
+      "def": 60,
+      "spa": 125,
+      "spd": 60,
+      "spe": 110,
+      "bst": 510,
+      "weight": 73,
+      "height": 1.6,
+      "types": [
+        "Normal",
+        "Ghost"
+      ],
+      "abilities": [
+        "Illusion"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 571,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Reuniclus",
+      "hp": 110,
+      "atk": 65,
+      "def": 75,
+      "spa": 125,
+      "spd": 85,
+      "spe": 30,
+      "bst": 490,
+      "weight": 20.1,
+      "height": 1,
+      "types": [
+        "Psychic"
+      ],
+      "abilities": [
+        "Overcoat",
+        "Magic Guard",
+        "Regenerator"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 579,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Vanilluxe",
+      "hp": 71,
+      "atk": 95,
+      "def": 85,
+      "spa": 110,
+      "spd": 95,
+      "spe": 79,
+      "bst": 535,
+      "weight": 57.5,
+      "height": 1.3,
+      "types": [
+        "Ice"
+      ],
+      "abilities": [
+        "Ice Body",
+        "Snow Warning",
+        "Weak Armor"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 584,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Emolga",
+      "hp": 55,
+      "atk": 75,
+      "def": 60,
+      "spa": 75,
+      "spd": 60,
+      "spe": 103,
+      "bst": 428,
+      "weight": 5,
+      "height": 0.4,
+      "types": [
+        "Electric",
+        "Flying"
+      ],
+      "abilities": [
+        "Static",
+        "Motor Drive"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 587,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Arcanine",
+      "hp": 90,
+      "atk": 110,
+      "def": 80,
+      "spa": 100,
+      "spd": 80,
+      "spe": 95,
+      "bst": 555,
+      "weight": 155,
+      "height": 1.9,
+      "types": [
+        "Fire"
+      ],
+      "abilities": [
+        "Intimidate",
+        "Flash Fire",
+        "Justified"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 59,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Arcanine-Hisui",
+      "hp": 95,
+      "atk": 115,
+      "def": 80,
+      "spa": 95,
+      "spd": 80,
+      "spe": 90,
+      "bst": 555,
+      "weight": 168,
+      "height": 2,
+      "types": [
+        "Fire",
+        "Rock"
+      ],
+      "abilities": [
+        "Intimidate",
+        "Flash Fire",
+        "Rock Head"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 59,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Charizard",
+      "hp": 78,
+      "atk": 84,
+      "def": 78,
+      "spa": 109,
+      "spd": 85,
+      "spe": 100,
+      "bst": 534,
+      "weight": 90.5,
+      "height": 1.7,
+      "types": [
+        "Fire",
+        "Flying"
+      ],
+      "abilities": [
+        "Blaze",
+        "Solar Power"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 6,
+      "evos": [],
+      "alts": [
+        "Charizard-Mega-Y",
+        "Charizard-Mega-X"
+      ]
+    },
+    {
+      "name": "Chandelure",
+      "hp": 60,
+      "atk": 55,
+      "def": 90,
+      "spa": 145,
+      "spd": 90,
+      "spe": 80,
+      "bst": 520,
+      "weight": 34.3,
+      "height": 1,
+      "types": [
+        "Ghost",
+        "Fire"
+      ],
+      "abilities": [
+        "Flash Fire",
+        "Flame Body",
+        "Infiltrator"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 609,
+      "evos": [],
+      "alts": [
+        "Chandelure-Mega"
+      ]
+    },
+    {
+      "name": "Beartic",
+      "hp": 95,
+      "atk": 130,
+      "def": 80,
+      "spa": 70,
+      "spd": 80,
+      "spe": 50,
+      "bst": 505,
+      "weight": 260,
+      "height": 2.6,
+      "types": [
+        "Ice"
+      ],
+      "abilities": [
+        "Snow Cloak",
+        "Slush Rush",
+        "Swift Swim"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 614,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Stunfisk",
+      "hp": 109,
+      "atk": 66,
+      "def": 84,
+      "spa": 81,
+      "spd": 99,
+      "spe": 32,
+      "bst": 471,
+      "weight": 11,
+      "height": 0.7,
+      "types": [
+        "Ground",
+        "Electric"
+      ],
+      "abilities": [
+        "Static",
+        "Limber",
+        "Sand Veil"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 618,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Stunfisk-Galar",
+      "hp": 109,
+      "atk": 81,
+      "def": 99,
+      "spa": 66,
+      "spd": 84,
+      "spe": 32,
+      "bst": 471,
+      "weight": 20.5,
+      "height": 0.7,
+      "types": [
+        "Ground",
+        "Steel"
+      ],
+      "abilities": [
+        "Mimicry"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 618,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Golurk",
+      "hp": 89,
+      "atk": 124,
+      "def": 80,
+      "spa": 55,
+      "spd": 80,
+      "spe": 55,
+      "bst": 483,
+      "weight": 330,
+      "height": 2.8,
+      "types": [
+        "Ground",
+        "Ghost"
+      ],
+      "abilities": [
+        "Iron Fist",
+        "Klutz",
+        "No Guard"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 623,
+      "evos": [],
+      "alts": [
+        "Golurk-Mega"
+      ]
+    },
+    {
+      "name": "Hydreigon",
+      "hp": 92,
+      "atk": 105,
+      "def": 90,
+      "spa": 125,
+      "spd": 90,
+      "spe": 98,
+      "bst": 600,
+      "weight": 160,
+      "height": 1.8,
+      "types": [
+        "Dark",
+        "Dragon"
+      ],
+      "abilities": [
+        "Levitate"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 635,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Volcarona",
+      "hp": 85,
+      "atk": 60,
+      "def": 65,
+      "spa": 135,
+      "spd": 105,
+      "spe": 100,
+      "bst": 550,
+      "weight": 46,
+      "height": 1.6,
+      "types": [
+        "Bug",
+        "Fire"
+      ],
+      "abilities": [
+        "Flame Body",
+        "Swarm"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 637,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Alakazam",
+      "hp": 55,
+      "atk": 50,
+      "def": 45,
+      "spa": 135,
+      "spd": 95,
+      "spe": 120,
+      "bst": 500,
+      "weight": 48,
+      "height": 1.5,
+      "types": [
+        "Psychic"
+      ],
+      "abilities": [
+        "Synchronize",
+        "Inner Focus",
+        "Magic Guard"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 65,
+      "evos": [],
+      "alts": [
+        "Alakazam-Mega"
+      ]
+    },
+    {
+      "name": "Chesnaught",
+      "hp": 88,
+      "atk": 107,
+      "def": 122,
+      "spa": 74,
+      "spd": 75,
+      "spe": 64,
+      "bst": 530,
+      "weight": 90,
+      "height": 1.6,
+      "types": [
+        "Grass",
+        "Fighting"
+      ],
+      "abilities": [
+        "Overgrow",
+        "Bulletproof"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 652,
+      "evos": [],
+      "alts": [
+        "Chesnaught-Mega"
+      ]
+    },
+    {
+      "name": "Delphox",
+      "hp": 75,
+      "atk": 69,
+      "def": 72,
+      "spa": 114,
+      "spd": 100,
+      "spe": 104,
+      "bst": 534,
+      "weight": 39,
+      "height": 1.5,
+      "types": [
+        "Fire",
+        "Psychic"
+      ],
+      "abilities": [
+        "Blaze",
+        "Magician"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 655,
+      "evos": [],
+      "alts": [
+        "Delphox-Mega"
+      ]
+    },
+    {
+      "name": "Greninja",
+      "hp": 72,
+      "atk": 95,
+      "def": 67,
+      "spa": 103,
+      "spd": 71,
+      "spe": 122,
+      "bst": 530,
+      "weight": 40,
+      "height": 1.5,
+      "types": [
+        "Water",
+        "Dark"
+      ],
+      "abilities": [
+        "Torrent",
+        "Protean",
+        "Battle Bond"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 658,
+      "evos": [],
+      "alts": [
+        "Greninja-Mega"
+      ]
+    },
+    {
+      "name": "Diggersby",
+      "hp": 85,
+      "atk": 56,
+      "def": 77,
+      "spa": 50,
+      "spd": 77,
+      "spe": 78,
+      "bst": 423,
+      "weight": 42.4,
+      "height": 1,
+      "types": [
+        "Normal",
+        "Ground"
+      ],
+      "abilities": [
+        "Pickup",
+        "Cheek Pouch",
+        "Huge Power"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 660,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Talonflame",
+      "hp": 78,
+      "atk": 81,
+      "def": 71,
+      "spa": 74,
+      "spd": 69,
+      "spe": 126,
+      "bst": 499,
+      "weight": 24.5,
+      "height": 1.2,
+      "types": [
+        "Fire",
+        "Flying"
+      ],
+      "abilities": [
+        "Flame Body",
+        "Gale Wings"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 663,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Vivillon",
+      "hp": 80,
+      "atk": 52,
+      "def": 50,
+      "spa": 90,
+      "spd": 50,
+      "spe": 89,
+      "bst": 411,
+      "weight": 17,
+      "height": 1.2,
+      "types": [
+        "Bug",
+        "Flying"
+      ],
+      "abilities": [
+        "Shield Dust",
+        "Compound Eyes",
+        "Friend Guard"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 666,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Vivillon-Fancy",
+      "hp": 80,
+      "atk": 52,
+      "def": 50,
+      "spa": 90,
+      "spd": 50,
+      "spe": 89,
+      "bst": 411,
+      "weight": 17,
+      "height": 1.2,
+      "types": [
+        "Bug",
+        "Flying"
+      ],
+      "abilities": [
+        "Shield Dust",
+        "Compound Eyes",
+        "Friend Guard"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 666,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Vivillon-Pokeball",
+      "hp": 80,
+      "atk": 52,
+      "def": 50,
+      "spa": 90,
+      "spd": 50,
+      "spe": 89,
+      "bst": 411,
+      "weight": 17,
+      "height": 1.2,
+      "types": [
+        "Bug",
+        "Flying"
+      ],
+      "abilities": [
+        "Shield Dust",
+        "Compound Eyes",
+        "Friend Guard"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 666,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Floette-Eternal",
+      "hp": 74,
+      "atk": 65,
+      "def": 67,
+      "spa": 125,
+      "spd": 128,
+      "spe": 92,
+      "bst": 551,
+      "weight": 0.9,
+      "height": 0.2,
+      "types": [
+        "Fairy"
+      ],
+      "abilities": [
+        "Flower Veil",
+        "Symbiosis"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 670,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Florges",
+      "hp": 78,
+      "atk": 65,
+      "def": 68,
+      "spa": 112,
+      "spd": 154,
+      "spe": 75,
+      "bst": 552,
+      "weight": 10,
+      "height": 1.1,
+      "types": [
+        "Fairy"
+      ],
+      "abilities": [
+        "Flower Veil",
+        "Symbiosis"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 671,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Pangoro",
+      "hp": 95,
+      "atk": 124,
+      "def": 78,
+      "spa": 69,
+      "spd": 71,
+      "spe": 58,
+      "bst": 495,
+      "weight": 136,
+      "height": 2.1,
+      "types": [
+        "Fighting",
+        "Dark"
+      ],
+      "abilities": [
+        "Iron Fist",
+        "Mold Breaker",
+        "Scrappy"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 675,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Furfrou",
+      "hp": 75,
+      "atk": 80,
+      "def": 60,
+      "spa": 65,
+      "spd": 90,
+      "spe": 102,
+      "bst": 472,
+      "weight": 28,
+      "height": 1.2,
+      "types": [
+        "Normal"
+      ],
+      "abilities": [
+        "Fur Coat"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 676,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Meowstic-F",
+      "hp": 74,
+      "atk": 48,
+      "def": 76,
+      "spa": 83,
+      "spd": 81,
+      "spe": 104,
+      "bst": 466,
+      "weight": 8.5,
+      "height": 0.6,
+      "types": [
+        "Psychic"
+      ],
+      "abilities": [
+        "Keen Eye",
+        "Infiltrator",
+        "Competitive"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 678,
+      "evos": [],
+      "alts": [
+        "Meowstic-F-Mega"
+      ]
+    },
+    {
+      "name": "Meowstic-M",
+      "hp": 74,
+      "atk": 48,
+      "def": 76,
+      "spa": 83,
+      "spd": 81,
+      "spe": 104,
+      "bst": 466,
+      "weight": 8.5,
+      "height": 0.6,
+      "types": [
+        "Psychic"
+      ],
+      "abilities": [
+        "Keen Eye",
+        "Infiltrator",
+        "Prankster"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 678,
+      "evos": [],
+      "alts": [
+        "Meowstic-M-Mega"
+      ]
+    },
+    {
+      "name": "Machamp",
+      "hp": 90,
+      "atk": 130,
+      "def": 80,
+      "spa": 65,
+      "spd": 85,
+      "spe": 55,
+      "bst": 505,
+      "weight": 130,
+      "height": 1.6,
+      "types": [
+        "Fighting"
+      ],
+      "abilities": [
+        "Guts",
+        "No Guard",
+        "Steadfast"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 68,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Aegislash",
+      "hp": 60,
+      "atk": 50,
+      "def": 140,
+      "spa": 50,
+      "spd": 140,
+      "spe": 60,
+      "bst": 500,
+      "weight": 53,
+      "height": 1.7,
+      "types": [
+        "Steel",
+        "Ghost"
+      ],
+      "abilities": [
+        "Stance Change"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 681,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Aromatisse",
+      "hp": 101,
+      "atk": 72,
+      "def": 72,
+      "spa": 99,
+      "spd": 89,
+      "spe": 29,
+      "bst": 462,
+      "weight": 15.5,
+      "height": 0.8,
+      "types": [
+        "Fairy"
+      ],
+      "abilities": [
+        "Healer",
+        "Aroma Veil"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 683,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Slurpuff",
+      "hp": 82,
+      "atk": 80,
+      "def": 86,
+      "spa": 85,
+      "spd": 75,
+      "spe": 72,
+      "bst": 480,
+      "weight": 5,
+      "height": 0.8,
+      "types": [
+        "Fairy"
+      ],
+      "abilities": [
+        "Sweet Veil",
+        "Unburden"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 685,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Clawitzer",
+      "hp": 71,
+      "atk": 73,
+      "def": 88,
+      "spa": 120,
+      "spd": 89,
+      "spe": 59,
+      "bst": 500,
+      "weight": 35.3,
+      "height": 1.3,
+      "types": [
+        "Water"
+      ],
+      "abilities": [
+        "Mega Launcher"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 693,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Heliolisk",
+      "hp": 62,
+      "atk": 55,
+      "def": 52,
+      "spa": 109,
+      "spd": 94,
+      "spe": 109,
+      "bst": 481,
+      "weight": 21,
+      "height": 1,
+      "types": [
+        "Electric",
+        "Normal"
+      ],
+      "abilities": [
+        "Dry Skin",
+        "Sand Veil",
+        "Solar Power"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 695,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Tyrantrum",
+      "hp": 82,
+      "atk": 121,
+      "def": 119,
+      "spa": 69,
+      "spd": 59,
+      "spe": 71,
+      "bst": 521,
+      "weight": 270,
+      "height": 2.5,
+      "types": [
+        "Rock",
+        "Dragon"
+      ],
+      "abilities": [
+        "Strong Jaw",
+        "Rock Head"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 697,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Aurorus",
+      "hp": 123,
+      "atk": 77,
+      "def": 72,
+      "spa": 99,
+      "spd": 92,
+      "spe": 58,
+      "bst": 521,
+      "weight": 225,
+      "height": 2.7,
+      "types": [
+        "Rock",
+        "Ice"
+      ],
+      "abilities": [
+        "Refrigerate",
+        "Snow Warning"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 699,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Sylveon",
+      "hp": 95,
+      "atk": 65,
+      "def": 65,
+      "spa": 110,
+      "spd": 130,
+      "spe": 60,
+      "bst": 525,
+      "weight": 23.5,
+      "height": 1,
+      "types": [
+        "Fairy"
+      ],
+      "abilities": [
+        "Cute Charm",
+        "Pixilate"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 700,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Hawlucha",
+      "hp": 78,
+      "atk": 92,
+      "def": 75,
+      "spa": 74,
+      "spd": 63,
+      "spe": 118,
+      "bst": 500,
+      "weight": 21.5,
+      "height": 0.8,
+      "types": [
+        "Fighting",
+        "Flying"
+      ],
+      "abilities": [
+        "Limber",
+        "Unburden",
+        "Mold Breaker"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 701,
+      "evos": [],
+      "alts": [
+        "Hawlucha-Mega"
+      ]
+    },
+    {
+      "name": "Dedenne",
+      "hp": 67,
+      "atk": 58,
+      "def": 57,
+      "spa": 81,
+      "spd": 67,
+      "spe": 101,
+      "bst": 431,
+      "weight": 2.2,
+      "height": 0.2,
+      "types": [
+        "Electric",
+        "Fairy"
+      ],
+      "abilities": [
+        "Cheek Pouch",
+        "Pickup",
+        "Plus"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 702,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Goodra",
+      "hp": 90,
+      "atk": 100,
+      "def": 70,
+      "spa": 110,
+      "spd": 150,
+      "spe": 80,
+      "bst": 600,
+      "weight": 150.5,
+      "height": 2,
+      "types": [
+        "Dragon"
+      ],
+      "abilities": [
+        "Sap Sipper",
+        "Hydration",
+        "Gooey"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 706,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Goodra-Hisui",
+      "hp": 80,
+      "atk": 100,
+      "def": 100,
+      "spa": 110,
+      "spd": 150,
+      "spe": 60,
+      "bst": 600,
+      "weight": 334.1,
+      "height": 1.7,
+      "types": [
+        "Steel",
+        "Dragon"
+      ],
+      "abilities": [
+        "Sap Sipper",
+        "Shell Armor",
+        "Gooey"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 706,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Klefki",
+      "hp": 57,
+      "atk": 80,
+      "def": 91,
+      "spa": 80,
+      "spd": 87,
+      "spe": 75,
+      "bst": 470,
+      "weight": 3,
+      "height": 0.2,
+      "types": [
+        "Steel",
+        "Fairy"
+      ],
+      "abilities": [
+        "Prankster",
+        "Magician"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 707,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Trevenant",
+      "hp": 85,
+      "atk": 110,
+      "def": 76,
+      "spa": 65,
+      "spd": 82,
+      "spe": 56,
+      "bst": 474,
+      "weight": 71,
+      "height": 1.5,
+      "types": [
+        "Ghost",
+        "Grass"
+      ],
+      "abilities": [
+        "Natural Cure",
+        "Frisk",
+        "Harvest"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 709,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Victreebel",
+      "hp": 80,
+      "atk": 105,
+      "def": 65,
+      "spa": 100,
+      "spd": 70,
+      "spe": 70,
+      "bst": 490,
+      "weight": 15.5,
+      "height": 1.7,
+      "types": [
+        "Grass",
+        "Poison"
+      ],
+      "abilities": [
+        "Chlorophyll",
+        "Gluttony"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 71,
+      "evos": [],
+      "alts": [
+        "Victreebel-Mega"
+      ]
+    },
+    {
+      "name": "Gourgeist",
+      "hp": 65,
+      "atk": 90,
+      "def": 122,
+      "spa": 58,
+      "spd": 75,
+      "spe": 84,
+      "bst": 494,
+      "weight": 12.5,
+      "height": 0.9,
+      "types": [
+        "Ghost",
+        "Grass"
+      ],
+      "abilities": [
+        "Pickup",
+        "Frisk",
+        "Insomnia"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 711,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Gourgeist-Large",
+      "hp": 75,
+      "atk": 95,
+      "def": 122,
+      "spa": 58,
+      "spd": 75,
+      "spe": 69,
+      "bst": 494,
+      "weight": 14,
+      "height": 1.1,
+      "types": [
+        "Ghost",
+        "Grass"
+      ],
+      "abilities": [
+        "Pickup",
+        "Frisk",
+        "Insomnia"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 711,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Gourgeist-Small",
+      "hp": 55,
+      "atk": 85,
+      "def": 122,
+      "spa": 58,
+      "spd": 75,
+      "spe": 99,
+      "bst": 494,
+      "weight": 9.5,
+      "height": 0.7,
+      "types": [
+        "Ghost",
+        "Grass"
+      ],
+      "abilities": [
+        "Pickup",
+        "Frisk",
+        "Insomnia"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 711,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Gourgeist-Super",
+      "hp": 85,
+      "atk": 100,
+      "def": 122,
+      "spa": 58,
+      "spd": 75,
+      "spe": 54,
+      "bst": 494,
+      "weight": 39,
+      "height": 1.7,
+      "types": [
+        "Ghost",
+        "Grass"
+      ],
+      "abilities": [
+        "Pickup",
+        "Frisk",
+        "Insomnia"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 711,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Avalugg",
+      "hp": 95,
+      "atk": 117,
+      "def": 184,
+      "spa": 44,
+      "spd": 46,
+      "spe": 28,
+      "bst": 514,
+      "weight": 505,
+      "height": 2,
+      "types": [
+        "Ice"
+      ],
+      "abilities": [
+        "Own Tempo",
+        "Ice Body",
+        "Sturdy"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 713,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Avalugg-Hisui",
+      "hp": 95,
+      "atk": 127,
+      "def": 184,
+      "spa": 34,
+      "spd": 36,
+      "spe": 38,
+      "bst": 514,
+      "weight": 262.4,
+      "height": 1.4,
+      "types": [
+        "Ice",
+        "Rock"
+      ],
+      "abilities": [
+        "Strong Jaw",
+        "Ice Body",
+        "Sturdy"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 713,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Noivern",
+      "hp": 85,
+      "atk": 70,
+      "def": 80,
+      "spa": 97,
+      "spd": 80,
+      "spe": 123,
+      "bst": 535,
+      "weight": 85,
+      "height": 1.5,
+      "types": [
+        "Flying",
+        "Dragon"
+      ],
+      "abilities": [
+        "Frisk",
+        "Infiltrator",
+        "Telepathy"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 715,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Decidueye",
+      "hp": 78,
+      "atk": 107,
+      "def": 75,
+      "spa": 100,
+      "spd": 100,
+      "spe": 70,
+      "bst": 530,
+      "weight": 36.6,
+      "height": 1.6,
+      "types": [
+        "Grass",
+        "Ghost"
+      ],
+      "abilities": [
+        "Overgrow",
+        "Long Reach"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 724,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Decidueye-Hisui",
+      "hp": 88,
+      "atk": 112,
+      "def": 80,
+      "spa": 95,
+      "spd": 95,
+      "spe": 60,
+      "bst": 530,
+      "weight": 37,
+      "height": 1.6,
+      "types": [
+        "Grass",
+        "Fighting"
+      ],
+      "abilities": [
+        "Overgrow",
+        "Scrappy"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 724,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Incineroar",
+      "hp": 95,
+      "atk": 115,
+      "def": 90,
+      "spa": 80,
+      "spd": 90,
+      "spe": 60,
+      "bst": 530,
+      "weight": 83,
+      "height": 1.8,
+      "types": [
+        "Fire",
+        "Dark"
+      ],
+      "abilities": [
+        "Blaze",
+        "Intimidate"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 727,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Primarina",
+      "hp": 80,
+      "atk": 74,
+      "def": 74,
+      "spa": 126,
+      "spd": 116,
+      "spe": 60,
+      "bst": 530,
+      "weight": 44,
+      "height": 1.8,
+      "types": [
+        "Water",
+        "Fairy"
+      ],
+      "abilities": [
+        "Torrent",
+        "Liquid Voice"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 730,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Toucannon",
+      "hp": 80,
+      "atk": 120,
+      "def": 75,
+      "spa": 75,
+      "spd": 75,
+      "spe": 60,
+      "bst": 485,
+      "weight": 26,
+      "height": 1.1,
+      "types": [
+        "Normal",
+        "Flying"
+      ],
+      "abilities": [
+        "Keen Eye",
+        "Skill Link",
+        "Sheer Force"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 733,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Crabominable",
+      "hp": 97,
+      "atk": 132,
+      "def": 77,
+      "spa": 62,
+      "spd": 67,
+      "spe": 43,
+      "bst": 478,
+      "weight": 180,
+      "height": 1.7,
+      "types": [
+        "Fighting",
+        "Ice"
+      ],
+      "abilities": [
+        "Hyper Cutter",
+        "Iron Fist",
+        "Anger Point"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 740,
+      "evos": [],
+      "alts": [
+        "Crabominable-Mega"
+      ]
+    },
+    {
+      "name": "Lycanroc",
+      "hp": 75,
+      "atk": 115,
+      "def": 65,
+      "spa": 55,
+      "spd": 65,
+      "spe": 112,
+      "bst": 487,
+      "weight": 25,
+      "height": 0.8,
+      "types": [
+        "Rock"
+      ],
+      "abilities": [
+        "Keen Eye",
+        "Sand Rush",
+        "Steadfast"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 745,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Lycanroc-Dusk",
+      "hp": 75,
+      "atk": 117,
+      "def": 65,
+      "spa": 55,
+      "spd": 65,
+      "spe": 110,
+      "bst": 487,
+      "weight": 25,
+      "height": 0.8,
+      "types": [
+        "Rock"
+      ],
+      "abilities": [
+        "Tough Claws"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 745,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Lycanroc-Midnight",
+      "hp": 85,
+      "atk": 115,
+      "def": 75,
+      "spa": 55,
+      "spd": 75,
+      "spe": 82,
+      "bst": 487,
+      "weight": 25,
+      "height": 1.1,
+      "types": [
+        "Rock"
+      ],
+      "abilities": [
+        "Keen Eye",
+        "Vital Spirit",
+        "No Guard"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 745,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Toxapex",
+      "hp": 50,
+      "atk": 63,
+      "def": 152,
+      "spa": 53,
+      "spd": 142,
+      "spe": 35,
+      "bst": 495,
+      "weight": 14.5,
+      "height": 0.7,
+      "types": [
+        "Poison",
+        "Water"
+      ],
+      "abilities": [
+        "Merciless",
+        "Limber",
+        "Regenerator"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 748,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Mudsdale",
+      "hp": 100,
+      "atk": 125,
+      "def": 100,
+      "spa": 55,
+      "spd": 85,
+      "spe": 35,
+      "bst": 500,
+      "weight": 920,
+      "height": 2.5,
+      "types": [
+        "Ground"
+      ],
+      "abilities": [
+        "Own Tempo",
+        "Stamina",
+        "Inner Focus"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 750,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Araquanid",
+      "hp": 68,
+      "atk": 70,
+      "def": 92,
+      "spa": 50,
+      "spd": 132,
+      "spe": 42,
+      "bst": 454,
+      "weight": 82,
+      "height": 1.8,
+      "types": [
+        "Water",
+        "Bug"
+      ],
+      "abilities": [
+        "Water Bubble",
+        "Water Absorb"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 752,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Salazzle",
+      "hp": 68,
+      "atk": 64,
+      "def": 60,
+      "spa": 111,
+      "spd": 60,
+      "spe": 117,
+      "bst": 480,
+      "weight": 22.2,
+      "height": 1.2,
+      "types": [
+        "Poison",
+        "Fire"
+      ],
+      "abilities": [
+        "Corrosion",
+        "Oblivious"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 758,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Tsareena",
+      "hp": 72,
+      "atk": 120,
+      "def": 98,
+      "spa": 50,
+      "spd": 98,
+      "spe": 72,
+      "bst": 510,
+      "weight": 21.4,
+      "height": 1.2,
+      "types": [
+        "Grass"
+      ],
+      "abilities": [
+        "Leaf Guard",
+        "Queenly Majesty",
+        "Sweet Veil"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 763,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Oranguru",
+      "hp": 90,
+      "atk": 60,
+      "def": 80,
+      "spa": 90,
+      "spd": 110,
+      "spe": 60,
+      "bst": 490,
+      "weight": 76,
+      "height": 1.5,
+      "types": [
+        "Normal",
+        "Psychic"
+      ],
+      "abilities": [
+        "Inner Focus",
+        "Telepathy",
+        "Symbiosis"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 765,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Passimian",
+      "hp": 100,
+      "atk": 120,
+      "def": 90,
+      "spa": 40,
+      "spd": 60,
+      "spe": 80,
+      "bst": 490,
+      "weight": 82.8,
+      "height": 2,
+      "types": [
+        "Fighting"
+      ],
+      "abilities": [
+        "Receiver",
+        "Defiant"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 766,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Mimikyu",
+      "hp": 55,
+      "atk": 90,
+      "def": 80,
+      "spa": 50,
+      "spd": 105,
+      "spe": 96,
+      "bst": 476,
+      "weight": 0.7,
+      "height": 0.2,
+      "types": [
+        "Ghost",
+        "Fairy"
+      ],
+      "abilities": [
+        "Disguise"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 778,
+      "evos": [],
+      "alts": [
+        "Mimikyu-Busted"
+      ]
+    },
+    {
+      "name": "Drampa",
+      "hp": 78,
+      "atk": 60,
+      "def": 85,
+      "spa": 135,
+      "spd": 91,
+      "spe": 36,
+      "bst": 485,
+      "weight": 185,
+      "height": 3,
+      "types": [
+        "Normal",
+        "Dragon"
+      ],
+      "abilities": [
+        "Berserk",
+        "Sap Sipper",
+        "Cloud Nine"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 780,
+      "evos": [],
+      "alts": [
+        "Drampa-Mega"
+      ]
+    },
+    {
+      "name": "Kommo-o",
+      "hp": 75,
+      "atk": 110,
+      "def": 125,
+      "spa": 100,
+      "spd": 105,
+      "spe": 85,
+      "bst": 600,
+      "weight": 78.2,
+      "height": 1.6,
+      "types": [
+        "Dragon",
+        "Fighting"
+      ],
+      "abilities": [
+        "Bulletproof",
+        "Soundproof",
+        "Overcoat"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 784,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Slowbro",
+      "hp": 95,
+      "atk": 75,
+      "def": 110,
+      "spa": 100,
+      "spd": 80,
+      "spe": 30,
+      "bst": 490,
+      "weight": 78.5,
+      "height": 1.6,
+      "types": [
+        "Water",
+        "Psychic"
+      ],
+      "abilities": [
+        "Oblivious",
+        "Own Tempo",
+        "Regenerator"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 80,
+      "evos": [],
+      "alts": [
+        "Slowbro-Mega"
+      ]
+    },
+    {
+      "name": "Slowbro-Galar",
+      "hp": 95,
+      "atk": 100,
+      "def": 95,
+      "spa": 100,
+      "spd": 70,
+      "spe": 30,
+      "bst": 490,
+      "weight": 70.5,
+      "height": 1.6,
+      "types": [
+        "Poison",
+        "Psychic"
+      ],
+      "abilities": [
+        "Quick Draw",
+        "Own Tempo",
+        "Regenerator"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 80,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Corviknight",
+      "hp": 98,
+      "atk": 87,
+      "def": 105,
+      "spa": 53,
+      "spd": 85,
+      "spe": 67,
+      "bst": 495,
+      "weight": 75,
+      "height": 2.2,
+      "types": [
+        "Flying",
+        "Steel"
+      ],
+      "abilities": [
+        "Pressure",
+        "Unnerve",
+        "Mirror Armor"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 823,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Flapple",
+      "hp": 70,
+      "atk": 110,
+      "def": 80,
+      "spa": 95,
+      "spd": 60,
+      "spe": 70,
+      "bst": 485,
+      "weight": 1,
+      "height": 0.3,
+      "types": [
+        "Grass",
+        "Dragon"
+      ],
+      "abilities": [
+        "Ripen",
+        "Gluttony",
+        "Hustle"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 841,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Appletun",
+      "hp": 110,
+      "atk": 85,
+      "def": 80,
+      "spa": 100,
+      "spd": 80,
+      "spe": 30,
+      "bst": 485,
+      "weight": 13,
+      "height": 0.4,
+      "types": [
+        "Grass",
+        "Dragon"
+      ],
+      "abilities": [
+        "Ripen",
+        "Gluttony",
+        "Thick Fat"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 842,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Sandaconda",
+      "hp": 72,
+      "atk": 107,
+      "def": 125,
+      "spa": 65,
+      "spd": 70,
+      "spe": 71,
+      "bst": 510,
+      "weight": 65.5,
+      "height": 3.8,
+      "types": [
+        "Ground"
+      ],
+      "abilities": [
+        "Sand Spit",
+        "Shed Skin",
+        "Sand Veil"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 844,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Polteageist",
+      "hp": 60,
+      "atk": 65,
+      "def": 65,
+      "spa": 134,
+      "spd": 114,
+      "spe": 70,
+      "bst": 508,
+      "weight": 0.4,
+      "height": 0.2,
+      "types": [
+        "Ghost"
+      ],
+      "abilities": [
+        "Weak Armor",
+        "Cursed Body"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 855,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Polteageist-Antique",
+      "hp": 60,
+      "atk": 65,
+      "def": 65,
+      "spa": 134,
+      "spd": 114,
+      "spe": 70,
+      "bst": 508,
+      "weight": 0.4,
+      "height": 0.2,
+      "types": [
+        "Ghost"
+      ],
+      "abilities": [
+        "Weak Armor",
+        "Cursed Body"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 855,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Hatterene",
+      "hp": 57,
+      "atk": 90,
+      "def": 95,
+      "spa": 136,
+      "spd": 103,
+      "spe": 29,
+      "bst": 510,
+      "weight": 5.1,
+      "height": 2.1,
+      "types": [
+        "Psychic",
+        "Fairy"
+      ],
+      "abilities": [
+        "Healer",
+        "Anticipation",
+        "Magic Bounce"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 858,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Mr. Rime",
+      "hp": 80,
+      "atk": 85,
+      "def": 75,
+      "spa": 110,
+      "spd": 100,
+      "spe": 70,
+      "bst": 520,
+      "weight": 58.2,
+      "height": 1.5,
+      "types": [
+        "Ice",
+        "Psychic"
+      ],
+      "abilities": [
+        "Tangled Feet",
+        "Screen Cleaner",
+        "Ice Body"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 866,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Runerigus",
+      "hp": 58,
+      "atk": 95,
+      "def": 145,
+      "spa": 50,
+      "spd": 105,
+      "spe": 30,
+      "bst": 483,
+      "weight": 66.6,
+      "height": 1.6,
+      "types": [
+        "Ground",
+        "Ghost"
+      ],
+      "abilities": [
+        "Wandering Spirit"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 867,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Alcremie",
+      "hp": 65,
+      "atk": 60,
+      "def": 75,
+      "spa": 110,
+      "spd": 121,
+      "spe": 64,
+      "bst": 495,
+      "weight": 0.5,
+      "height": 0.3,
+      "types": [
+        "Fairy"
+      ],
+      "abilities": [
+        "Sweet Veil",
+        "Aroma Veil"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 869,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Morpeko",
+      "hp": 58,
+      "atk": 95,
+      "def": 58,
+      "spa": 70,
+      "spd": 58,
+      "spe": 97,
+      "bst": 436,
+      "weight": 3,
+      "height": 0.3,
+      "types": [
+        "Electric",
+        "Dark"
+      ],
+      "abilities": [
+        "Hunger Switch"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 877,
+      "evos": [],
+      "alts": [
+        "Morpeko-Hangry"
+      ]
+    },
+    {
+      "name": "Dragapult",
+      "hp": 88,
+      "atk": 120,
+      "def": 75,
+      "spa": 100,
+      "spd": 75,
+      "spe": 142,
+      "bst": 600,
+      "weight": 50,
+      "height": 3,
+      "types": [
+        "Dragon",
+        "Ghost"
+      ],
+      "abilities": [
+        "Clear Body",
+        "Infiltrator",
+        "Cursed Body"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 887,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Wyrdeer",
+      "hp": 103,
+      "atk": 105,
+      "def": 72,
+      "spa": 105,
+      "spd": 75,
+      "spe": 65,
+      "bst": 525,
+      "weight": 95.1,
+      "height": 1.8,
+      "types": [
+        "Normal",
+        "Psychic"
+      ],
+      "abilities": [
+        "Intimidate",
+        "Frisk",
+        "Sap Sipper"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 899,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Blastoise",
+      "hp": 79,
+      "atk": 83,
+      "def": 100,
+      "spa": 85,
+      "spd": 105,
+      "spe": 78,
+      "bst": 530,
+      "weight": 85.5,
+      "height": 1.6,
+      "types": [
+        "Water"
+      ],
+      "abilities": [
+        "Torrent",
+        "Rain Dish"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 9,
+      "evos": [],
+      "alts": [
+        "Blastoise-Mega"
+      ]
+    },
+    {
+      "name": "Kleavor",
+      "hp": 70,
+      "atk": 135,
+      "def": 95,
+      "spa": 45,
+      "spd": 70,
+      "spe": 85,
+      "bst": 500,
+      "weight": 89,
+      "height": 1.8,
+      "types": [
+        "Bug",
+        "Rock"
+      ],
+      "abilities": [
+        "Swarm",
+        "Sheer Force",
+        "Sharpness"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 900,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Basculegion",
+      "hp": 120,
+      "atk": 112,
+      "def": 65,
+      "spa": 80,
+      "spd": 75,
+      "spe": 78,
+      "bst": 530,
+      "weight": 110,
+      "height": 3,
+      "types": [
+        "Water",
+        "Ghost"
+      ],
+      "abilities": [
+        "Swift Swim",
+        "Adaptability",
+        "Mold Breaker"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 902,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Basculegion-F",
+      "hp": 120,
+      "atk": 92,
+      "def": 65,
+      "spa": 100,
+      "spd": 75,
+      "spe": 78,
+      "bst": 530,
+      "weight": 110,
+      "height": 3,
+      "types": [
+        "Water",
+        "Ghost"
+      ],
+      "abilities": [
+        "Swift Swim",
+        "Adaptability",
+        "Mold Breaker"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 902,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Sneasler",
+      "hp": 80,
+      "atk": 130,
+      "def": 60,
+      "spa": 40,
+      "spd": 80,
+      "spe": 120,
+      "bst": 510,
+      "weight": 43,
+      "height": 1.3,
+      "types": [
+        "Fighting",
+        "Poison"
+      ],
+      "abilities": [
+        "Pressure",
+        "Unburden",
+        "Poison Touch"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 903,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Meowscarada",
+      "hp": 76,
+      "atk": 110,
+      "def": 70,
+      "spa": 81,
+      "spd": 70,
+      "spe": 123,
+      "bst": 530,
+      "weight": 31.2,
+      "height": 1.5,
+      "types": [
+        "Grass",
+        "Dark"
+      ],
+      "abilities": [
+        "Overgrow",
+        "Protean"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 908,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Skeledirge",
+      "hp": 104,
+      "atk": 75,
+      "def": 100,
+      "spa": 110,
+      "spd": 75,
+      "spe": 66,
+      "bst": 530,
+      "weight": 326.5,
+      "height": 1.6,
+      "types": [
+        "Fire",
+        "Ghost"
+      ],
+      "abilities": [
+        "Blaze",
+        "Unaware"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 911,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Quaquaval",
+      "hp": 85,
+      "atk": 120,
+      "def": 80,
+      "spa": 85,
+      "spd": 75,
+      "spe": 85,
+      "bst": 530,
+      "weight": 61.9,
+      "height": 1.8,
+      "types": [
+        "Water",
+        "Fighting"
+      ],
+      "abilities": [
+        "Torrent",
+        "Moxie"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 914,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Maushold",
+      "hp": 74,
+      "atk": 75,
+      "def": 70,
+      "spa": 65,
+      "spd": 75,
+      "spe": 111,
+      "bst": 470,
+      "weight": 2.3,
+      "height": 0.3,
+      "types": [
+        "Normal"
+      ],
+      "abilities": [
+        "Friend Guard",
+        "Cheek Pouch",
+        "Technician"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 925,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Maushold-Four",
+      "hp": 74,
+      "atk": 75,
+      "def": 70,
+      "spa": 65,
+      "spd": 75,
+      "spe": 111,
+      "bst": 470,
+      "weight": 2.8,
+      "height": 0.3,
+      "types": [
+        "Normal"
+      ],
+      "abilities": [
+        "Friend Guard",
+        "Cheek Pouch",
+        "Technician"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 925,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Garganacl",
+      "hp": 100,
+      "atk": 100,
+      "def": 130,
+      "spa": 45,
+      "spd": 90,
+      "spe": 35,
+      "bst": 500,
+      "weight": 240,
+      "height": 2.3,
+      "types": [
+        "Rock"
+      ],
+      "abilities": [
+        "Purifying Salt",
+        "Sturdy",
+        "Clear Body"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 934,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Armarouge",
+      "hp": 85,
+      "atk": 60,
+      "def": 100,
+      "spa": 125,
+      "spd": 80,
+      "spe": 75,
+      "bst": 525,
+      "weight": 85,
+      "height": 1.5,
+      "types": [
+        "Fire",
+        "Psychic"
+      ],
+      "abilities": [
+        "Flash Fire",
+        "Weak Armor"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 936,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Ceruledge",
+      "hp": 75,
+      "atk": 125,
+      "def": 80,
+      "spa": 60,
+      "spd": 100,
+      "spe": 85,
+      "bst": 525,
+      "weight": 62,
+      "height": 1.6,
+      "types": [
+        "Fire",
+        "Ghost"
+      ],
+      "abilities": [
+        "Flash Fire",
+        "Weak Armor"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 937,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Bellibolt",
+      "hp": 109,
+      "atk": 64,
+      "def": 91,
+      "spa": 103,
+      "spd": 83,
+      "spe": 45,
+      "bst": 495,
+      "weight": 113,
+      "height": 1.2,
+      "types": [
+        "Electric"
+      ],
+      "abilities": [
+        "Electromorphosis",
+        "Static",
+        "Damp"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 939,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Gengar",
+      "hp": 60,
+      "atk": 65,
+      "def": 60,
+      "spa": 130,
+      "spd": 75,
+      "spe": 110,
+      "bst": 500,
+      "weight": 40.5,
+      "height": 1.5,
+      "types": [
+        "Ghost",
+        "Poison"
+      ],
+      "abilities": [
+        "Cursed Body"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 94,
+      "evos": [],
+      "alts": [
+        "Gengar-Mega"
+      ]
+    },
+    {
+      "name": "Scovillain",
+      "hp": 65,
+      "atk": 108,
+      "def": 65,
+      "spa": 108,
+      "spd": 65,
+      "spe": 75,
+      "bst": 486,
+      "weight": 15,
+      "height": 0.9,
+      "types": [
+        "Grass",
+        "Fire"
+      ],
+      "abilities": [
+        "Chlorophyll",
+        "Insomnia",
+        "Moody"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 952,
+      "evos": [],
+      "alts": [
+        "Scovillain-Mega"
+      ]
+    },
+    {
+      "name": "Espathra",
+      "hp": 95,
+      "atk": 60,
+      "def": 60,
+      "spa": 101,
+      "spd": 60,
+      "spe": 105,
+      "bst": 481,
+      "weight": 90,
+      "height": 1.9,
+      "types": [
+        "Psychic"
+      ],
+      "abilities": [
+        "Opportunist",
+        "Frisk",
+        "Speed Boost"
+      ],
+      "formats": [
+        "UUBL"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 956,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Tinkaton",
+      "hp": 85,
+      "atk": 75,
+      "def": 77,
+      "spa": 70,
+      "spd": 105,
+      "spe": 94,
+      "bst": 506,
+      "weight": 112.8,
+      "height": 0.7,
+      "types": [
+        "Fairy",
+        "Steel"
+      ],
+      "abilities": [
+        "Mold Breaker",
+        "Own Tempo",
+        "Pickpocket"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 959,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Palafin",
+      "hp": 100,
+      "atk": 70,
+      "def": 72,
+      "spa": 53,
+      "spd": 62,
+      "spe": 100,
+      "bst": 457,
+      "weight": 60.2,
+      "height": 1.3,
+      "types": [
+        "Water"
+      ],
+      "abilities": [
+        "Zero to Hero"
+      ],
+      "formats": [
+        "Uber"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 964,
+      "evos": [],
+      "alts": [
+        "Palafin-Hero"
+      ]
+    },
+    {
+      "name": "Orthworm",
+      "hp": 70,
+      "atk": 85,
+      "def": 145,
+      "spa": 60,
+      "spd": 55,
+      "spe": 65,
+      "bst": 480,
+      "weight": 310,
+      "height": 2.5,
+      "types": [
+        "Steel"
+      ],
+      "abilities": [
+        "Earth Eater",
+        "Sand Veil"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 968,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Glimmora",
+      "hp": 83,
+      "atk": 55,
+      "def": 90,
+      "spa": 130,
+      "spd": 81,
+      "spe": 86,
+      "bst": 525,
+      "weight": 45,
+      "height": 1.5,
+      "types": [
+        "Rock",
+        "Poison"
+      ],
+      "abilities": [
+        "Toxic Debris",
+        "Corrosion"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 970,
+      "evos": [],
+      "alts": [
+        "Glimmora-Mega"
+      ]
+    },
+    {
+      "name": "Farigiraf",
+      "hp": 120,
+      "atk": 90,
+      "def": 70,
+      "spa": 110,
+      "spd": 70,
+      "spe": 60,
+      "bst": 520,
+      "weight": 160,
+      "height": 3.2,
+      "types": [
+        "Normal",
+        "Psychic"
+      ],
+      "abilities": [
+        "Cud Chew",
+        "Armor Tail",
+        "Sap Sipper"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 981,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Kingambit",
+      "hp": 100,
+      "atk": 135,
+      "def": 120,
+      "spa": 60,
+      "spd": 85,
+      "spe": 50,
+      "bst": 550,
+      "weight": 120,
+      "height": 2,
+      "types": [
+        "Dark",
+        "Steel"
+      ],
+      "abilities": [
+        "Defiant",
+        "Supreme Overlord",
+        "Pressure"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 983,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Lopunny-Mega",
+      "hp": 65,
+      "atk": 136,
+      "def": 94,
+      "spa": 54,
+      "spd": 96,
+      "spe": 135,
+      "bst": 580,
+      "weight": 28.3,
+      "height": 1.3,
+      "types": [
+        "Normal",
+        "Fighting"
+      ],
+      "abilities": [
+        "Scrappy"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Venusaur-Mega",
+      "hp": 80,
+      "atk": 100,
+      "def": 123,
+      "spa": 122,
+      "spd": 120,
+      "spe": 80,
+      "bst": 625,
+      "weight": 155.5,
+      "height": 2.4,
+      "types": [
+        "Grass",
+        "Poison"
+      ],
+      "abilities": [
+        "Thick Fat"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Medicham-Mega",
+      "hp": 60,
+      "atk": 100,
+      "def": 85,
+      "spa": 80,
+      "spd": 85,
+      "spe": 100,
+      "bst": 510,
+      "weight": 31.5,
+      "height": 1.3,
+      "types": [
+        "Fighting",
+        "Psychic"
+      ],
+      "abilities": [
+        "Pure Power"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Gardevoir-Mega",
+      "hp": 68,
+      "atk": 85,
+      "def": 65,
+      "spa": 165,
+      "spd": 135,
+      "spe": 100,
+      "bst": 618,
+      "weight": 48.4,
+      "height": 1.6,
+      "types": [
+        "Psychic",
+        "Fairy"
+      ],
+      "abilities": [
+        "Pixilate"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Alakazam-Mega",
+      "hp": 55,
+      "atk": 50,
+      "def": 65,
+      "spa": 175,
+      "spd": 105,
+      "spe": 150,
+      "bst": 600,
+      "weight": 48,
+      "height": 1.2,
+      "types": [
+        "Psychic"
+      ],
+      "abilities": [
+        "Trace"
+      ],
+      "formats": [
+        "UUBL"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Garchomp-Mega",
+      "hp": 108,
+      "atk": 170,
+      "def": 115,
+      "spa": 120,
+      "spd": 95,
+      "spe": 92,
+      "bst": 700,
+      "weight": 95,
+      "height": 1.9,
+      "types": [
+        "Dragon",
+        "Ground"
+      ],
+      "abilities": [
+        "Sand Force"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Drampa-Mega",
+      "hp": 78,
+      "atk": 85,
+      "def": 110,
+      "spa": 160,
+      "spd": 116,
+      "spe": 36,
+      "bst": 585,
+      "weight": 240.5,
+      "height": 3,
+      "types": [
+        "Normal",
+        "Dragon"
+      ],
+      "abilities": [
+        "Berserk"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Floette-Mega",
+      "hp": 74,
+      "atk": 85,
+      "def": 87,
+      "spa": 155,
+      "spd": 148,
+      "spe": 102,
+      "bst": 651,
+      "weight": 100.8,
+      "height": 0.2,
+      "types": [
+        "Fairy"
+      ],
+      "abilities": [
+        "Fairy Aura"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Glalie-Mega",
+      "hp": 80,
+      "atk": 120,
+      "def": 80,
+      "spa": 120,
+      "spd": 80,
+      "spe": 100,
+      "bst": 580,
+      "weight": 350.2,
+      "height": 2.1,
+      "types": [
+        "Ice"
+      ],
+      "abilities": [
+        "Refrigerate"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Clefable-Mega",
+      "hp": 95,
+      "atk": 80,
+      "def": 93,
+      "spa": 135,
+      "spd": 110,
+      "spe": 70,
+      "bst": 583,
+      "weight": 42.3,
+      "height": 1.7,
+      "types": [
+        "Fairy",
+        "Flying"
+      ],
+      "abilities": [
+        "Magic Bounce"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Tyranitar-Mega",
+      "hp": 100,
+      "atk": 164,
+      "def": 150,
+      "spa": 95,
+      "spd": 120,
+      "spe": 71,
+      "bst": 700,
+      "weight": 255,
+      "height": 2.5,
+      "types": [
+        "Rock",
+        "Dark"
+      ],
+      "abilities": [
+        "Sand Stream"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Greninja-Mega",
+      "hp": 72,
+      "atk": 125,
+      "def": 77,
+      "spa": 133,
+      "spd": 81,
+      "spe": 142,
+      "bst": 630,
+      "weight": 40,
+      "height": 1.5,
+      "types": [
+        "Water",
+        "Dark"
+      ],
+      "abilities": [
+        "Protean"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Chesnaught-Mega",
+      "hp": 88,
+      "atk": 137,
+      "def": 172,
+      "spa": 74,
+      "spd": 115,
+      "spe": 44,
+      "bst": 630,
+      "weight": 90,
+      "height": 1.6,
+      "types": [
+        "Grass",
+        "Fighting"
+      ],
+      "abilities": [
+        "Bulletproof"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Meowstic-M-Mega",
+      "hp": 74,
+      "atk": 48,
+      "def": 76,
+      "spa": 143,
+      "spd": 101,
+      "spe": 124,
+      "bst": 566,
+      "weight": 10.1,
+      "height": 0.8,
+      "types": [
+        "Psychic"
+      ],
+      "abilities": [
+        "Trace"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Crucibelle-Mega",
+      "hp": 106,
+      "atk": 135,
+      "def": 75,
+      "spa": 91,
+      "spd": 125,
+      "spe": 108,
+      "bst": 640,
+      "weight": 22.5,
+      "height": 1.4,
+      "types": [
+        "Rock",
+        "Poison"
+      ],
+      "abilities": [
+        "Magic Guard"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Mimikyu-Busted",
+      "hp": 55,
+      "atk": 90,
+      "def": 80,
+      "spa": 50,
+      "spd": 105,
+      "spe": 96,
+      "bst": 476,
+      "weight": 0.7,
+      "height": 0.2,
+      "types": [
+        "Ghost",
+        "Fairy"
+      ],
+      "abilities": [
+        "Disguise"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Chimecho-Mega",
+      "hp": 75,
+      "atk": 50,
+      "def": 110,
+      "spa": 135,
+      "spd": 120,
+      "spe": 65,
+      "bst": 555,
+      "weight": 8,
+      "height": 1.2,
+      "types": [
+        "Psychic",
+        "Steel"
+      ],
+      "abilities": [
+        "Levitate"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Gyarados-Mega",
+      "hp": 95,
+      "atk": 155,
+      "def": 109,
+      "spa": 70,
+      "spd": 130,
+      "spe": 81,
+      "bst": 640,
+      "weight": 305,
+      "height": 6.5,
+      "types": [
+        "Water",
+        "Dark"
+      ],
+      "abilities": [
+        "Mold Breaker"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Ramnarok-Radiant",
+      "hp": 110,
+      "atk": 56,
+      "def": 85,
+      "spa": 141,
+      "spd": 54,
+      "spe": 154,
+      "bst": 600,
+      "weight": 182,
+      "height": 2.2,
+      "types": [
+        "Fire",
+        "Ice"
+      ],
+      "abilities": [
+        "No Guard"
+      ],
+      "formats": [],
+      "isNonstandard": "CAP",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Morpeko-Hangry",
+      "hp": 58,
+      "atk": 95,
+      "def": 58,
+      "spa": 70,
+      "spd": 58,
+      "spe": 97,
+      "bst": 436,
+      "weight": 3,
+      "height": 0.3,
+      "types": [
+        "Electric",
+        "Dark"
+      ],
+      "abilities": [
+        "Hunger Switch"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Gengar-Mega",
+      "hp": 60,
+      "atk": 65,
+      "def": 80,
+      "spa": 170,
+      "spd": 95,
+      "spe": 130,
+      "bst": 600,
+      "weight": 40.5,
+      "height": 1.4,
+      "types": [
+        "Ghost",
+        "Poison"
+      ],
+      "abilities": [
+        "Shadow Tag"
+      ],
+      "formats": [
+        "Uber"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Scizor-Mega",
+      "hp": 70,
+      "atk": 150,
+      "def": 140,
+      "spa": 65,
+      "spd": 100,
+      "spe": 75,
+      "bst": 600,
+      "weight": 125,
+      "height": 2,
+      "types": [
+        "Bug",
+        "Steel"
+      ],
+      "abilities": [
+        "Technician"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Emboar-Mega",
+      "hp": 110,
+      "atk": 148,
+      "def": 75,
+      "spa": 110,
+      "spd": 110,
+      "spe": 75,
+      "bst": 628,
+      "weight": 180.3,
+      "height": 1.8,
+      "types": [
+        "Fire",
+        "Fighting"
+      ],
+      "abilities": [
+        "Mold Breaker"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Excadrill-Mega",
+      "hp": 110,
+      "atk": 165,
+      "def": 100,
+      "spa": 65,
+      "spd": 65,
+      "spe": 103,
+      "bst": 608,
+      "weight": 60,
+      "height": 0.9,
+      "types": [
+        "Ground",
+        "Steel"
+      ],
+      "abilities": [
+        "Piercing Drill"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Banette-Mega",
+      "hp": 64,
+      "atk": 165,
+      "def": 75,
+      "spa": 93,
+      "spd": 83,
+      "spe": 75,
+      "bst": 555,
+      "weight": 13,
+      "height": 1.2,
+      "types": [
+        "Ghost"
+      ],
+      "abilities": [
+        "Prankster"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Altaria-Mega",
+      "hp": 75,
+      "atk": 110,
+      "def": 110,
+      "spa": 110,
+      "spd": 105,
+      "spe": 80,
+      "bst": 590,
+      "weight": 20.6,
+      "height": 1.5,
+      "types": [
+        "Dragon",
+        "Fairy"
+      ],
+      "abilities": [
+        "Pixilate"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Chandelure-Mega",
+      "hp": 60,
+      "atk": 75,
+      "def": 110,
+      "spa": 175,
+      "spd": 110,
+      "spe": 90,
+      "bst": 620,
+      "weight": 69.6,
+      "height": 2.5,
+      "types": [
+        "Ghost",
+        "Fire"
+      ],
+      "abilities": [
+        "Infiltrator"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Starmie-Mega",
+      "hp": 60,
+      "atk": 100,
+      "def": 105,
+      "spa": 130,
+      "spd": 105,
+      "spe": 120,
+      "bst": 620,
+      "weight": 80,
+      "height": 2.3,
+      "types": [
+        "Water",
+        "Psychic"
+      ],
+      "abilities": [
+        "Huge Power"
+      ],
+      "formats": [
+        "Uber"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Glimmora-Mega",
+      "hp": 83,
+      "atk": 90,
+      "def": 105,
+      "spa": 150,
+      "spd": 96,
+      "spe": 101,
+      "bst": 625,
+      "weight": 77,
+      "height": 2.8,
+      "types": [
+        "Rock",
+        "Poison"
+      ],
+      "abilities": [
+        "Adaptability"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Lucario-Mega",
+      "hp": 70,
+      "atk": 145,
+      "def": 88,
+      "spa": 140,
+      "spd": 70,
+      "spe": 112,
+      "bst": 625,
+      "weight": 57.5,
+      "height": 1.3,
+      "types": [
+        "Fighting",
+        "Steel"
+      ],
+      "abilities": [
+        "Adaptability"
+      ],
+      "formats": [
+        "Uber"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Pinsir-Mega",
+      "hp": 65,
+      "atk": 155,
+      "def": 120,
+      "spa": 65,
+      "spd": 90,
+      "spe": 105,
+      "bst": 600,
+      "weight": 59,
+      "height": 1.7,
+      "types": [
+        "Bug",
+        "Flying"
+      ],
+      "abilities": [
+        "Aerilate"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Scovillain-Mega",
+      "hp": 65,
+      "atk": 138,
+      "def": 85,
+      "spa": 138,
+      "spd": 85,
+      "spe": 75,
+      "bst": 586,
+      "weight": 22,
+      "height": 1.2,
+      "types": [
+        "Grass",
+        "Fire"
+      ],
+      "abilities": [
+        "Spicy Spray"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Audino-Mega",
+      "hp": 103,
+      "atk": 60,
+      "def": 126,
+      "spa": 80,
+      "spd": 126,
+      "spe": 50,
+      "bst": 545,
+      "weight": 32,
+      "height": 1.5,
+      "types": [
+        "Normal",
+        "Fairy"
+      ],
+      "abilities": [
+        "Healer"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Hawlucha-Mega",
+      "hp": 78,
+      "atk": 137,
+      "def": 100,
+      "spa": 74,
+      "spd": 93,
+      "spe": 118,
+      "bst": 600,
+      "weight": 25,
+      "height": 1,
+      "types": [
+        "Fighting",
+        "Flying"
+      ],
+      "abilities": [
+        "No Guard"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Feraligatr-Mega",
+      "hp": 85,
+      "atk": 160,
+      "def": 125,
+      "spa": 89,
+      "spd": 93,
+      "spe": 78,
+      "bst": 630,
+      "weight": 108.8,
+      "height": 2.3,
+      "types": [
+        "Water",
+        "Dragon"
+      ],
+      "abilities": [
+        "Dragonize"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Houndoom-Mega",
+      "hp": 75,
+      "atk": 90,
+      "def": 90,
+      "spa": 140,
+      "spd": 90,
+      "spe": 115,
+      "bst": 600,
+      "weight": 49.5,
+      "height": 1.9,
+      "types": [
+        "Dark",
+        "Fire"
+      ],
+      "abilities": [
+        "Solar Power"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Pidgeot-Mega",
+      "hp": 83,
+      "atk": 80,
+      "def": 80,
+      "spa": 135,
+      "spd": 80,
+      "spe": 121,
+      "bst": 579,
+      "weight": 50.5,
+      "height": 2.2,
+      "types": [
+        "Normal",
+        "Flying"
+      ],
+      "abilities": [
+        "No Guard"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Charizard-Mega-Y",
+      "hp": 78,
+      "atk": 104,
+      "def": 78,
+      "spa": 159,
+      "spd": 115,
+      "spe": 100,
+      "bst": 634,
+      "weight": 100.5,
+      "height": 1.7,
+      "types": [
+        "Fire",
+        "Flying"
+      ],
+      "abilities": [
+        "Drought"
+      ],
+      "formats": [
+        "UUBL"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Ampharos-Mega",
+      "hp": 90,
+      "atk": 95,
+      "def": 105,
+      "spa": 165,
+      "spd": 110,
+      "spe": 45,
+      "bst": 610,
+      "weight": 61.5,
+      "height": 1.4,
+      "types": [
+        "Electric",
+        "Dragon"
+      ],
+      "abilities": [
+        "Mold Breaker"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Heracross-Mega",
+      "hp": 80,
+      "atk": 185,
+      "def": 115,
+      "spa": 40,
+      "spd": 105,
+      "spe": 75,
+      "bst": 600,
+      "weight": 62.5,
+      "height": 1.7,
+      "types": [
+        "Bug",
+        "Fighting"
+      ],
+      "abilities": [
+        "Skill Link"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Victreebel-Mega",
+      "hp": 80,
+      "atk": 125,
+      "def": 85,
+      "spa": 135,
+      "spd": 95,
+      "spe": 70,
+      "bst": 590,
+      "weight": 125.5,
+      "height": 4.5,
+      "types": [
+        "Grass",
+        "Poison"
+      ],
+      "abilities": [
+        "Innards Out"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Aerodactyl-Mega",
+      "hp": 80,
+      "atk": 135,
+      "def": 85,
+      "spa": 70,
+      "spd": 95,
+      "spe": 150,
+      "bst": 615,
+      "weight": 79,
+      "height": 2.1,
+      "types": [
+        "Rock",
+        "Flying"
+      ],
+      "abilities": [
+        "Tough Claws"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Steelix-Mega",
+      "hp": 75,
+      "atk": 125,
+      "def": 230,
+      "spa": 55,
+      "spd": 95,
+      "spe": 30,
+      "bst": 610,
+      "weight": 740,
+      "height": 10.5,
+      "types": [
+        "Steel",
+        "Ground"
+      ],
+      "abilities": [
+        "Sand Force"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Crabominable-Mega",
+      "hp": 97,
+      "atk": 157,
+      "def": 122,
+      "spa": 62,
+      "spd": 107,
+      "spe": 33,
+      "bst": 578,
+      "weight": 252.8,
+      "height": 2.6,
+      "types": [
+        "Fighting",
+        "Ice"
+      ],
+      "abilities": [
+        "Iron Fist"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Dragonite-Mega",
+      "hp": 91,
+      "atk": 124,
+      "def": 115,
+      "spa": 145,
+      "spd": 125,
+      "spe": 100,
+      "bst": 700,
+      "weight": 290,
+      "height": 2.2,
+      "types": [
+        "Dragon",
+        "Flying"
+      ],
+      "abilities": [
+        "Multiscale"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Absol-Mega",
+      "hp": 65,
+      "atk": 150,
+      "def": 60,
+      "spa": 115,
+      "spd": 60,
+      "spe": 115,
+      "bst": 565,
+      "weight": 49,
+      "height": 1.2,
+      "types": [
+        "Dark"
+      ],
+      "abilities": [
+        "Magic Bounce"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Sableye-Mega",
+      "hp": 50,
+      "atk": 85,
+      "def": 125,
+      "spa": 85,
+      "spd": 115,
+      "spe": 20,
+      "bst": 480,
+      "weight": 161,
+      "height": 0.5,
+      "types": [
+        "Dark",
+        "Ghost"
+      ],
+      "abilities": [
+        "Magic Bounce"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Froslass-Mega",
+      "hp": 70,
+      "atk": 80,
+      "def": 70,
+      "spa": 140,
+      "spd": 100,
+      "spe": 120,
+      "bst": 580,
+      "weight": 29.6,
+      "height": 2.6,
+      "types": [
+        "Ice",
+        "Ghost"
+      ],
+      "abilities": [
+        "Snow Warning"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Gallade-Mega",
+      "hp": 68,
+      "atk": 165,
+      "def": 95,
+      "spa": 65,
+      "spd": 115,
+      "spe": 110,
+      "bst": 618,
+      "weight": 56.4,
+      "height": 1.6,
+      "types": [
+        "Psychic",
+        "Fighting"
+      ],
+      "abilities": [
+        "Inner Focus"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Meganium-Mega",
+      "hp": 80,
+      "atk": 92,
+      "def": 115,
+      "spa": 143,
+      "spd": 115,
+      "spe": 80,
+      "bst": 625,
+      "weight": 201,
+      "height": 2.4,
+      "types": [
+        "Grass",
+        "Fairy"
+      ],
+      "abilities": [
+        "Mega Sol"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Aggron-Mega",
+      "hp": 70,
+      "atk": 140,
+      "def": 230,
+      "spa": 60,
+      "spd": 80,
+      "spe": 50,
+      "bst": 630,
+      "weight": 395,
+      "height": 2.2,
+      "types": [
+        "Steel"
+      ],
+      "abilities": [
+        "Filter"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Beedrill-Mega",
+      "hp": 65,
+      "atk": 150,
+      "def": 40,
+      "spa": 15,
+      "spd": 80,
+      "spe": 145,
+      "bst": 495,
+      "weight": 40.5,
+      "height": 1.4,
+      "types": [
+        "Bug",
+        "Poison"
+      ],
+      "abilities": [
+        "Adaptability"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Camerupt-Mega",
+      "hp": 70,
+      "atk": 120,
+      "def": 100,
+      "spa": 145,
+      "spd": 105,
+      "spe": 20,
+      "bst": 560,
+      "weight": 320.5,
+      "height": 2.5,
+      "types": [
+        "Fire",
+        "Ground"
+      ],
+      "abilities": [
+        "Sheer Force"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Blastoise-Mega",
+      "hp": 79,
+      "atk": 103,
+      "def": 120,
+      "spa": 135,
+      "spd": 115,
+      "spe": 78,
+      "bst": 630,
+      "weight": 101.1,
+      "height": 1.6,
+      "types": [
+        "Water"
+      ],
+      "abilities": [
+        "Mega Launcher"
+      ],
+      "formats": [
+        "Uber"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Skarmory-Mega",
+      "hp": 65,
+      "atk": 140,
+      "def": 110,
+      "spa": 40,
+      "spd": 100,
+      "spe": 110,
+      "bst": 565,
+      "weight": 40.4,
+      "height": 1.7,
+      "types": [
+        "Steel",
+        "Flying"
+      ],
+      "abilities": [
+        "Stalwart"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Slowbro-Mega",
+      "hp": 95,
+      "atk": 75,
+      "def": 180,
+      "spa": 130,
+      "spd": 80,
+      "spe": 30,
+      "bst": 590,
+      "weight": 120,
+      "height": 2,
+      "types": [
+        "Water",
+        "Psychic"
+      ],
+      "abilities": [
+        "Shell Armor"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Delphox-Mega",
+      "hp": 75,
+      "atk": 69,
+      "def": 72,
+      "spa": 159,
+      "spd": 125,
+      "spe": 134,
+      "bst": 634,
+      "weight": 39,
+      "height": 1.5,
+      "types": [
+        "Fire",
+        "Psychic"
+      ],
+      "abilities": [
+        "Levitate"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Sharpedo-Mega",
+      "hp": 70,
+      "atk": 140,
+      "def": 70,
+      "spa": 110,
+      "spd": 65,
+      "spe": 105,
+      "bst": 560,
+      "weight": 130.3,
+      "height": 2.5,
+      "types": [
+        "Water",
+        "Dark"
+      ],
+      "abilities": [
+        "Strong Jaw"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Charizard-Mega-X",
+      "hp": 78,
+      "atk": 130,
+      "def": 111,
+      "spa": 130,
+      "spd": 85,
+      "spe": 100,
+      "bst": 634,
+      "weight": 110.5,
+      "height": 1.7,
+      "types": [
+        "Fire",
+        "Dragon"
+      ],
+      "abilities": [
+        "Tough Claws"
+      ],
+      "formats": [
+        "UUBL"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Meowstic-F-Mega",
+      "hp": 74,
+      "atk": 48,
+      "def": 76,
+      "spa": 143,
+      "spd": 101,
+      "spe": 124,
+      "bst": 566,
+      "weight": 10.1,
+      "height": 0.8,
+      "types": [
+        "Psychic"
+      ],
+      "abilities": [
+        "Trace"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Golurk-Mega",
+      "hp": 89,
+      "atk": 159,
+      "def": 105,
+      "spa": 70,
+      "spd": 105,
+      "spe": 55,
+      "bst": 583,
+      "weight": 330,
+      "height": 4,
+      "types": [
+        "Ground",
+        "Ghost"
+      ],
+      "abilities": [
+        "Unseen Fist"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Manectric-Mega",
+      "hp": 70,
+      "atk": 75,
+      "def": 80,
+      "spa": 135,
+      "spd": 80,
+      "spe": 135,
+      "bst": 575,
+      "weight": 44,
+      "height": 1.8,
+      "types": [
+        "Electric"
+      ],
+      "abilities": [
+        "Intimidate"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Abomasnow-Mega",
+      "hp": 90,
+      "atk": 132,
+      "def": 105,
+      "spa": 132,
+      "spd": 105,
+      "spe": 30,
+      "bst": 594,
+      "weight": 185,
+      "height": 2.7,
+      "types": [
+        "Grass",
+        "Ice"
+      ],
+      "abilities": [
+        "Snow Warning"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Palafin-Hero",
+      "hp": 100,
+      "atk": 160,
+      "def": 97,
+      "spa": 106,
+      "spd": 87,
+      "spe": 100,
+      "bst": 650,
+      "weight": 97.4,
+      "height": 1.8,
+      "types": [
+        "Water"
+      ],
+      "abilities": [
+        "Zero to Hero"
+      ],
+      "formats": [
+        "Uber"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Kangaskhan-Mega",
+      "hp": 105,
+      "atk": 125,
+      "def": 100,
+      "spa": 60,
+      "spd": 100,
+      "spe": 100,
+      "bst": 590,
+      "weight": 100,
+      "height": 2.2,
+      "types": [
+        "Normal"
+      ],
+      "abilities": [
+        "Parental Bond"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": null,
+      "evos": [],
+      "alts": []
+    }
+  ]
+}

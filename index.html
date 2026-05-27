@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Champions Builder</title>
+    <link rel="stylesheet" href="styles.css?v=63">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero" aria-label="Champions Builder">
+        <div class="hero-copy">
+          <h1>Champions Builder</h1>
+        </div>
+      </section>
+
+      <section class="toolbar" aria-label="Filters">
+        <label class="search">
+          <span>Zoeken</span>
+          <input id="searchInput" type="search" placeholder="Naam, type of ability">
+        </label>
+        <label>
+          <span>Sorteren</span>
+          <select id="sortSelect">
+            <option value="name">Naam</option>
+            <option value="bst">Base stat totaal</option>
+            <option value="spe">Speed</option>
+            <option value="atk">Attack</option>
+            <option value="spa">Sp. Atk</option>
+            <option value="hp">HP</option>
+          </select>
+        </label>
+        <label>
+          <span>Dataset</span>
+          <select id="sourceSelect">
+            <option value="all">Alle Pokémon</option>
+            <option value="Standard">Standaard</option>
+            <option value="CAP">CAP-fanmade</option>
+          </select>
+        </label>
+        <label>
+          <span>Teamplan</span>
+          <select id="teamStyleSelect">
+            <option value="balanced">Gebalanceerd</option>
+            <option value="offense">Offensief</option>
+            <option value="bulky">Bulky</option>
+            <option value="rain">Rain</option>
+            <option value="sun">Sun</option>
+            <option value="trickroom">Trick Room</option>
+            <option value="doublesupport">Double support</option>
+          </select>
+        </label>
+        <label>
+          <span>Format</span>
+          <select id="battleFormatSelect">
+            <option value="single3">Single 3v3</option>
+            <option value="double4">Double 4v4</option>
+          </select>
+        </label>
+        <button id="resetApp" class="reset-button" type="button">Beginscherm</button>
+        <button id="guideModeToggle" class="guide-mode-button" type="button" aria-pressed="true">Help mij kiezen</button>
+        <button id="showAllPokemon" class="show-all-button" type="button">Alle Pokémon</button>
+      </section>
+
+      <section class="type-panel" aria-label="Typefilters">
+        <div class="filter-head">
+          <button id="typeToggle" class="type-toggle" type="button" aria-expanded="false">Typefilter</button>
+          <strong id="activeTypeLabel">Alle types</strong>
+        </div>
+        <div class="type-strip" id="typeFilters"></div>
+      </section>
+
+      <section class="meta-row" aria-live="polite">
+        <div>
+          <strong id="resultCount">0</strong>
+          <span id="resultLabel">resultaten</span>
+        </div>
+      </section>
+
+      <nav class="view-tabs" aria-label="Weergave">
+        <button id="builderTab" class="view-tab active" type="button">Builder</button>
+        <button id="teamTab" class="view-tab" type="button">Team lab</button>
+      </nav>
+
+      <section id="builderView" class="tab-view active" aria-label="Builder">
+        <div class="workspace">
+          <section class="grid" id="pokemonGrid" aria-label="Pokémon"></section>
+
+          <aside class="side-panel" aria-label="Details en team">
+            <section class="detail" id="detailPanel"></section>
+            <section class="team">
+              <div class="panel-head">
+                <h2>Team</h2>
+                <button id="clearTeam" type="button">Leegmaken</button>
+              </div>
+              <div class="team-slots" id="teamSlots"></div>
+            </section>
+            <section class="team-overview" id="teamOverview" aria-live="polite"></section>
+          </aside>
+        </div>
+      </section>
+
+      <section id="teamView" class="tab-view" aria-label="Team lab">
+        <div class="team-lab">
+          <section class="team-workbench-panel">
+            <div class="panel-head">
+              <h2>Team aanpassen</h2>
+              <button id="backToBuilder" type="button">Naar builder</button>
+            </div>
+            <div class="team-workbench" id="teamWorkbench" aria-live="polite"></div>
+          </section>
+          <section class="team-analysis" id="teamAnalysis" aria-live="polite"></section>
+        </div>
+      </section>
+
+      <button id="floatingTeamLab" class="floating-team-lab" type="button" hidden>
+        <span>Team lab</span>
+        <strong id="floatingTeamCount">0/3</strong>
+      </button>
+    </main>
+
+    <template id="cardTemplate">
+      <article class="pokemon-card">
+        <button class="card-button" type="button">
+          <span class="sprite-wrap"><img class="sprite" alt=""></span>
+          <span class="card-main">
+            <span class="card-top">
+              <strong class="name"></strong>
+              <span class="bst"></span>
+            </span>
+            <span class="types"></span>
+            <span class="abilities"></span>
+          </span>
+        </button>
+        <button class="add-button" type="button" title="Toevoegen aan team">+</button>
+      </article>
+    </template>
+
+    <script src="app.js?v=67"></script>
+  </body>
+</html>

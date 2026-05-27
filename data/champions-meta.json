@@ -1,0 +1,201 @@
+{
+  "version": "2026-05-26-local-1",
+  "status": "local-seed",
+  "note": "Offline Champions meta seed. This is a local starting point for format guidance, archetypes and threat checks. Validate and update against in-game Pokemon Champions data over time.",
+  "formats": {
+    "single3": {
+      "label": "Single 3v3",
+      "priorities": [
+        "zelfstandige winconditie",
+        "speed-control of priority",
+        "minimaal een veilige switch-in",
+        "geen dubbele Mega of basisspecies"
+      ]
+    },
+    "double4": {
+      "label": "Double 4v4",
+      "priorities": [
+        "support naast damage",
+        "speed-control",
+        "spread- of partnerdruk",
+        "Intimidate, Prankster of defensieve utility"
+      ]
+    }
+  },
+  "archetypes": [
+    {
+      "id": "rain",
+      "label": "Rain",
+      "formats": ["single3", "double4"],
+      "core": ["Pelipper", "Politoed", "Basculegion", "Rotom-Wash"],
+      "checks": ["Electric", "Grass", "Dragon"]
+    },
+    {
+      "id": "sun",
+      "label": "Sun",
+      "formats": ["single3", "double4"],
+      "core": ["Torkoal", "Charizard-Mega-Y", "Venusaur-Mega", "Jumbao"],
+      "checks": ["Rock", "Water", "Dragon"]
+    },
+    {
+      "id": "trickroom",
+      "label": "Trick Room",
+      "formats": ["double4"],
+      "core": ["Hatterene", "Reuniclus", "Slowbro", "Torkoal"],
+      "checks": ["Dark", "Ghost", "Steel"]
+    },
+    {
+      "id": "doublesupport",
+      "label": "Double support",
+      "formats": ["double4"],
+      "core": ["Incineroar", "Whimsicott", "Tomohawk", "Maushold"],
+      "checks": ["Rock", "Electric", "Ice"]
+    }
+  ],
+  "threats": [
+    {
+      "name": "Dragapult",
+      "priority": "high",
+      "formats": ["single3", "double4"],
+      "tags": ["speed-control", "mixed pressure"],
+      "attackTypes": ["Dragon", "Ghost"],
+      "answers": ["Fairy", "Steel", "Dark"],
+      "note": "Snelle Dragon/Ghost-druk vraagt om Fairy, Steel, Dark of eigen speed-control."
+    },
+    {
+      "name": "Garchomp",
+      "priority": "high",
+      "formats": ["single3", "double4"],
+      "tags": ["physical breaker", "Ground pressure"],
+      "attackTypes": ["Dragon", "Ground"],
+      "answers": ["Ice", "Fairy", "Flying"],
+      "note": "Ground + Dragon dwingt Ice/Fairy/Flying-antwoorden of een stevige fysieke switch-in."
+    },
+    {
+      "name": "Garchomp-Mega",
+      "priority": "high",
+      "formats": ["single3", "double4"],
+      "tags": ["Mega", "physical breaker"],
+      "attackTypes": ["Dragon", "Ground"],
+      "answers": ["Ice", "Fairy", "Flying"],
+      "note": "Mega-slot pressure; check ook of je eigen Mega-slot al bezet is."
+    },
+    {
+      "name": "Volcarona",
+      "priority": "high",
+      "formats": ["single3"],
+      "tags": ["special sweeper", "setup"],
+      "attackTypes": ["Bug", "Fire"],
+      "answers": ["Rock", "Water", "Fire"],
+      "note": "Setup-special attacker; Rock, Water of snelle revenge-kill is belangrijk."
+    },
+    {
+      "name": "Dragonite",
+      "priority": "medium",
+      "formats": ["single3", "double4"],
+      "tags": ["physical setup", "priority"],
+      "attackTypes": ["Dragon", "Flying"],
+      "answers": ["Ice", "Fairy", "Steel"],
+      "note": "Multiscale-achtige bulk vraagt om chip damage, Ice/Fairy/Steel of sterke status."
+    },
+    {
+      "name": "Tyranitar-Mega",
+      "priority": "medium",
+      "formats": ["single3"],
+      "tags": ["Mega", "bulky breaker"],
+      "attackTypes": ["Rock", "Dark"],
+      "answers": ["Fighting", "Ground", "Steel"],
+      "note": "Bulky Mega die speciale druk opvangt; Fighting/Ground/Steel helpt."
+    },
+    {
+      "name": "Charizard-Mega-Y",
+      "priority": "high",
+      "formats": ["single3", "double4"],
+      "tags": ["Mega", "Sun", "special breaker"],
+      "attackTypes": ["Fire", "Flying"],
+      "answers": ["Rock", "Water", "Dragon"],
+      "note": "Sun-boosted Fire pressure; Rock-resist of Water/Dragon-checks zijn belangrijk."
+    },
+    {
+      "name": "Venusaur-Mega",
+      "priority": "medium",
+      "formats": ["single3"],
+      "tags": ["Mega", "bulky special"],
+      "attackTypes": ["Grass", "Poison"],
+      "answers": ["Fire", "Flying", "Psychic"],
+      "note": "Bulky Grass/Poison kan balans teams vertragen; Fire/Flying/Psychic helpt."
+    },
+    {
+      "name": "Pelipper",
+      "priority": "medium",
+      "formats": ["single3", "double4"],
+      "tags": ["Rain", "weather"],
+      "attackTypes": ["Water", "Flying"],
+      "answers": ["Electric", "Rock", "Water"],
+      "note": "Rain setter; Electric/Rock-pressure of Water-resist houdt rain in toom."
+    },
+    {
+      "name": "Basculegion",
+      "priority": "medium",
+      "formats": ["single3", "double4"],
+      "tags": ["Rain", "physical breaker"],
+      "attackTypes": ["Water", "Ghost"],
+      "answers": ["Grass", "Water", "Dark"],
+      "note": "Rain-abuser met Ghost/Water pressure; Grass/Water/Dark-antwoorden zijn nuttig."
+    },
+    {
+      "name": "Torkoal",
+      "priority": "medium",
+      "formats": ["double4"],
+      "tags": ["Sun", "Trick Room", "weather"],
+      "attackTypes": ["Fire"],
+      "answers": ["Water", "Rock", "Dragon"],
+      "note": "Sun + lage Speed past in Trick Room; Water/Rock/Dragon of weather control helpt."
+    },
+    {
+      "name": "Hatterene",
+      "priority": "medium",
+      "formats": ["double4"],
+      "tags": ["Trick Room", "special breaker"],
+      "attackTypes": ["Psychic", "Fairy"],
+      "answers": ["Steel", "Poison", "Ghost"],
+      "note": "Trick Room setter/abuser; Steel/Poison/Ghost en Taunt-achtige druk zijn nuttig."
+    },
+    {
+      "name": "Incineroar",
+      "priority": "high",
+      "formats": ["double4"],
+      "tags": ["Double support", "Intimidate"],
+      "attackTypes": ["Fire", "Dark"],
+      "answers": ["Water", "Ground", "Fighting"],
+      "note": "Sterke double support; Water/Ground/Fighting en speciale druk helpen."
+    },
+    {
+      "name": "Whimsicott",
+      "priority": "medium",
+      "formats": ["double4"],
+      "tags": ["Double support", "Prankster", "speed-control"],
+      "attackTypes": ["Grass", "Fairy"],
+      "answers": ["Fire", "Poison", "Steel"],
+      "note": "Prankster utility en speed-control; Fire/Poison/Steel zetten druk."
+    },
+    {
+      "name": "Rotom-Wash",
+      "priority": "medium",
+      "formats": ["single3", "double4"],
+      "tags": ["pivot", "bulky utility"],
+      "attackTypes": ["Water", "Electric"],
+      "answers": ["Grass", "Dragon", "Electric"],
+      "note": "Flexibele pivot; Grass of sterke neutral pressure voorkomt vrije wissels."
+    },
+    {
+      "name": "Palafin-Hero",
+      "priority": "medium",
+      "formats": ["single3", "double4"],
+      "tags": ["physical breaker", "Water pressure"],
+      "attackTypes": ["Water"],
+      "answers": ["Grass", "Water", "Dragon"],
+      "note": "Hoge fysieke Water-druk; resist of revenge-kill is belangrijk."
+    }
+  ]
+}

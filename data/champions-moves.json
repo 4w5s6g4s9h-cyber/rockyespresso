@@ -1,0 +1,602 @@
+{
+  "generatedAt": "2026-05-27",
+  "sources": [
+    {
+      "id": "smogon-champions",
+      "label": "Smogon Strategy Pokedex - Champions",
+      "url": "https://www.smogon.com/dex/champions/pokemon/"
+    },
+    {
+      "id": "serebii",
+      "label": "Serebii.net Pokedex",
+      "url": "https://www.serebii.net/pokedex-sv/"
+    }
+  ],
+  "note": "Offline move reference for curated sets. Values follow mainline Pokemon move data unless Champions balance patches differ.",
+  "moves": {
+    "Acrobatics": {
+      "type": "Flying",
+      "category": "Physical",
+      "power": "55",
+      "accuracy": "100",
+      "pp": "15",
+      "effect": "Doubles power if the user has no held item."
+    },
+    "Aqua Jet": {
+      "type": "Water",
+      "category": "Physical",
+      "power": "40",
+      "accuracy": "100",
+      "pp": "20",
+      "effect": "Priority Water attack."
+    },
+    "Brave Bird": {
+      "type": "Flying",
+      "category": "Physical",
+      "power": "120",
+      "accuracy": "100",
+      "pp": "15",
+      "effect": "Strong Flying STAB; user takes recoil."
+    },
+    "Bug Buzz": {
+      "type": "Bug",
+      "category": "Special",
+      "power": "90",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "Special Bug STAB; can lower Sp. Def."
+    },
+    "Close Combat": {
+      "type": "Fighting",
+      "category": "Physical",
+      "power": "120",
+      "accuracy": "100",
+      "pp": "5",
+      "effect": "High power; lowers user's Defense and Sp. Def."
+    },
+    "Crunch": {
+      "type": "Dark",
+      "category": "Physical",
+      "power": "80",
+      "accuracy": "100",
+      "pp": "15",
+      "effect": "Physical Dark STAB; can lower Defense."
+    },
+    "Defog": {
+      "type": "Flying",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "15",
+      "effect": "Removes hazards/screens and lowers target evasion."
+    },
+    "Dire Claw": {
+      "type": "Poison",
+      "category": "Physical",
+      "power": "80",
+      "accuracy": "100",
+      "pp": "15",
+      "effect": "Can poison, paralyze, or sleep the target."
+    },
+    "Dragon Claw": {
+      "type": "Dragon",
+      "category": "Physical",
+      "power": "80",
+      "accuracy": "100",
+      "pp": "15",
+      "effect": "Reliable physical Dragon STAB."
+    },
+    "Dragon Dance": {
+      "type": "Dragon",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "20",
+      "effect": "Raises Attack and Speed."
+    },
+    "Dragon Tail": {
+      "type": "Dragon",
+      "category": "Physical",
+      "power": "60",
+      "accuracy": "90",
+      "pp": "10",
+      "effect": "Forces the target out; negative priority."
+    },
+    "Dual Wingbeat": {
+      "type": "Flying",
+      "category": "Physical",
+      "power": "40",
+      "accuracy": "90",
+      "pp": "10",
+      "effect": "Hits twice; useful Flying contact coverage."
+    },
+    "Earth Power": {
+      "type": "Ground",
+      "category": "Special",
+      "power": "90",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "Special Ground coverage; can lower Sp. Def."
+    },
+    "Earthquake": {
+      "type": "Ground",
+      "category": "Physical",
+      "power": "100",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "Strong Ground STAB; hits adjacent Pokemon in doubles."
+    },
+    "Encore": {
+      "type": "Normal",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "100",
+      "pp": "5",
+      "effect": "Locks target into its last used move."
+    },
+    "Extreme Speed": {
+      "type": "Normal",
+      "category": "Physical",
+      "power": "80",
+      "accuracy": "100",
+      "pp": "5",
+      "effect": "Very high priority finishing move."
+    },
+    "Fake Out": {
+      "type": "Normal",
+      "category": "Physical",
+      "power": "40",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "First-turn priority flinch pressure."
+    },
+    "Fiery Dance": {
+      "type": "Fire",
+      "category": "Special",
+      "power": "80",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "Fire STAB; can raise Sp. Atk."
+    },
+    "Fire Blast": {
+      "type": "Fire",
+      "category": "Special",
+      "power": "110",
+      "accuracy": "85",
+      "pp": "5",
+      "effect": "High-power Fire coverage; can burn."
+    },
+    "Fire Fang": {
+      "type": "Fire",
+      "category": "Physical",
+      "power": "65",
+      "accuracy": "95",
+      "pp": "15",
+      "effect": "Physical Fire coverage; can burn or flinch."
+    },
+    "Flamethrower": {
+      "type": "Fire",
+      "category": "Special",
+      "power": "90",
+      "accuracy": "100",
+      "pp": "15",
+      "effect": "Reliable Fire STAB; can burn."
+    },
+    "Flare Blitz": {
+      "type": "Fire",
+      "category": "Physical",
+      "power": "120",
+      "accuracy": "100",
+      "pp": "15",
+      "effect": "Strong Fire STAB; user takes recoil."
+    },
+    "Flash Cannon": {
+      "type": "Steel",
+      "category": "Special",
+      "power": "80",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "Special Steel STAB; can lower Sp. Def."
+    },
+    "Flip Turn": {
+      "type": "Water",
+      "category": "Physical",
+      "power": "60",
+      "accuracy": "100",
+      "pp": "20",
+      "effect": "Water pivot move that switches the user out."
+    },
+    "Focus Blast": {
+      "type": "Fighting",
+      "category": "Special",
+      "power": "120",
+      "accuracy": "70",
+      "pp": "5",
+      "effect": "High-power Fighting coverage; can lower Sp. Def."
+    },
+    "Giga Drain": {
+      "type": "Grass",
+      "category": "Special",
+      "power": "75",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "Grass coverage that restores HP."
+    },
+    "Hurricane": {
+      "type": "Flying",
+      "category": "Special",
+      "power": "110",
+      "accuracy": "70",
+      "pp": "10",
+      "effect": "Strong Flying STAB; perfect accuracy in rain."
+    },
+    "Hydro Pump": {
+      "type": "Water",
+      "category": "Special",
+      "power": "110",
+      "accuracy": "80",
+      "pp": "5",
+      "effect": "High-power Water STAB."
+    },
+    "Hyper Voice": {
+      "type": "Normal",
+      "category": "Special",
+      "power": "90",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "Sound move; spread damage in doubles."
+    },
+    "Ice Spinner": {
+      "type": "Ice",
+      "category": "Physical",
+      "power": "80",
+      "accuracy": "100",
+      "pp": "15",
+      "effect": "Ice coverage; removes terrain."
+    },
+    "Iron Head": {
+      "type": "Steel",
+      "category": "Physical",
+      "power": "80",
+      "accuracy": "100",
+      "pp": "15",
+      "effect": "Physical Steel STAB; can flinch."
+    },
+    "Jet Punch": {
+      "type": "Water",
+      "category": "Physical",
+      "power": "60",
+      "accuracy": "100",
+      "pp": "15",
+      "effect": "Priority Water attack."
+    },
+    "King's Shield": {
+      "type": "Steel",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "10",
+      "effect": "Protects user and can punish contact attackers."
+    },
+    "Knock Off": {
+      "type": "Dark",
+      "category": "Physical",
+      "power": "65",
+      "accuracy": "100",
+      "pp": "20",
+      "effect": "Removes target's item; extra value vs item users."
+    },
+    "Kowtow Cleave": {
+      "type": "Dark",
+      "category": "Physical",
+      "power": "85",
+      "accuracy": "-",
+      "pp": "10",
+      "effect": "Reliable Dark STAB that does not miss."
+    },
+    "Last Respects": {
+      "type": "Ghost",
+      "category": "Physical",
+      "power": "50+",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "Power rises for each fainted ally."
+    },
+    "Leech Seed": {
+      "type": "Grass",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "90",
+      "pp": "10",
+      "effect": "Drains HP each turn and supports bulky play."
+    },
+    "Moonblast": {
+      "type": "Fairy",
+      "category": "Special",
+      "power": "95",
+      "accuracy": "100",
+      "pp": "15",
+      "effect": "Reliable Fairy STAB; can lower Sp. Atk."
+    },
+    "Moonlight": {
+      "type": "Fairy",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "5",
+      "effect": "Recovery; amount depends on weather."
+    },
+    "Mortal Spin": {
+      "type": "Poison",
+      "category": "Physical",
+      "power": "30",
+      "accuracy": "100",
+      "pp": "15",
+      "effect": "Removes hazards/bind effects and poisons foes."
+    },
+    "Pain Split": {
+      "type": "Normal",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "20",
+      "effect": "Averages user and target HP."
+    },
+    "Parting Shot": {
+      "type": "Dark",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "100",
+      "pp": "20",
+      "effect": "Lowers target offenses and switches user out."
+    },
+    "Power Gem": {
+      "type": "Rock",
+      "category": "Special",
+      "power": "80",
+      "accuracy": "100",
+      "pp": "20",
+      "effect": "Reliable special Rock coverage."
+    },
+    "Protect": {
+      "type": "Normal",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "10",
+      "effect": "Protects for a turn; core doubles utility."
+    },
+    "Psychic": {
+      "type": "Psychic",
+      "category": "Special",
+      "power": "90",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "Reliable Psychic STAB; can lower Sp. Def."
+    },
+    "Quiver Dance": {
+      "type": "Bug",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "20",
+      "effect": "Raises Sp. Atk, Sp. Def, and Speed."
+    },
+    "Rapid Spin": {
+      "type": "Normal",
+      "category": "Physical",
+      "power": "50",
+      "accuracy": "100",
+      "pp": "40",
+      "effect": "Removes hazards and raises Speed."
+    },
+    "Roost": {
+      "type": "Flying",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "5",
+      "effect": "Reliable recovery; temporarily removes Flying typing."
+    },
+    "Shadow Ball": {
+      "type": "Ghost",
+      "category": "Special",
+      "power": "80",
+      "accuracy": "100",
+      "pp": "15",
+      "effect": "Special Ghost STAB; can lower Sp. Def."
+    },
+    "Shadow Sneak": {
+      "type": "Ghost",
+      "category": "Physical",
+      "power": "40",
+      "accuracy": "100",
+      "pp": "30",
+      "effect": "Priority Ghost attack."
+    },
+    "Sludge Bomb": {
+      "type": "Poison",
+      "category": "Special",
+      "power": "90",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "Poison STAB; can poison."
+    },
+    "Solar Beam": {
+      "type": "Grass",
+      "category": "Special",
+      "power": "120",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "Charges normally; attacks immediately in sun."
+    },
+    "Stealth Rock": {
+      "type": "Rock",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "20",
+      "effect": "Sets entry hazard that punishes switches."
+    },
+    "Stone Edge": {
+      "type": "Rock",
+      "category": "Physical",
+      "power": "100",
+      "accuracy": "80",
+      "pp": "5",
+      "effect": "High-power Rock STAB; high critical-hit ratio."
+    },
+    "Sucker Punch": {
+      "type": "Dark",
+      "category": "Physical",
+      "power": "70",
+      "accuracy": "100",
+      "pp": "5",
+      "effect": "Priority if the target uses an attacking move."
+    },
+    "Swords Dance": {
+      "type": "Normal",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "20",
+      "effect": "Raises Attack by two stages."
+    },
+    "Synthesis": {
+      "type": "Grass",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "5",
+      "effect": "Recovery; amount depends on weather."
+    },
+    "Tailwind": {
+      "type": "Flying",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "15",
+      "effect": "Doubles team Speed for several turns."
+    },
+    "Thunder Wave": {
+      "type": "Electric",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "90",
+      "pp": "20",
+      "effect": "Paralyzes the target for speed control."
+    },
+    "Trick Room": {
+      "type": "Psychic",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "5",
+      "effect": "Slower Pokemon move first for several turns."
+    },
+    "U-turn": {
+      "type": "Bug",
+      "category": "Physical",
+      "power": "70",
+      "accuracy": "100",
+      "pp": "20",
+      "effect": "Bug pivot move that switches the user out."
+    },
+    "Volt Switch": {
+      "type": "Electric",
+      "category": "Special",
+      "power": "70",
+      "accuracy": "100",
+      "pp": "20",
+      "effect": "Electric pivot move that switches the user out."
+    },
+    "Wave Crash": {
+      "type": "Water",
+      "category": "Physical",
+      "power": "120",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "Strong Water STAB; user takes recoil."
+    },
+    "Weather Ball": {
+      "type": "Normal",
+      "category": "Special",
+      "power": "50",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "Changes type and doubles power in weather."
+    },
+    "Will-O-Wisp": {
+      "type": "Fire",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "85",
+      "pp": "15",
+      "effect": "Burns the target to reduce physical pressure."
+    },
+    "Outrage": {
+      "type": "Dragon",
+      "category": "Physical",
+      "power": "120",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "Locks the user in for 2-3 turns, then confuses the user."
+    },
+    "Poison Jab": {
+      "type": "Poison",
+      "category": "Physical",
+      "power": "80",
+      "accuracy": "100",
+      "pp": "20",
+      "effect": "Physical Poison coverage; 30% chance to poison."
+    },
+    "Rock Tomb": {
+      "type": "Rock",
+      "category": "Physical",
+      "power": "60",
+      "accuracy": "95",
+      "pp": "15",
+      "effect": "Lowers target Speed by one stage; useful tempo control."
+    },
+    "Overheat": {
+      "type": "Fire",
+      "category": "Special",
+      "power": "130",
+      "accuracy": "90",
+      "pp": "5",
+      "effect": "Very strong Fire attack; lowers user's Sp. Atk by two stages."
+    },
+    "Flame Charge": {
+      "type": "Fire",
+      "category": "Physical",
+      "power": "50",
+      "accuracy": "100",
+      "pp": "20",
+      "effect": "Raises user's Speed by one stage after damage."
+    },
+    "Air Slash": {
+      "type": "Flying",
+      "category": "Special",
+      "power": "75",
+      "accuracy": "95",
+      "pp": "15",
+      "effect": "Flying STAB; 30% chance to flinch."
+    },
+    "Nasty Plot": {
+      "type": "Dark",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "20",
+      "effect": "Raises Sp. Atk by two stages."
+    },
+    "Calm Mind": {
+      "type": "Psychic",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "20",
+      "effect": "Raises Sp. Atk and Sp. Def by one stage."
+    }
+  }
+}
