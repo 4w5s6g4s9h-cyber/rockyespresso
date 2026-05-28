@@ -604,7 +604,7 @@ function createStartPanel() {
   if (state.team.length) copy.append(createStartDashboard());
 
   const groups = document.createElement("div");
-  groups.className = "starter-groups";
+  groups.className = state.team.length ? "starter-groups wide-picks" : "starter-groups";
   const suggestions = startSuggestionGroups();
   if (!suggestions.length) {
     const empty = document.createElement("p");
@@ -615,9 +615,6 @@ function createStartPanel() {
     groups.append(empty);
   }
   suggestions.forEach((group) => groups.append(createStarterGroup(group)));
-  if (state.team.length && state.team.length < maxTeamSize()) {
-    groups.append(createTeamNeedsPanel());
-  }
 
   panel.append(copy, groups);
   return panel;
@@ -853,14 +850,43 @@ function createStarterGroup(group) {
   description.textContent = group.description;
   head.append(title, description);
 
+  if (group.needs?.length) {
+    head.append(createChoiceNeeds(group.needs));
+  }
+
   const picks = document.createElement("div");
   picks.className = "starter-picks";
-  group.items.forEach(({ pokemon, reason }) => {
-    picks.append(createStarterPick(pokemon, reason));
-  });
+  if (group.items.length) {
+    group.items.forEach(({ pokemon, reason }) => {
+      picks.append(createStarterPick(pokemon, reason));
+    });
+  } else {
+    const empty = document.createElement("p");
+    empty.className = "starter-empty";
+    empty.textContent = "Maak een plek vrij om nieuwe aanbevelingen te zien.";
+    picks.append(empty);
+  }
 
   section.append(head, picks);
   return section;
+}
+
+function createChoiceNeeds(needs) {
+  const list = document.createElement("div");
+  list.className = "choice-need-list";
+  needs.forEach((need) => {
+    const item = document.createElement("div");
+    item.className = `choice-need ${need.done ? "done" : "open"}`;
+    const mark = document.createElement("span");
+    mark.textContent = need.done ? "OK" : "Nodig";
+    const text = document.createElement("strong");
+    text.textContent = need.label;
+    const note = document.createElement("small");
+    note.textContent = need.note;
+    item.append(mark, text, note);
+    list.append(item);
+  });
+  return list;
 }
 
 function createTeamNeedsPanel() {
@@ -872,7 +898,9 @@ function createTeamNeedsPanel() {
   const title = document.createElement("h3");
   title.textContent = "Waarom deze richting?";
   const description = document.createElement("p");
-  description.textContent = "De app kijkt nu vooral naar open teamgaten.";
+  description.textContent = state.team.length >= maxTeamSize()
+    ? "De app checkt nu je rollen en resterende aandachtspunten."
+    : "De app kijkt nu vooral naar open teamgaten.";
   head.append(title, description);
 
   const list = document.createElement("div");
@@ -899,10 +927,11 @@ function startSuggestionGroups() {
     return [{
       title: state.team.length >= maxTeamSize() ? "Controleer je team" : "Beste volgende keuzes",
       description: state.team.length >= maxTeamSize()
-        ? "Je team is vol. Deze opties tonen alleen als je eerst een slot vrijmaakt."
-        : "Dynamisch gekozen op basis van je huidige zwaktes, rollen en balans.",
-      items: recommendedStartPicks()
-    }].filter((group) => group.items.length);
+        ? "Je team is vol. Dit overzicht laat zien welke rollen nog aandacht vragen."
+        : "Dynamisch gekozen op basis van wat je team nu nog nodig heeft.",
+      items: recommendedStartPicks(),
+      needs: currentTeamNeeds()
+    }];
   }
 
   const used = new Set();
@@ -1725,18 +1754,19 @@ function renderTeamAnalysis() {
     return;
   }
 
-  teamAnalysis.append(createTeamProgress());
-  teamAnalysis.append(createTeamQualityPanel());
-  teamAnalysis.append(createFormatFocusPanel());
+  teamAnalysis.append(createTeamSummaryPanel());
+  appendIfPresent(teamAnalysis, createTeamQualityPanel());
   teamAnalysis.append(createTypePanel());
   teamAnalysis.append(createThreatChecklistPanel());
-  teamAnalysis.append(createTeamSelectionPanel());
-  teamAnalysis.append(createSuggestionPanel());
-  teamAnalysis.append(createBalancePanel());
   teamAnalysis.append(createRoleChecklistPanel());
-  teamAnalysis.append(createStylePlanPanel());
-  teamAnalysis.append(createDataStatusPanel());
-  teamAnalysis.append(createExportPanel());
+  teamAnalysis.append(createFormatFocusPanel());
+  if (state.team.length < maxTeamSize()) {
+    teamAnalysis.append(createSuggestionPanel());
+  }
+}
+
+function appendIfPresent(parent, child) {
+  if (child) parent.append(child);
 }
 
 function renderTeamOverview() {
@@ -1786,20 +1816,32 @@ function renderTeamOverview() {
   teamOverview.append(summary, roster);
 }
 
-function createTeamProgress() {
+function createTeamSummaryPanel() {
   const panel = document.createElement("div");
-  panel.className = "analysis-block";
+  panel.className = "analysis-block analysis-summary";
 
   const title = document.createElement("h3");
-  title.textContent = `${state.team.length}/${maxTeamSize()} teamleden`;
+  title.textContent = state.team.length >= maxTeamSize() ? "Team klaar voor check" : "Team in opbouw";
 
-  const note = document.createElement("p");
-  const format = BATTLE_FORMATS[state.battleFormat];
-  note.textContent = state.team.length < maxTeamSize()
-    ? `${format.description} Nog ${maxTeamSize() - state.team.length} plek${maxTeamSize() - state.team.length === 1 ? "" : "ken"} vrij.`
-    : "Je team is vol. Klik op een teamlid om details te bekijken.";
+  const chips = document.createElement("div");
+  chips.className = "summary-chips";
+  const risky = state.team.filter((pokemon) => needsValidationAsCore(pokemon)).length;
+  const generated = state.team.filter((pokemon) => selectedBuild(pokemon).status === "generated").length;
+  const quality = risky || generated
+    ? `${risky + generated} aandachtspunt${risky + generated === 1 ? "" : "en"}`
+    : "Sets OK";
+  [
+    ["Team", `${state.team.length}/${maxTeamSize()}`],
+    ["Format", BATTLE_FORMATS[state.battleFormat].label],
+    ["Plan", TEAM_STYLES[state.teamStyle].label],
+    ["Kwaliteit", quality]
+  ].forEach(([label, value]) => {
+    const item = document.createElement("div");
+    item.innerHTML = `<span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong>`;
+    chips.append(item);
+  });
 
-  panel.append(title, note);
+  panel.append(title, chips);
   return panel;
 }
 
@@ -1808,22 +1850,12 @@ function createTeamQualityPanel() {
   const generated = state.team.filter((pokemon) => selectedBuild(pokemon).status === "generated");
 
   if (!risky.length && !generated.length) {
-    const panel = document.createElement("div");
-    panel.className = "analysis-block";
-    panel.append(createSmallTitle("Teamkwaliteit"));
-    const note = document.createElement("p");
-    note.textContent = "De gekozen Pokémon hebben voldoende basiswaarde en gebruiken geen onzekere door-de-app-bedachte sets.";
-    panel.append(note);
-    return panel;
+    return null;
   }
 
   const panel = document.createElement("div");
   panel.className = "analysis-block quality-warning";
   panel.append(createSmallTitle("Teamkwaliteit"));
-
-  const note = document.createElement("p");
-  note.textContent = "Niet elke gekozen Pokémon is betrouwbaar genoeg voor een topteam. De app telt zulke picks minder zwaar mee in analyses.";
-  panel.append(note);
 
   const list = document.createElement("div");
   list.className = "quality-list";
@@ -1918,7 +1950,7 @@ function createBalancePanel() {
 function createRoleChecklistPanel() {
   const panel = document.createElement("div");
   panel.className = "analysis-block";
-  panel.append(createSmallTitle("Teamrollen"));
+  panel.append(createSmallTitle("Rollen"));
 
   const roles = roleCoverage();
   const list = document.createElement("div");
@@ -1945,7 +1977,7 @@ function createRoleChecklistPanel() {
 function createTypePanel() {
   const panel = document.createElement("div");
   panel.className = "analysis-block type-analysis";
-  panel.append(createSmallTitle("Type matchups"));
+  panel.append(createSmallTitle("Matchups"));
 
   const concerns = teamTypeSummary()
     .filter((item) => item.weak >= 2 && item.resist + item.immune === 0)
@@ -1953,7 +1985,7 @@ function createTypePanel() {
 
   if (!concerns.length) {
     const good = document.createElement("p");
-    good.textContent = "Geen grote gedeelde type-zwakte zonder antwoord gevonden.";
+    good.textContent = "Geen onbeantwoorde gedeelde zwakte.";
     panel.append(good);
   } else {
     panel.append(createTypeList(concerns, "Let op"));
@@ -1971,12 +2003,7 @@ function createFormatFocusPanel() {
   const format = state.championsMeta.formats?.[state.battleFormat];
   const panel = document.createElement("div");
   panel.className = "analysis-block format-focus";
-  panel.append(createSmallTitle(`Format-focus: ${BATTLE_FORMATS[state.battleFormat].label}`));
-
-  const note = document.createElement("p");
-  note.textContent = state.battleFormat === "double4"
-    ? "Double 4v4 waardeert support, speed-control en defensieve synergie hoger dan losse power."
-    : "Single 3v3 waardeert zelfstandige matchups, snelheid, revenge-killing en weinig harde counters.";
+  panel.append(createSmallTitle("Formatregels"));
 
   const list = document.createElement("div");
   list.className = "format-priorities";
@@ -1986,7 +2013,7 @@ function createFormatFocusPanel() {
     list.append(item);
   });
 
-  panel.append(note, list);
+  panel.append(list);
   return panel;
 }
 
@@ -2057,7 +2084,7 @@ function createThreatChecklistPanel() {
   const threats = relevantThreats();
   const panel = document.createElement("div");
   panel.className = "analysis-block threat-checklist";
-  panel.append(createSmallTitle("Champions threat-check"));
+  panel.append(createSmallTitle("Threat-check"));
 
   if (!threats.length) {
     const empty = document.createElement("p");
