@@ -406,7 +406,7 @@ function resetToStart() {
   render();
   resetApp.textContent = "Gereset";
   window.setTimeout(() => {
-    resetApp.textContent = "Beginscherm";
+    resetApp.textContent = "Reset";
   }, 900);
   document.querySelector(".hero").scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -699,15 +699,7 @@ function createStartSteps() {
   head.className = "start-progress-head";
   const title = document.createElement("strong");
   title.textContent = "Aanpak";
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = "start-refresh";
-  button.textContent = "Nieuwe suggesties";
-  button.addEventListener("click", () => {
-    state.startSuggestionPage += 1;
-    render();
-  });
-  head.append(title, button);
+  head.append(title);
 
   const steps = document.createElement("ol");
   steps.className = "start-steps";
@@ -846,6 +838,17 @@ function createStarterGroup(group) {
   head.className = "starter-section-head";
   const title = document.createElement("h3");
   title.textContent = group.title;
+  if (group.refreshable) {
+    const refresh = document.createElement("button");
+    refresh.type = "button";
+    refresh.className = "start-refresh";
+    refresh.textContent = "Nieuwe suggesties";
+    refresh.addEventListener("click", () => {
+      state.startSuggestionPage += 1;
+      render();
+    });
+    title.append(" ", refresh);
+  }
   const description = document.createElement("p");
   description.textContent = group.description;
   head.append(title, description);
@@ -903,7 +906,9 @@ function startSuggestionGroups() {
   }
 
   const used = new Set();
-  const safeStarters = starterPokemon().slice(0, 3).map((pokemon) => {
+  const baseStarters = starterPokemon();
+  const rotate = baseStarters.length ? state.startSuggestionPage % baseStarters.length : 0;
+  const safeStarters = [...baseStarters.slice(rotate), ...baseStarters.slice(0, rotate)].slice(0, 3).map((pokemon) => {
     used.add(pokemon.name);
     return { pokemon, reason: starterReason(pokemon) };
   });
@@ -914,12 +919,14 @@ function startSuggestionGroups() {
     {
       title: "Veilige starters",
       description: "Sterke eerste keuzes die weinig voorkennis vragen.",
-      items: safeStarters
+      items: safeStarters,
+      refreshable: true
     },
     {
       title: "Alternatieven voor je plan",
       description: "Aanvallende druk, defensieve veiligheid en tempo in een compacte shortlist.",
-      items: planPicks
+      items: planPicks,
+      refreshable: true
     }
   ];
 
