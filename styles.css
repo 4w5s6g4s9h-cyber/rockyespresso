@@ -2428,6 +2428,11 @@ a,
   color: var(--ui-action-ink);
 }
 
+.set-status.sv {
+  background: color-mix(in srgb, var(--ui-info), transparent 82%);
+  color: #164c63;
+}
+
 .set-status.generated {
   border: 1px solid color-mix(in srgb, var(--ui-confirm-2), transparent 72%);
   background: color-mix(in srgb, var(--ui-confirm-2), transparent 90%);
