@@ -129,6 +129,10 @@ const EV_PRESETS = [
   "248 HP / 156 Def / 104 Spe"
 ];
 
+const EV_TOTAL_LIMIT = 510;
+const EV_STAT_LIMIT = 252;
+const STAT_LABELS = ["HP", "Atk", "Def", "SpA", "SpD", "Spe"];
+
 const state = {
   pokemon: [],
   movesets: {},
@@ -429,7 +433,7 @@ function renderTypeFilters() {
   typeFilters.classList.toggle("collapsed", !state.typeFiltersOpen);
   typeToggle.setAttribute("aria-expanded", String(state.typeFiltersOpen));
   typeToggle.textContent = state.typeFiltersOpen ? "Types verbergen" : "Types tonen";
-  activeTypeLabel.textContent = selectedTypeLabel();
+  activeTypeLabel.textContent = state.selectedTypes.length ? selectedTypeLabel() : "";
 
   ["All", ...TYPES].forEach((type) => {
     const button = document.createElement("button");
@@ -599,7 +603,7 @@ function createStartPanel() {
   copy.append(title, text);
   const helper = document.createElement("div");
   helper.className = "start-helper";
-  helper.append(createStartControls(), createStartSteps());
+  helper.append(createStartControls());
   copy.append(helper);
   if (state.team.length) copy.append(createStartDashboard());
 
@@ -688,43 +692,6 @@ function createStartChoiceGroup(label, options, current, onSelect) {
   return group;
 }
 
-function createStartSteps() {
-  const wrap = document.createElement("div");
-  wrap.className = "start-progress";
-
-  const head = document.createElement("div");
-  head.className = "start-progress-head";
-  const title = document.createElement("strong");
-  title.textContent = "Aanpak";
-  head.append(title);
-
-  const steps = document.createElement("ol");
-  steps.className = "start-steps";
-
-  const teamFull = state.team.length >= maxTeamSize();
-  const rulesOk = teamRules().every((rule) => rule.ok);
-  const items = [
-    { label: "Kies kern", state: state.team.length ? "done" : "active" },
-    { label: "Vul zwaktes", state: state.team.length && !teamFull ? "active" : state.team.length ? "done" : "" },
-    { label: "Check regels", state: teamFull ? (rulesOk ? "done" : "active") : "" },
-    { label: "Optimaliseer sets", state: teamFull && rulesOk ? "active" : "" }
-  ];
-
-  items.forEach((item, index) => {
-    const step = document.createElement("li");
-    step.className = item.state ? `start-step ${item.state}` : "start-step";
-    const number = document.createElement("span");
-    number.textContent = String(index + 1);
-    const label = document.createElement("strong");
-    label.textContent = item.label;
-    step.append(number, label);
-    steps.append(step);
-  });
-
-  wrap.append(head, steps);
-  return wrap;
-}
-
 function createStartDashboard() {
   const dashboard = document.createElement("div");
   dashboard.className = "start-dashboard";
@@ -743,14 +710,11 @@ function createStartDashboard() {
 }
 
 function startGuidanceItems() {
-  const openSlots = maxTeamSize() - state.team.length;
   const concern = mainTypeConcern();
   const missingRole = roleCoverage().find((role) => !role.done);
   const mega = state.team.find(isMega);
 
   return [
-    ["Format", `${BATTLE_FORMATS[state.battleFormat].label} · ${state.team.length}/${maxTeamSize()}`],
-    ["Volgende plek", openSlots > 0 ? `${openSlots} open` : "Team vol"],
     ["Type aandacht", concern ? `${concern.type}: ${concern.weak} zwak, geen antwoord` : "Geen grote gedeelde zwakte"],
     ["Rol mist", missingRole ? missingRole.label : "Basisrollen op orde"],
     ["Mega-slot", mega ? mega.name : "Nog vrij"]
@@ -784,7 +748,7 @@ function createStarterPick(pokemon, reason = starterReason(pokemon)) {
   const build = selectedBuild(pokemon);
   const set = document.createElement("span");
   set.className = "starter-pick-set";
-  set.textContent = `${build.label} · ${build.item} · ${setQualityLabel(build)}`;
+  set.textContent = quickDecisionLabel(pokemon, build);
   const note = document.createElement("span");
   note.className = "starter-pick-note";
   note.textContent = reason;
@@ -1271,7 +1235,8 @@ function renderDetail(pokemon) {
 
 function trainingOverviewHtml(pokemon) {
   const build = selectedBuild(pokemon);
-  const evs = parseEvs(build.evs);
+  const safeEvs = safeSelectedEv(build.evs);
+  const evs = parseEvs(safeEvs);
   const stats = statEntries(pokemon);
   const basePoints = radarPoints(stats.map(([, value]) => value));
   const trainedStats = stats.map(([label, value]) => [label, trainedStatValue(value, evs[label] ?? 0)]);
@@ -1295,7 +1260,7 @@ function trainingOverviewHtml(pokemon) {
           ${stats.map(([label, value]) => statTrainingRow(label, value, evs[label] ?? 0)).join("")}
         </div>
       </div>
-      <div class="ev-summary">${escapeHtml(build.evs)}</div>
+      <div class="ev-summary">${escapeHtml(safeEvs)}</div>
     </div>
   `;
 }
@@ -1313,14 +1278,23 @@ function statEntries(pokemon) {
 
 function statTrainingRow(label, value, ev) {
   const trained = trainedStatValue(value, ev);
+  const evLevel = Math.min(1, ev / 252);
+  const evColor = evInvestmentColor(ev);
   return `
-    <div class="stat-training-row">
+    <div class="stat-training-row" style="--ev-level:${evLevel};--ev-color:${evColor}">
       <strong>${label}</strong>
       <span>${value}</span>
-      <span class="ev-pill">${ev ? `${ev} SP` : "0 SP"}</span>
+      <span class="ev-pill">${ev}</span>
       <span class="meter"><span style="width:${Math.min(100, trained / 220 * 100)}%"></span></span>
     </div>
   `;
+}
+
+function evInvestmentColor(ev) {
+  if (ev >= 180) return "#e34b77";
+  if (ev >= 80) return "#f0a018";
+  if (ev > 0) return "#39bdda";
+  return "#d9d7f4";
 }
 
 function trainedStatValue(base, ev) {
@@ -1331,7 +1305,7 @@ function parseEvs(evs) {
   const values = { HP: 0, Atk: 0, Def: 0, SpA: 0, SpD: 0, Spe: 0 };
   String(evs).split("/").forEach((part) => {
     const match = part.trim().match(/^(\d+)\s+(HP|Atk|Def|SpA|SpD|Spe)$/);
-    if (match) values[match[2]] = Number(match[1]);
+    if (match) values[match[2]] = Math.max(0, Math.min(EV_STAT_LIMIT, Number(match[1])));
   });
   return values;
 }
@@ -1371,6 +1345,7 @@ function addToTeam(pokemon) {
 function renderTeam() {
   teamSlots.replaceChildren();
   document.querySelector(".team .panel-head h2").textContent = `Team (${BATTLE_FORMATS[state.battleFormat].label})`;
+  document.querySelector(".team .team-inline-summary")?.remove();
   for (let index = 0; index < maxTeamSize(); index += 1) {
     const member = state.team[index];
     const slot = document.createElement(member ? "div" : "button");
@@ -1395,9 +1370,47 @@ function renderTeam() {
     }
     teamSlots.append(slot);
   }
+  if (state.team.length) teamSlots.insertAdjacentElement("afterend", createTeamInlineSummary());
   renderTeamAnalysis();
   renderTeamOverview();
   renderTeamWorkbench();
+}
+
+function createTeamInlineSummary() {
+  const wrap = document.createElement("div");
+  wrap.className = "team-inline-summary";
+
+  const facts = document.createElement("div");
+  facts.className = "overview-grid";
+  const missingRole = roleCoverage().find((role) => !role.done);
+  const concern = teamTypeSummary().find((item) => item.weak >= 2 && item.resist + item.immune === 0);
+  [
+    ["Plan", TEAM_STYLES[state.teamStyle].label],
+    ["Mega", state.team.find(isMega)?.name ?? "Nog vrij"],
+    ["Rol mist", missingRole ? missingRole.label : "Basis op orde"],
+    ["Type aandacht", concern ? concern.type : "Geen grote gedeelde zwakte"]
+  ].forEach(([label, value]) => {
+    const item = document.createElement("div");
+    item.innerHTML = `<span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong>`;
+    facts.append(item);
+  });
+
+  const roster = document.createElement("div");
+  roster.className = "overview-roster compact";
+  const sourceCounts = state.team.reduce((counts, pokemon) => {
+    const source = setSourceShort(selectedBuild(pokemon));
+    counts[source] = (counts[source] ?? 0) + 1;
+    return counts;
+  }, {});
+  Object.entries(sourceCounts).forEach(([source, count]) => {
+    const row = document.createElement("div");
+    row.className = "team-source-chip";
+    row.innerHTML = `<span>${escapeHtml(source)}</span><strong>${count}</strong>`;
+    roster.append(row);
+  });
+
+  wrap.append(facts, roster);
+  return wrap;
 }
 
 function removeFromTeam(index) {
@@ -1449,27 +1462,17 @@ function createWorkbenchCard(pokemon, index) {
     showSpriteFallback(event.target.closest(".sprite-wrap"), pokemon.name);
   }, { once: true });
 
-  const tabs = document.createElement("div");
-  tabs.className = "set-tabs workbench-set-tabs";
-  buildOptions(pokemon).forEach((option) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `set-tab${option.id === build.id ? " active" : ""}`;
-    button.setAttribute("aria-pressed", String(option.id === build.id));
-    button.textContent = option.label;
-    button.addEventListener("click", () => {
-      const scrollY = window.scrollY;
-      state.selectedSets[pokemon.name] = option.id;
-      state.selected = pokemon;
-      render();
-      window.scrollTo({ top: scrollY, left: 0, behavior: "instant" });
-    });
-    tabs.append(button);
+  const tabs = createSetSourceCards(buildOptions(pokemon), build, (option) => {
+    const scrollY = window.scrollY;
+    state.selectedSets[pokemon.name] = option.id;
+    state.selected = pokemon;
+    render();
+    window.scrollTo({ top: scrollY, left: 0, behavior: "instant" });
   });
 
   const status = document.createElement("span");
   status.className = `set-status ${setQualityClass(build)}`;
-  status.textContent = setQualityLabel(build);
+  status.textContent = setSourceShort(build);
 
   const grid = document.createElement("div");
   grid.className = "workbench-build-grid";
@@ -1535,8 +1538,56 @@ function createWorkbenchCard(pokemon, index) {
   return card;
 }
 
+function createSetSourceCards(options, build, onSelect, context = "team") {
+  const wrap = document.createElement("div");
+  wrap.className = "set-source-cards workbench-set-tabs";
+  const custom = options.find((option) => option.status === "custom");
+  const grouped = options
+    .filter((option) => option.status !== "custom")
+    .reduce((groups, option) => {
+      const key = setSourceShort(option);
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(option);
+      return groups;
+    }, new Map());
+
+  sortedSetSourceGroups(grouped).forEach(([source, sourceOptions]) => {
+    const card = document.createElement("section");
+    card.className = `set-source-card ${setQualityClass(sourceOptions[0])}`;
+    const title = document.createElement("h4");
+    title.textContent = source;
+    const list = document.createElement("div");
+    list.className = "set-source-options";
+    sourceOptions.forEach((option) => {
+      list.append(createSetOptionButton(option, build, onSelect));
+    });
+    card.append(title, list);
+    wrap.append(card);
+  });
+
+  if (custom) {
+    const action = document.createElement("div");
+    action.className = "set-custom-action";
+    action.append(createSetOptionButton(custom, build, onSelect, context));
+    wrap.append(action);
+  }
+
+  return wrap;
+}
+
+function createSetOptionButton(option, build, onSelect, context = "team") {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = `set-tab set-option-button ${setQualityClass(option)}${option.id === build.id ? " active" : ""}`;
+  button.setAttribute("aria-pressed", String(option.id === build.id));
+  button.textContent = option.status === "custom" && context === "team" ? "Zelf set bouwen" : cleanSetLabel(option);
+  button.addEventListener("click", () => onSelect(option));
+  return button;
+}
+
 function createCustomSetEditor(pokemon, build) {
   const moveOptions = customMoveOptions(pokemon, build);
+  const evs = parseEvs(safeSelectedEv(build.evs));
   const form = document.createElement("form");
   form.className = "custom-set-editor";
   form.innerHTML = `
@@ -1544,10 +1595,16 @@ function createCustomSetEditor(pokemon, build) {
     <label><span>Item</span>${selectHtml("item", customItemOptions(pokemon, build), build.item)}</label>
     <label><span>Ability</span>${selectHtml("ability", pokemon.abilities, build.ability)}</label>
     <label><span>Nature</span>${selectHtml("nature", customNatureOptions(build), build.nature)}</label>
-    <label class="wide"><span>Training</span>${selectHtml("evs", customEvOptions(build), safeSelectedEv(build.evs))}</label>
-    ${[0, 1, 2, 3].map((index) => `
-      <label><span>Move ${index + 1}</span>${selectHtml(`move${index}`, moveOptions, safeSelectedMove(build.moves[index], moveOptions, index))}</label>
-    `).join("")}
+    <fieldset class="custom-ev-editor">
+      <legend>Training</legend>
+      ${statEntries(pokemon).map(([label]) => `
+        <label><span>${label}</span><input name="ev${label}" type="number" min="0" max="252" step="4" value="${evs[label] ?? 0}"></label>
+      `).join("")}
+    </fieldset>
+    <fieldset class="custom-move-editor">
+      <legend>Moves</legend>
+      ${[0, 1, 2, 3].map((index) => customMovePickerHtml(index, safeSelectedMove(build.moves[index], moveOptions, index), moveOptions)).join("")}
+    </fieldset>
   `;
 
   form.addEventListener("change", () => {
@@ -1558,7 +1615,7 @@ function createCustomSetEditor(pokemon, build) {
       item: String(formData.get("item") || ""),
       ability: String(formData.get("ability") || ""),
       nature: String(formData.get("nature") || ""),
-      evs: safeSelectedEv(String(formData.get("evs") || "")),
+      evs: evSpreadFromForm(formData),
       moves: [0, 1, 2, 3].map((index) => String(formData.get(`move${index}`) || "").trim()).filter(Boolean)
     };
     state.customSets[pokemon.name] = next;
@@ -1567,6 +1624,38 @@ function createCustomSetEditor(pokemon, build) {
   });
 
   return form;
+}
+
+function customMovePickerHtml(index, selected, options) {
+  const details = moveDetails(selected);
+  const typeColor = TYPE_COLORS[details.type] || "#6657dc";
+  return `
+    <label class="custom-move-picker" style="--type-color:${typeColor}">
+      <span>Move ${index + 1}</span>
+      ${selectHtml(`move${index}`, options, selected)}
+      <small>${escapeHtml(details.type)} · ${escapeHtml(details.category)} · Pow ${escapeHtml(details.power)} · Acc ${escapeHtml(details.accuracy)}<br>${escapeHtml(details.effect)}</small>
+    </label>
+  `;
+}
+
+function evSpreadFromForm(formData) {
+  const raw = STAT_LABELS
+    .map((stat) => [stat, clampEv(Number(formData.get(`ev${stat}`) || 0))])
+    .map(([stat, value]) => `${value} ${stat}`)
+    .join(" / ");
+  return normalizeEvSpread(raw) || "0 HP";
+}
+
+function evPartsFromValues(values) {
+  return STAT_LABELS
+    .map((stat) => [stat, values[stat] ?? 0])
+    .filter(([, value]) => value > 0)
+    .map(([stat, value]) => `${value} ${stat}`);
+}
+
+function clampEv(value) {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(252, Math.round(value / 4) * 4));
 }
 
 function updateCustomWorkbenchCard(pokemon, build) {
@@ -1599,6 +1688,9 @@ function updateCustomWorkbenchCard(pokemon, build) {
     moves.replaceChildren();
     build.moves.forEach((move, moveIndex) => moves.append(createMoveCard(move, moveIndex)));
   }
+
+  const editor = card.querySelector(".custom-set-editor");
+  if (editor) editor.replaceWith(createCustomSetEditor(pokemon, build));
 
   renderTeamOverview();
   renderTeamAnalysis();
@@ -1637,15 +1729,36 @@ function safeSelectedEv(evs) {
   if (EV_PRESETS.includes(evs)) return evs;
   const normalized = normalizeEvSpread(evs);
   if (Object.values(parseEvs(normalized)).some(Boolean)) return normalized;
+  if (String(evs).trim() === "0 HP") return "0 HP";
   return EV_PRESETS.includes(normalized) ? normalized : EV_PRESETS[0];
 }
 
 function normalizeEvSpread(evs) {
-  const values = parseEvs(evs);
-  const parts = ["HP", "Atk", "Def", "SpA", "SpD", "Spe"]
-    .filter((stat) => values[stat] > 0)
-    .map((stat) => `${values[stat]} ${stat}`);
-  return parts.join(" / ");
+  const values = normalizeEvValues(parseEvs(evs));
+  return evPartsFromValues(values).join(" / ");
+}
+
+function normalizeEvValues(values) {
+  const capped = Object.fromEntries(STAT_LABELS.map((stat) => [stat, Math.max(0, Math.min(EV_STAT_LIMIT, values[stat] ?? 0))]));
+  const total = STAT_LABELS.reduce((sum, stat) => sum + capped[stat], 0);
+  if (total <= EV_TOTAL_LIMIT) return capped;
+
+  const scaled = STAT_LABELS.map((stat) => {
+    const exact = capped[stat] * EV_TOTAL_LIMIT / total;
+    const value = Math.min(EV_STAT_LIMIT, Math.floor(exact / 4) * 4);
+    return { stat, exact, value, remainder: exact - value };
+  });
+  let used = scaled.reduce((sum, item) => sum + item.value, 0);
+  scaled
+    .sort((a, b) => b.remainder - a.remainder)
+    .forEach((item) => {
+      if (used + 4 <= EV_TOTAL_LIMIT && item.value + 4 <= EV_STAT_LIMIT) {
+        item.value += 4;
+        used += 4;
+      }
+    });
+
+  return Object.fromEntries(scaled.map(({ stat, value }) => [stat, value]));
 }
 
 function cssEscape(value) {
@@ -1654,7 +1767,7 @@ function cssEscape(value) {
 }
 
 function customMoveOptions(pokemon, build) {
-  const setMoves = buildOptions(pokemon).flatMap((option) => option.moves ?? []);
+  const setMoves = splitOptions(buildOptions(pokemon).flatMap((option) => option.moves ?? []));
   return [...new Set([...setMoves, ...customMoveOptionsFromBase(pokemon)])].sort();
 }
 
@@ -1772,10 +1885,6 @@ function renderTeamAnalysis() {
   teamAnalysis.append(createTypePanel());
   teamAnalysis.append(createThreatChecklistPanel());
   teamAnalysis.append(createRoleChecklistPanel());
-  teamAnalysis.append(createFormatFocusPanel());
-  if (state.team.length < maxTeamSize()) {
-    teamAnalysis.append(createSuggestionPanel());
-  }
 }
 
 function appendIfPresent(parent, child) {
@@ -1784,49 +1893,11 @@ function appendIfPresent(parent, child) {
 
 function renderTeamOverview() {
   teamOverview.replaceChildren();
-  teamOverview.append(createSectionHead("Teamoverzicht"));
+  teamOverview.hidden = true;
 
   if (!state.team.length) {
-    const empty = document.createElement("p");
-    empty.className = "empty-detail";
-    empty.textContent = "Kies eerst een Pokémon. Hier komt daarna een samenvatting van je format, rollen, matchups en sets.";
-    teamOverview.append(empty);
     return;
   }
-
-  const summary = document.createElement("div");
-  summary.className = "overview-grid";
-  [
-    ["Format", BATTLE_FORMATS[state.battleFormat].label],
-    ["Team", `${state.team.length}/${maxTeamSize()}`],
-    ["Mega", state.team.find(isMega)?.name ?? "Nog vrij"],
-    ["Plan", TEAM_STYLES[state.teamStyle].label]
-  ].forEach(([label, value]) => {
-    const item = document.createElement("div");
-    item.innerHTML = `<span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong>`;
-    summary.append(item);
-  });
-
-  const roster = document.createElement("div");
-  roster.className = "overview-roster";
-  state.team.forEach((pokemon) => {
-    const build = selectedBuild(pokemon);
-    const row = document.createElement("button");
-    row.type = "button";
-    row.className = "overview-member";
-    row.innerHTML = `
-      <img src="${spriteUrl(pokemon.name)}" alt="">
-      <span><strong>${escapeHtml(pokemon.name)}</strong><small>${escapeHtml(build.label)} · ${escapeHtml(roleFor(pokemon).label)}</small></span>
-    `;
-    row.addEventListener("click", () => {
-      state.selected = pokemon;
-      render();
-    });
-    row.querySelector("img").addEventListener("error", (event) => event.target.remove(), { once: true });
-    roster.append(row);
-  });
-
-  teamOverview.append(summary, roster);
 }
 
 function createTeamSummaryPanel() {
@@ -1838,16 +1909,10 @@ function createTeamSummaryPanel() {
 
   const chips = document.createElement("div");
   chips.className = "summary-chips";
-  const risky = state.team.filter((pokemon) => needsValidationAsCore(pokemon)).length;
-  const generated = state.team.filter((pokemon) => selectedBuild(pokemon).status === "generated").length;
-  const quality = risky || generated
-    ? `${risky + generated} aandachtspunt${risky + generated === 1 ? "" : "en"}`
-    : "Sets OK";
   [
     ["Team", `${state.team.length}/${maxTeamSize()}`],
     ["Format", BATTLE_FORMATS[state.battleFormat].label],
-    ["Plan", TEAM_STYLES[state.teamStyle].label],
-    ["Kwaliteit", quality]
+    ["Plan", TEAM_STYLES[state.teamStyle].label]
   ].forEach(([label, value]) => {
     const item = document.createElement("div");
     item.innerHTML = `<span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong>`;
@@ -2083,7 +2148,7 @@ function createSuggestionPanel() {
     const build = selectedBuild(pokemon);
     const quality = document.createElement("span");
     quality.className = `suggestion-quality ${setQualityClass(build)}`;
-    quality.textContent = setQualityLabel(build);
+    quality.textContent = quickDecisionLabel(pokemon, build);
     body.append(top, chips, text, quality);
     card.append(spriteWrap, body);
     list.append(card);
@@ -2634,7 +2699,7 @@ function teamExportText() {
 
   return state.team.map((pokemon) => {
     const build = selectedBuild(pokemon);
-    return `${pokemon.name} @ ${build.item}\nAbility: ${build.ability}\nNature: ${build.nature}\nTraining: ${build.evs}\nRole: ${build.role}\nSource: ${buildSourceLabel(build)}\n- ${build.moves.join("\n- ")}`;
+    return `${pokemon.name} @ ${build.item}\nAbility: ${build.ability}\nNature: ${build.nature}\nTraining: ${safeSelectedEv(build.evs)}\nRole: ${build.role}\nSource: ${buildSourceLabel(build)}\n- ${build.moves.join("\n- ")}`;
   }).join("\n\n");
 }
 
@@ -2647,22 +2712,90 @@ function buildAdviceHtml(pokemon) {
         <h3>Set-richtlijn</h3>
         <span>Template</span>
       </div>
-      <div class="set-tabs">
-        ${options.map((option) => `
-          <button class="set-tab${option.id === build.id ? " active" : ""}" type="button" data-set-id="${escapeHtml(option.id)}" aria-pressed="${option.id === build.id ? "true" : "false"}">${escapeHtml(option.label)}</button>
-        `).join("")}
-      </div>
+      ${setSourceCardsHtml(options, build)}
       <div class="set-grid">
         <div><span>Item</span>${escapeHtml(build.item)}</div>
         <div><span>Ability</span>${escapeHtml(build.ability)}</div>
         <div><span>Nature</span>${escapeHtml(build.nature)}</div>
-        <div><span>Status</span>${escapeHtml(setQualityLabel(build))}</div>
+        <div><span>Bron</span>${escapeHtml(setSourceShort(build))}</div>
       </div>
       <div class="move-plan">
-        ${build.moves.map((move) => `<span>${escapeHtml(move)}</span>`).join("")}
+        ${build.moves.map(movePillHtml).join("")}
       </div>
     </div>
   `;
+}
+
+function setSourceCardsHtml(options, build) {
+  const grouped = options
+    .filter((option) => option.status !== "custom")
+    .reduce((groups, option) => {
+      const key = setSourceShort(option);
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(option);
+      return groups;
+    }, new Map());
+
+  return `
+    <div class="set-source-cards">
+      ${sortedSetSourceGroups(grouped).map(([source, sourceOptions]) => setSourceCardHtml(source, sourceOptions, build)).join("")}
+    </div>
+  `;
+}
+
+function sortedSetSourceGroups(grouped) {
+  return [...grouped].sort(([a], [b]) => setSourceRank(a) - setSourceRank(b) || a.localeCompare(b));
+}
+
+function setSourceRank(source) {
+  return {
+    Champions: 1,
+    SV: 2,
+    App: 3,
+    Smogon: 4
+  }[source] ?? 9;
+}
+
+function setSourceCardHtml(source, options, build) {
+  return `
+    <section class="set-source-card ${setQualityClass(options[0])}">
+      <h4>${escapeHtml(source)}</h4>
+      <div class="set-source-options">
+        ${options.map((option) => setOptionButtonHtml(option, build)).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function setOptionButtonHtml(option, build, context = "builder") {
+  const selected = option.id === build.id;
+  const label = option.status === "custom" && context === "team" ? "Zelf set bouwen" : cleanSetLabel(option);
+  return `
+    <button class="set-tab set-option-button ${setQualityClass(option)}${selected ? " active" : ""}" type="button" data-set-id="${escapeHtml(option.id)}" aria-pressed="${selected ? "true" : "false"}">
+      ${escapeHtml(label)}
+    </button>
+  `;
+}
+
+function quickDecisionLabel(pokemon, build = selectedBuild(pokemon)) {
+  const weaknesses = TYPES
+    .filter((type) => defensiveMultiplier(pokemon.types, type) > 1)
+    .slice(0, 2);
+  const source = setSourceShort(build);
+  const risk = weaknesses.length ? `zwak: ${weaknesses.join(", ")}` : "weinig zwaktes";
+  return `${source} set · ${risk}`;
+}
+
+function cleanSetLabel(build) {
+  return String(build.label || "Set")
+    .replace(/\s*\((?:Champions|SV|Smogon Champions|Smogon SV)\)\s*/gi, "")
+    .replace(/^Custom$/i, "Zelf bouwen");
+}
+
+function movePillHtml(move) {
+  const details = moveDetails(move);
+  const typeColor = TYPE_COLORS[details.type] || "#6657dc";
+  return `<span class="move-type-pill" style="--type-color:${typeColor}"><strong>${escapeHtml(move)}</strong><small>${escapeHtml(details.type)}</small></span>`;
 }
 
 function selectedBuild(pokemon) {
@@ -2751,7 +2884,7 @@ function customMoveOptionsFromBase(pokemon) {
   const exact = state.movesets[pokemon.name] ?? [];
   const baseName = baseSpeciesLabel(pokemon.name);
   const base = baseName === pokemon.name ? [] : state.movesets[baseName] ?? [];
-  const setMoves = [...exact, ...base].flatMap((option) => option.moves ?? []);
+  const setMoves = splitOptions([...exact, ...base].flatMap((option) => option.moves ?? []));
   const typedMoves = Object.entries(state.moveDetails)
     .filter(([, details]) => pokemon.types.includes(details.type))
     .map(([move]) => move);
@@ -2771,6 +2904,14 @@ function setQualityLabel(build) {
   if (build.status === "generated") return "Door app bedacht";
   if (build.status === "smogon-champions") return "Smogon Champions";
   if (build.status === "smogon-sv") return "Smogon SV";
+  return "Smogon";
+}
+
+function setSourceShort(build) {
+  if (build.status === "custom") return "Custom";
+  if (build.status === "generated") return "App";
+  if (build.status === "smogon-champions") return "Champions";
+  if (build.status === "smogon-sv") return "SV";
   return "Smogon";
 }
 

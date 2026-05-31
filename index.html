@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Champions Builder</title>
-    <link rel="stylesheet" href="styles.css?v=71">
+    <link rel="stylesheet" href="styles.css?v=84">
   </head>
   <body>
     <main class="shell">
@@ -58,16 +58,15 @@
           </select>
         </label>
         <button id="showAllPokemon" class="show-all-button" type="button">Lijst alle Mons</button>
+        <div class="type-panel" aria-label="Typefilters">
+          <div class="filter-head">
+            <button id="typeToggle" class="type-toggle" type="button" aria-expanded="false">Types</button>
+            <strong id="activeTypeLabel">Alle types</strong>
+          </div>
+          <div class="type-strip" id="typeFilters"></div>
+        </div>
         <button id="guideModeToggle" class="guide-mode-button" type="button" aria-pressed="true">Help mij kiezen</button>
         <button id="resetApp" class="reset-button" type="button">Reset</button>
-      </section>
-
-      <section class="type-panel" aria-label="Typefilters">
-        <div class="filter-head">
-          <button id="typeToggle" class="type-toggle" type="button" aria-expanded="false">Typefilter</button>
-          <strong id="activeTypeLabel">Alle types</strong>
-        </div>
-        <div class="type-strip" id="typeFilters"></div>
       </section>
 
       <section class="meta-row" aria-live="polite">
@@ -136,6 +135,6 @@
       </article>
     </template>
 
-    <script src="app.js?v=73"></script>
+    <script src="app.js?v=79"></script>
   </body>
 </html>
