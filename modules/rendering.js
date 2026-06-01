@@ -20,6 +20,7 @@ export function renderApp(ctx) {
 
   ctx.renderDetail(ctx.state.selected);
   ctx.renderTeam();
+  ctx.renderFloatingCompare();
 }
 
 export function renderWithoutScrollJump(update) {

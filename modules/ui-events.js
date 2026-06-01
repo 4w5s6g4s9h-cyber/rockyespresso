@@ -41,6 +41,7 @@ export function bindEvents(ctx) {
   });
   ctx.resetApp.addEventListener("click", ctx.resetToStart);
   ctx.guideModeToggle.addEventListener("click", ctx.toggleGuideMode);
+  ctx.favoritesToggle.addEventListener("click", ctx.toggleFavoritesFilter);
   ctx.showAllPokemon.addEventListener("click", ctx.showAllPokemonList);
   ctx.randomUltraTeam.addEventListener("click", ctx.generateRandomUltraTeam);
   ctx.clearTeam.addEventListener("click", () => {

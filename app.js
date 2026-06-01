@@ -192,8 +192,10 @@ const state = {
   customSets: {},
   savedTeams: [],
   favorites: [],
+  favoritesOnly: false,
   roleFilter: "all",
   compare: [],
+  compareMinimized: false,
   explanationOpen: "",
   cache: {},
   hasExplored: false,
@@ -233,10 +235,13 @@ const clearTeam = document.querySelector("#clearTeam");
 const resetApp = document.querySelector("#resetApp");
 const guideModeToggle = document.querySelector("#guideModeToggle");
 const showAllPokemon = document.querySelector("#showAllPokemon");
+const favoritesToggle = document.querySelector("#favoritesToggle");
 const randomUltraTeam = document.querySelector("#randomUltraTeam");
 const backToBuilder = document.querySelector("#backToBuilder");
 const floatingTeamLab = document.querySelector("#floatingTeamLab");
 const floatingTeamCount = document.querySelector("#floatingTeamCount");
+const teamQuickNav = document.querySelector("#teamQuickNav");
+const floatingCompare = document.querySelector("#floatingCompare");
 
 init();
 
@@ -291,6 +296,7 @@ function appContext() {
     resetApp,
     guideModeToggle,
     showAllPokemon,
+    favoritesToggle,
     randomUltraTeam,
     backToBuilder,
     floatingTeamLab,
@@ -299,6 +305,7 @@ function appContext() {
     renderTypeFilters,
     resetToStart,
     toggleGuideMode,
+    toggleFavoritesFilter,
     generateRandomUltraTeam,
     showAllPokemonList,
     switchView,
@@ -314,7 +321,8 @@ function appContext() {
     renderViewTabs,
     renderGuideModeToggle,
     renderTeamManager,
-    syncBattleSelection
+    syncBattleSelection,
+    renderFloatingCompare
   };
 }
 
@@ -408,6 +416,7 @@ function resetToStart() {
   teamStyleSelect.value = "balanced";
   roleFilterSelect.value = "all";
   battleFormatSelect.value = "single3";
+  state.favoritesOnly = false;
   state.selectedTypes = [];
   state.typeFiltersOpen = false;
   state.team = [];
@@ -438,6 +447,24 @@ function toggleGuideMode() {
     state.selectedTypes = [];
     renderTypeFilters();
   }
+  state.activeView = "builder";
+  render();
+}
+
+function refreshSuggestionsList() {
+  state.startSuggestionPage += 1;
+  state.hasExplored = false;
+  state.guideMode = true;
+  state.activeView = "builder";
+  searchInput.value = "";
+  renderTypeFilters();
+  render();
+}
+
+function toggleFavoritesFilter() {
+  state.favoritesOnly = !state.favoritesOnly;
+  state.hasExplored = true;
+  state.guideMode = false;
   state.activeView = "builder";
   render();
 }
@@ -559,6 +586,9 @@ function render() {
 function renderGuideModeToggle() {
   guideModeToggle.classList.toggle("active", state.guideMode);
   guideModeToggle.setAttribute("aria-pressed", String(state.guideMode));
+  favoritesToggle.classList.toggle("active", state.favoritesOnly);
+  favoritesToggle.setAttribute("aria-pressed", String(state.favoritesOnly));
+  favoritesToggle.textContent = state.favoritesOnly ? `Favorieten (${state.favorites.length})` : "Favorieten";
 }
 
 function switchView(view) {
@@ -617,7 +647,7 @@ function getFilteredPokemon() {
   if (query) state.hasExplored = true;
   const sort = sortSelect.value;
 
-  return state.pokemon
+  const ranked = state.pokemon
     .filter((pokemon) => {
       const haystack = normalize([
         pokemon.name,
@@ -632,12 +662,19 @@ function getFilteredPokemon() {
         || (state.roleFilter === "Support" && ["Wall", "Allrounder"].includes(role));
       const matchesFocus = matchesFocusFilter(pokemon, sourceSelect.value);
       const matchesPlan = state.teamStyle === "balanced" || teamStyleMatch(pokemon, state.teamStyle);
-      return matchesQuery && matchesType && matchesRole && matchesFocus && matchesPlan;
+      const matchesFavorite = !state.favoritesOnly || state.favorites.includes(pokemon.name);
+      return matchesQuery && matchesType && matchesRole && matchesFocus && matchesPlan && matchesFavorite;
     })
     .sort((a, b) => {
       if (sort === "name") return a.name.localeCompare(b.name);
-      return b[sort] - a[sort] || a.name.localeCompare(b.name);
+      return sortValue(b, sort) - sortValue(a, sort) || a.name.localeCompare(b.name);
     });
+}
+
+function sortValue(pokemon, sort) {
+  if (sort === "offense") return Math.max(pokemon.atk, pokemon.spa);
+  if (sort === "bulk") return pokemon.hp + pokemon.def + pokemon.spd;
+  return pokemon[sort] ?? 0;
 }
 
 function matchesFocusFilter(pokemon, focus) {
@@ -702,7 +739,7 @@ function createSuggestionRefreshBar() {
   const refresh = document.createElement("button");
   refresh.type = "button";
   refresh.className = "start-refresh";
-  refresh.textContent = "Ververs";
+  refresh.textContent = "Nieuwe suggesties";
   refresh.addEventListener("click", () => {
     state.startSuggestionPage += 1;
     render();
@@ -841,7 +878,10 @@ function createStarterPick(pokemon, reason = starterReason(pokemon)) {
   const risk = document.createElement("span");
   risk.className = "starter-pick-risk";
   risk.textContent = starterRisk(pokemon);
-  body.append(name, meta, note, risk);
+  const extra = document.createElement("span");
+  extra.className = "starter-pick-extra";
+  extra.textContent = starterExtraInfo(pokemon);
+  body.append(name, meta, note, extra, risk);
 
   const actions = document.createElement("span");
   actions.className = "starter-pick-actions";
@@ -875,6 +915,13 @@ function createStarterPick(pokemon, reason = starterReason(pokemon)) {
 
   card.append(spriteWrap, body, actions);
   return card;
+}
+
+function starterExtraInfo(pokemon) {
+  const build = selectedBuild(pokemon);
+  const role = displayRoleForBuild(pokemon, build);
+  const offense = pokemon.atk >= pokemon.spa ? `Atk ${pokemon.atk}` : `SpA ${pokemon.spa}`;
+  return `${role} · ${offense} · Spe ${pokemon.spe} · ${preferredAbility(pokemon)} · ${setQualityLabel(build)}`;
 }
 
 function createStarterGroup(group) {
@@ -992,7 +1039,7 @@ function startSuggestionGroups() {
     },
     {
       title: "Alternatieven voor je plan",
-      description: "Aanvallende druk, defensieve veiligheid en tempo in een compacte shortlist.",
+      description: "Aanvallende druk, defensieve veiligheid en tempo in een compacte favorietenwaardige selectie.",
       items: planPicks,
       refreshable: true
     }
@@ -1248,8 +1295,8 @@ function createCard(pokemon) {
   const favorite = document.createElement("button");
   favorite.type = "button";
   favorite.className = `mini-action${state.favorites.includes(pokemon.name) ? " active" : ""}`;
-  favorite.textContent = state.favorites.includes(pokemon.name) ? "Shortlist" : "Bewaar";
-  favorite.title = state.favorites.includes(pokemon.name) ? "Verwijder uit shortlist" : "Zet op shortlist";
+  favorite.textContent = state.favorites.includes(pokemon.name) ? "Favoriet" : "Favoriet";
+  favorite.title = state.favorites.includes(pokemon.name) ? "Verwijder uit favorieten" : "Zet bij favorieten";
   favorite.addEventListener("mousedown", (event) => event.preventDefault());
   favorite.addEventListener("click", (event) => {
     event.stopPropagation();
@@ -1303,6 +1350,7 @@ function toggleCompare(pokemon) {
   } else {
     state.compare = [...state.compare, pokemon.name].slice(-2);
   }
+  state.compareMinimized = false;
   renderTeamAnalysis();
   render();
 }
@@ -1723,6 +1771,7 @@ function loadSavedTeam(id) {
 
 function renderTeamWorkbench() {
   teamWorkbench.replaceChildren();
+  renderTeamQuickNav();
 
   if (!state.team.length) {
     const empty = document.createElement("div");
@@ -1739,6 +1788,33 @@ function renderTeamWorkbench() {
     const pokemon = state.team[index];
     teamWorkbench.append(pokemon ? createWorkbenchCard(pokemon, index) : createEmptyWorkbenchSlot(index));
   }
+}
+
+function renderTeamQuickNav() {
+  teamQuickNav.replaceChildren();
+  teamQuickNav.hidden = !state.team.length;
+  if (!state.team.length) return;
+
+  state.team.forEach((pokemon, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "team-quick-button";
+    button.setAttribute("aria-label", `Ga naar ${pokemon.name}`);
+    button.title = pokemon.name;
+    button.innerHTML = `
+      <span>${index + 1}</span>
+      <img src="${spriteUrl(pokemon.name)}" alt="">
+    `;
+    button.querySelector("img").addEventListener("error", (event) => {
+      event.currentTarget.remove();
+      button.dataset.fallback = pokemon.name.slice(0, 2).toUpperCase();
+    });
+    button.addEventListener("click", () => {
+      const card = teamWorkbench.querySelector(`[data-pokemon="${cssEscape(pokemon.name)}"]`);
+      card?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    teamQuickNav.append(button);
+  });
 }
 
 function battleSelectionSize() {
@@ -2236,17 +2312,16 @@ function renderTeamAnalysis() {
 
 function renderTeamOverview() {
   teamOverview.replaceChildren();
-  const hasContent = state.team.length || state.favorites.length || state.compare.length;
+  const hasContent = state.team.length || state.favorites.length;
   teamOverview.hidden = !hasContent;
   if (!hasContent) return;
 
-  teamOverview.append(createSmallTitle("Shortlist & vergelijking"));
+  teamOverview.append(createSmallTitle("Favorieten"));
   if (state.favorites.length) teamOverview.append(createFavoritesPanel());
-  if (state.compare.length) teamOverview.append(createComparePanel());
-  if (!state.favorites.length && !state.compare.length) {
+  if (!state.favorites.length) {
     const empty = document.createElement("p");
     empty.className = "empty-detail";
-    empty.textContent = "Bewaar Pokémon op je shortlist of vergelijk twee opties vanuit de kaarten.";
+    empty.textContent = "Markeer Pokémon als favoriet om ze later snel terug te vinden.";
     teamOverview.append(empty);
   }
 }
@@ -2319,8 +2394,12 @@ function createComparePanel() {
     ["Typing", selected.map((pokemon) => pokemon.types.join(" / "))],
     ["Ability", selected.map((pokemon) => preferredAbility(pokemon))],
     ["BST", selected.map((pokemon) => pokemon.bst)],
+    ["Aanval", selected.map((pokemon) => Math.max(pokemon.atk, pokemon.spa))],
+    ["Bulk", selected.map((pokemon) => pokemon.hp + pokemon.def + pokemon.spd)],
     ["Speed", selected.map((pokemon) => pokemon.spe)],
+    ["Stats", selected.map((pokemon) => `HP ${pokemon.hp} / Atk ${pokemon.atk} / Def ${pokemon.def} / SpA ${pokemon.spa} / SpD ${pokemon.spd} / Spe ${pokemon.spe}`)],
     ["Set", selected.map((pokemon) => setQualityLabel(selectedBuild(pokemon)))],
+    ["Item", selected.map((pokemon) => selectedBuild(pokemon).item || "n.v.t.")],
     ["Teamfit", selected.map((pokemon) => suggestionReasons(pokemon).reasons[0] ?? formatFitLabel(pokemon))]
   ];
   rows.forEach(([label, values]) => {
@@ -2344,6 +2423,47 @@ function createComparePanel() {
   });
   panel.append(clear);
   return panel;
+}
+
+function renderFloatingCompare() {
+  floatingCompare.replaceChildren();
+  floatingCompare.hidden = !state.compare.length;
+  if (!state.compare.length) return;
+
+  floatingCompare.classList.toggle("minimized", state.compareMinimized);
+  const shell = document.createElement("div");
+  shell.className = "floating-compare-shell";
+
+  const bar = document.createElement("div");
+  bar.className = "floating-compare-bar";
+  const count = document.createElement("strong");
+  count.textContent = `Vergelijker ${state.compare.length}/2`;
+  const names = document.createElement("span");
+  names.textContent = state.compare.join(" vs ");
+  const minimize = document.createElement("button");
+  minimize.type = "button";
+  minimize.textContent = state.compareMinimized ? "Open" : "Minimaliseer";
+  minimize.addEventListener("click", () => {
+    state.compareMinimized = !state.compareMinimized;
+    renderFloatingCompare();
+  });
+  const clear = document.createElement("button");
+  clear.type = "button";
+  clear.textContent = "Leeg";
+  clear.addEventListener("click", () => {
+    state.compare = [];
+    render();
+  });
+  bar.append(count, names, minimize, clear);
+  shell.append(bar);
+
+  if (!state.compareMinimized) {
+    const panel = createComparePanel();
+    panel.classList.add("floating-compare-panel");
+    shell.append(panel);
+  }
+
+  floatingCompare.append(shell);
 }
 
 function createTeamSummaryPanel() {
@@ -2576,6 +2696,7 @@ function createSuggestionPanel() {
   const panel = document.createElement("div");
   panel.className = "analysis-block";
   panel.append(createSmallTitle(replacementMode ? "Vervang-suggesties" : "Suggesties"));
+  panel.append(createSuggestionRefreshBar());
 
   if (!suggestions.length) {
     const done = document.createElement("p");
@@ -2628,6 +2749,9 @@ function createSuggestionPanel() {
     const quality = document.createElement("span");
     quality.className = `suggestion-quality ${setQualityClass(build)}`;
     quality.textContent = quickDecisionLabel(pokemon, build);
+    const details = document.createElement("span");
+    details.className = "suggestion-details";
+    details.textContent = suggestionDetailLine(pokemon, build);
     const actions = document.createElement("span");
     actions.className = "suggestion-actions";
     const add = document.createElement("button");
@@ -2647,7 +2771,7 @@ function createSuggestionPanel() {
       render();
     });
     actions.append(add, explain);
-    body.append(top, chips, text, quality, actions);
+    body.append(top, chips, text, details, quality, actions);
     if (state.explanationOpen === pokemon.name) {
       const details = document.createElement("span");
       details.className = "suggestion-explain";
@@ -2660,6 +2784,12 @@ function createSuggestionPanel() {
 
   panel.append(list);
   return panel;
+}
+
+function suggestionDetailLine(pokemon, build = selectedBuild(pokemon)) {
+  const offense = pokemon.atk >= pokemon.spa ? `Atk ${pokemon.atk}` : `SpA ${pokemon.spa}`;
+  const bulk = pokemon.hp + pokemon.def + pokemon.spd;
+  return `${offense} · Spe ${pokemon.spe} · Bulk ${bulk} · ${preferredAbility(pokemon)} · ${setQualityLabel(build)}`;
 }
 
 function createThreatChecklistPanel() {
@@ -3105,8 +3235,11 @@ function suggestedPokemon(limit = 3) {
       return { pokemon, score, reason: reasons.slice(0, 3).join(" en ") };
     })
     .filter((item) => item.score > 0)
-    .sort((a, b) => b.score - a.score || b.pokemon.bst - a.pokemon.bst)
-    .slice(0, limit);
+    .sort((a, b) => b.score - a.score || b.pokemon.bst - a.pokemon.bst);
+  const windowSize = Math.max(limit, 12);
+  const pool = ranked.slice(0, Math.max(windowSize, limit * 3));
+  const offset = pool.length ? (state.startSuggestionPage * limit) % pool.length : 0;
+  return [...pool.slice(offset), ...pool.slice(0, offset)].slice(0, limit);
 }
 
 function suggestionReasons(pokemon, context = {}) {

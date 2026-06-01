@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Champions Builder</title>
-    <link rel="stylesheet" href="styles.css?v=97">
+    <link rel="stylesheet" href="styles.css?v=99">
   </head>
   <body>
     <main class="shell">
@@ -20,27 +20,32 @@
             <span>Zoeken</span>
             <input id="searchInput" type="search" placeholder="Naam, type of ability">
           </label>
+          <label class="sort-quick">
+            <span>Sorteren</span>
+            <select id="sortSelect">
+              <option value="name">Naam</option>
+              <option value="bst">BST</option>
+              <option value="offense">Hoogste aanval</option>
+              <option value="bulk">Bulk</option>
+              <option value="spe">Speed</option>
+              <option value="atk">Attack</option>
+              <option value="def">Defense</option>
+              <option value="spa">Sp. Atk</option>
+              <option value="spd">Sp. Def</option>
+              <option value="hp">HP</option>
+            </select>
+          </label>
           <button id="showAllPokemon" class="show-all-button" type="button">Lijst alle Mons</button>
           <button id="guideModeToggle" class="guide-mode-button" type="button" aria-pressed="false">
             <span class="guide-mode-icon" aria-hidden="true"></span>
             <span>Help mij kiezen</span>
           </button>
+          <button id="favoritesToggle" class="favorites-toggle-button" type="button" aria-pressed="false">Favorieten</button>
           <button id="randomUltraTeam" class="ultra-team-button" type="button">Willekeurig Ultra Team</button>
         </div>
         <details class="toolbar-drawer">
           <summary>Filters & teamregels</summary>
           <div class="toolbar-controls">
-            <label>
-              <span>Sorteren</span>
-              <select id="sortSelect">
-                <option value="name">Naam</option>
-                <option value="bst">Base stat totaal</option>
-                <option value="spe">Speed</option>
-                <option value="atk">Attack</option>
-                <option value="spa">Sp. Atk</option>
-                <option value="hp">HP</option>
-              </select>
-            </label>
             <label>
               <span>Focus</span>
               <select id="sourceSelect">
@@ -83,7 +88,7 @@
                 <option value="Bulky pivot">Bulky pivot</option>
               </select>
             </label>
-            <label>
+            <label class="format-filter">
               <span>Format</span>
               <select id="battleFormatSelect">
                 <option value="single3">Single 3v3</option>
@@ -134,6 +139,7 @@
 
       <section id="teamView" class="tab-view" aria-label="Team lab">
         <div class="team-lab">
+          <nav class="team-quick-nav" id="teamQuickNav" aria-label="Team snelnavigatie"></nav>
           <section class="team-workbench-panel">
             <div class="panel-head">
               <h2>Team aanpassen</h2>
@@ -150,6 +156,7 @@
         <span>Team lab</span>
         <strong id="floatingTeamCount">0/3</strong>
       </button>
+      <section id="floatingCompare" class="floating-compare" aria-live="polite"></section>
     </main>
 
     <template id="cardTemplate">
@@ -169,6 +176,6 @@
       </article>
     </template>
 
-    <script type="module" src="app.js?v=89"></script>
+    <script type="module" src="app.js?v=91"></script>
   </body>
 </html>
