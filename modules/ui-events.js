@@ -23,7 +23,7 @@ export function bindEvents(ctx) {
   ctx.battleFormatSelect.addEventListener("change", () => {
     ctx.state.battleFormat = ctx.battleFormatSelect.value;
     ctx.state.startSuggestionPage = 0;
-    ctx.state.team = ctx.state.team.slice(0, ctx.maxTeamSize());
+    ctx.syncBattleSelection();
     ctx.state.teamNotice = "";
     ctx.invalidateCache();
     ctx.render();
@@ -42,6 +42,7 @@ export function bindEvents(ctx) {
   ctx.resetApp.addEventListener("click", ctx.resetToStart);
   ctx.guideModeToggle.addEventListener("click", ctx.toggleGuideMode);
   ctx.showAllPokemon.addEventListener("click", ctx.showAllPokemonList);
+  ctx.randomUltraTeam.addEventListener("click", ctx.generateRandomUltraTeam);
   ctx.clearTeam.addEventListener("click", () => {
     ctx.state.team = [];
     ctx.state.teamNotice = "";

@@ -117,7 +117,7 @@ h1 {
 
 .toolbar-primary {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(140px, auto) minmax(180px, auto);
+  grid-template-columns: minmax(220px, 1fr) minmax(140px, auto) minmax(174px, auto) minmax(190px, auto);
   gap: 10px;
   align-items: end;
 }
@@ -195,7 +195,8 @@ select:focus {
 
 .reset-button,
 .guide-mode-button,
-.show-all-button {
+.show-all-button,
+.ultra-team-button {
   min-height: 44px;
   border: 1px solid rgba(220, 49, 86, 0.25);
   border-radius: var(--radius);
@@ -207,21 +208,67 @@ select:focus {
 
 .reset-button:hover,
 .guide-mode-button:hover,
-.show-all-button:hover {
+.show-all-button:hover,
+.ultra-team-button:hover {
   border-color: rgba(220, 49, 86, 0.45);
   background: rgba(220, 49, 86, 0.12);
 }
 
 .guide-mode-button {
-  border-color: rgba(103, 87, 219, 0.32);
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.88), rgba(232, 227, 255, 0.92));
-  color: #4f46a8;
-  text-align: center;
+  display: inline-grid;
+  grid-template-columns: 28px max-content;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-width: 174px;
+  border: 2px solid rgba(103, 87, 219, 0.34);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(237, 243, 255, 0.9));
+  color: #3f3a91;
+  box-shadow: inset 0 -3px 0 rgba(103, 87, 219, 0.1), 0 6px 16px rgba(63, 58, 145, 0.1);
 }
 
 .guide-mode-button.active {
-  border-color: rgba(184, 255, 0, 0.8);
-  background: linear-gradient(90deg, var(--champions-lime), var(--champions-lime-2));
+  border-color: rgba(184, 255, 0, 0.9);
+  background: linear-gradient(90deg, #d7ff22, var(--champions-lime), var(--champions-lime-2));
+  color: #253a7a;
+  box-shadow: inset 0 -3px 0 rgba(66, 117, 0, 0.18), 0 0 0 4px rgba(184, 255, 0, 0.22), 0 10px 22px rgba(66, 117, 0, 0.2);
+}
+
+.guide-mode-icon {
+  position: relative;
+  display: inline-block;
+  width: 28px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(103, 87, 219, 0.16);
+  box-shadow: inset 0 0 0 2px rgba(103, 87, 219, 0.22);
+}
+
+.guide-mode-icon::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #6757db;
+  transition: transform 150ms ease, background 150ms ease;
+}
+
+.guide-mode-button.active .guide-mode-icon {
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: inset 0 0 0 2px rgba(37, 58, 122, 0.3);
+}
+
+.guide-mode-button.active .guide-mode-icon::after {
+  transform: translateX(10px);
+  background: #253a7a;
+}
+
+.ultra-team-button {
+  border-color: rgba(255, 159, 18, 0.44);
+  background: linear-gradient(90deg, #ffdc4d, #ff9f12);
   color: #253a7a;
 }
 
@@ -1130,6 +1177,7 @@ a {
 }
 
 .training-overview {
+  container-type: inline-size;
   display: grid;
   gap: 8px;
   margin-top: 10px;
@@ -1139,14 +1187,15 @@ a {
 
 .training-body {
   display: grid;
-  grid-template-columns: 122px minmax(0, 1fr);
-  gap: 10px;
+  grid-template-columns: 128px minmax(0, 1fr);
+  gap: 12px;
   align-items: center;
 }
 
 .stat-radar {
-  width: 122px;
-  height: 122px;
+  width: 112px;
+  height: 112px;
+  justify-self: center;
 }
 
 .radar-grid,
@@ -1180,19 +1229,37 @@ a {
 
 .stat-training-list {
   display: grid;
-  gap: 5px;
+  gap: 4px;
   min-width: 0;
 }
 
+.stat-training-header,
 .stat-training-row {
   display: grid;
-  grid-template-columns: 36px 34px 54px minmax(0, 1fr) 34px;
+  grid-template-columns: minmax(34px, 0.7fr) minmax(34px, 0.7fr) minmax(28px, 0.45fr) minmax(48px, 1fr);
   gap: 6px;
   align-items: center;
+  min-width: 0;
+}
+
+.stat-training-header {
+  color: var(--muted);
+  font-size: 0.58rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.stat-training-row {
   font-size: 0.78rem;
 }
 
+.stat-training-row > span:not(.trained-stat),
+.stat-training-row > strong:not(.sp-value) {
+  min-width: 0;
+}
+
 .sp-value {
+  min-width: 0;
   color: var(--ink);
   font-size: 0.76rem;
   font-weight: 950;
@@ -1200,21 +1267,32 @@ a {
 }
 
 .trained-stat {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 28px;
+  overflow: hidden;
   border-radius: 999px;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--stat-color), #fff 20%), var(--stat-color));
+  background: color-mix(in srgb, var(--stat-color), #fff 62%);
   color: #15234f;
   box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.12);
-  padding: 3px 6px;
+  padding: 3px 8px;
   font-size: 0.76rem;
   font-weight: 900;
   text-align: center;
 }
 
-.meter {
-  height: 9px;
+.trained-stat strong {
+  min-width: 0;
   overflow: hidden;
-  border-radius: 999px;
-  background: #e7edf5;
+  text-overflow: ellipsis;
+}
+
+.meter {
+  height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  background: transparent;
 }
 
 .meter span {
@@ -1222,6 +1300,17 @@ a {
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, var(--accent), #f2b84b);
+}
+
+.trained-stat .meter {
+  position: absolute;
+  inset: 0;
+  opacity: 0.72;
+}
+
+.trained-stat strong {
+  position: relative;
+  z-index: 1;
 }
 
 .panel-head {
@@ -2555,18 +2644,18 @@ a,
 }
 
 .workbench-training .training-body {
-  grid-template-columns: 118px minmax(0, 1fr);
-  gap: 9px;
+  grid-template-columns: 122px minmax(0, 1fr);
+  gap: 10px;
 }
 
 .workbench-training .stat-radar {
-  width: 118px;
-  height: 118px;
+  width: 108px;
+  height: 108px;
 }
 
 .workbench-training .stat-training-row {
-  grid-template-columns: 34px 32px 54px minmax(0, 1fr) 34px;
-  gap: 5px;
+  grid-template-columns: minmax(34px, 0.7fr) minmax(34px, 0.7fr) minmax(28px, 0.45fr) minmax(48px, 1fr);
+  gap: 6px;
 }
 
 .sp-summary {
@@ -2801,6 +2890,13 @@ a,
   font-size: 0.7rem;
 }
 
+.favorite-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 7px;
+  align-items: center;
+}
+
 .favorite-item {
   display: grid;
   grid-template-columns: 38px minmax(0, 1fr);
@@ -2821,11 +2917,19 @@ a,
 }
 
 .compare-head,
+.compare-name-row,
 .compare-row {
   display: grid;
   grid-template-columns: 86px repeat(2, minmax(0, 1fr));
   gap: 6px;
   align-items: center;
+}
+
+.compare-name-row {
+  border: 2px solid rgba(103, 87, 219, 0.16);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.68);
+  padding: 7px;
 }
 
 .compare-row {
@@ -2834,16 +2938,52 @@ a,
   padding: 7px;
 }
 
-.compare-row span {
+.compare-row span,
+.compare-name-row > span {
   color: var(--muted);
   font-size: 0.68rem;
   font-weight: 950;
   text-transform: uppercase;
 }
 
-.compare-row strong {
+.compare-row strong,
+.compare-name-row strong {
   overflow-wrap: anywhere;
   font-size: 0.76rem;
+}
+
+.compare-name-row strong {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 6px;
+  align-items: center;
+}
+
+.compare-name-row img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.compare-name-row small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.64rem;
+}
+
+.selection-item {
+  width: 100%;
+  border: 2px solid rgba(103, 87, 219, 0.18);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.72);
+  color: inherit;
+  padding: 8px;
+  text-align: left;
+}
+
+.selection-item.selected {
+  border-color: rgba(184, 255, 0, 0.78);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--ui-action), #fff 72%), rgba(255, 255, 255, 0.82));
 }
 
 .score-grid {
@@ -2889,6 +3029,19 @@ a,
   color: var(--muted);
   font-size: 0.72rem;
   line-height: 1.28;
+}
+
+.builder-explainer summary,
+.collapsible-rules summary {
+  cursor: pointer;
+  color: var(--champions-purple-dark);
+  font-weight: 950;
+}
+
+.builder-explainer p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.45;
 }
 
 .suggestion-actions {
@@ -3077,13 +3230,30 @@ a,
   gap: 5px;
 }
 
-.stat-training-row .meter {
+.stat-training-row .trained-stat {
   background: linear-gradient(90deg, #d8f7ff, #e6f8dc 35%, #fff1bd 60%, #ffd9b0 78%, #ffd6e4);
 }
 
 .stat-training-row .meter span {
   background: var(--stat-color);
   box-shadow: 0 0 8px color-mix(in srgb, var(--stat-color), transparent 56%);
+}
+
+@container (max-width: 430px) {
+  .training-body {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-radar {
+    width: 96px;
+    height: 96px;
+  }
+
+  .stat-training-header,
+  .stat-training-row,
+  .workbench-training .stat-training-row {
+    grid-template-columns: minmax(32px, 0.68fr) minmax(34px, 0.72fr) minmax(28px, 0.45fr) minmax(56px, 1fr);
+  }
 }
 
 .team-overview[hidden] {
@@ -3327,3 +3497,6 @@ a,
     justify-content: center;
   }
 }
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;

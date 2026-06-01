@@ -8,8 +8,8 @@ import {
 } from "../modules/team-analysis.js";
 
 const battleFormats = {
-  single3: { label: "Single 3v3", maxTeamSize: 3 },
-  double4: { label: "Double 4v4", maxTeamSize: 4 }
+  single3: { label: "Single 3v3", maxTeamSize: 6, selectionSize: 3 },
+  double4: { label: "Double 4v4", maxTeamSize: 6, selectionSize: 4 }
 };
 
 const teamStyles = {
@@ -31,7 +31,8 @@ assert.equal(normalizeSpSpread("40 HP / 40 Atk / 40 Def"), "5 HP / 5 Atk / 5 Def
 assert.deepEqual(teamLegality({ pokemon: garchomp, team: [], battleFormat: "single3", battleFormats }), { ok: true, reason: "" });
 assert.equal(teamLegality({ pokemon: garchomp, team: [garchomp], battleFormat: "single3", battleFormats }).ok, false);
 assert.equal(teamLegality({ pokemon: megaChomp, team: [garchomp], battleFormat: "single3", battleFormats }).ok, false);
-assert.equal(teamLegality({ pokemon: dragonite, team: [garchomp, starmie, corviknight], battleFormat: "single3", battleFormats }).ok, false);
+assert.equal(teamLegality({ pokemon: dragonite, team: [garchomp, starmie, corviknight], battleFormat: "single3", battleFormats }).ok, true);
+assert.equal(teamLegality({ pokemon: dragonite, team: [garchomp, starmie, corviknight, starmie, corviknight, starmie], battleFormat: "single3", battleFormats }).ok, false);
 
 const summary = teamTypeSummary([garchomp, dragonite]);
 assert.equal(summary.find((item) => item.type === "Ice").weak, 2);

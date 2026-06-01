@@ -86,19 +86,51 @@ const TEAM_STYLES = {
     label: "Double support",
     description: "Support, Intimidate en speed-control voor Double 4v4. Minder solo, meer team-synergie.",
     targets: { physical: 1, special: 1, fast: 2, bulky: 3 }
+  },
+  hyperoffense: {
+    label: "Hyper Offense",
+    description: "Zes slots met tempo, setup en directe druk. Minder veilig, maar ideaal om momentum te houden.",
+    targets: { physical: 3, special: 2, fast: 4, bulky: 0 }
+  },
+  voltturn: {
+    label: "VoltTurn",
+    description: "Pivot-team dat met U-turn/Volt Switch en snelle druk steeds goede matchups zoekt.",
+    targets: { physical: 2, special: 2, fast: 2, bulky: 2 }
+  },
+  sand: {
+    label: "Sand",
+    description: "Sand Stream, Rock/Ground/Steel-druk en solide switch-ins rond chip damage.",
+    targets: { physical: 3, special: 1, fast: 1, bulky: 3 }
+  },
+  snow: {
+    label: "Snow",
+    description: "Ice-druk met defensieve rugdekking. Let extra op Fire, Steel en Rock.",
+    targets: { physical: 2, special: 2, fast: 2, bulky: 2 }
+  },
+  stall: {
+    label: "Stall",
+    description: "Zoveel mogelijk veilige antwoorden, status en recovery. Winnen via controle en chip.",
+    targets: { physical: 1, special: 1, fast: 0, bulky: 5 }
+  },
+  antiMeta: {
+    label: "Anti-meta",
+    description: "Team dat vooral populaire threats checkt en minder op een vast archetype leunt.",
+    targets: { physical: 2, special: 2, fast: 2, bulky: 3 }
   }
 };
 
 const BATTLE_FORMATS = {
   single3: {
     label: "Single 3v3",
-    maxTeamSize: 3,
-    description: "Kies drie Pokémon die zelfstandig goede matchups en veilige wissels hebben."
+    maxTeamSize: 6,
+    selectionSize: 3,
+    description: "Bouw zes Pokémon en kies bij Team Preview drie Pokémon voor het 3v3-gevecht."
   },
   double4: {
     label: "Double 4v4",
-    maxTeamSize: 4,
-    description: "Kies vier Pokémon met goede type-synergie en rollen die elkaar ondersteunen."
+    maxTeamSize: 6,
+    selectionSize: 4,
+    description: "Bouw zes Pokémon en kies bij Team Preview vier Pokémon voor het 4v4-gevecht."
   }
 };
 
@@ -154,6 +186,7 @@ const state = {
   selectedTypes: [],
   typeFiltersOpen: false,
   team: [],
+  battleSelection: [],
   teamNotice: "",
   selectedSets: {},
   customSets: {},
@@ -164,7 +197,7 @@ const state = {
   explanationOpen: "",
   cache: {},
   hasExplored: false,
-  guideMode: true,
+  guideMode: false,
   teamStyle: "balanced",
   battleFormat: "single3",
   startSuggestionPage: 0,
@@ -200,6 +233,7 @@ const clearTeam = document.querySelector("#clearTeam");
 const resetApp = document.querySelector("#resetApp");
 const guideModeToggle = document.querySelector("#guideModeToggle");
 const showAllPokemon = document.querySelector("#showAllPokemon");
+const randomUltraTeam = document.querySelector("#randomUltraTeam");
 const backToBuilder = document.querySelector("#backToBuilder");
 const floatingTeamLab = document.querySelector("#floatingTeamLab");
 const floatingTeamCount = document.querySelector("#floatingTeamCount");
@@ -257,6 +291,7 @@ function appContext() {
     resetApp,
     guideModeToggle,
     showAllPokemon,
+    randomUltraTeam,
     backToBuilder,
     floatingTeamLab,
     typeToggle,
@@ -264,6 +299,7 @@ function appContext() {
     renderTypeFilters,
     resetToStart,
     toggleGuideMode,
+    generateRandomUltraTeam,
     showAllPokemonList,
     switchView,
     maxTeamSize,
@@ -277,7 +313,8 @@ function appContext() {
     renderTeam,
     renderViewTabs,
     renderGuideModeToggle,
-    renderTeamManager
+    renderTeamManager,
+    syncBattleSelection
   };
 }
 
@@ -374,10 +411,11 @@ function resetToStart() {
   state.selectedTypes = [];
   state.typeFiltersOpen = false;
   state.team = [];
+  state.battleSelection = [];
   state.teamNotice = "";
   state.selected = state.pokemon.find((pokemon) => pokemon.name === "Garchomp") ?? state.pokemon[0];
   state.hasExplored = false;
-  state.guideMode = true;
+  state.guideMode = false;
   state.teamStyle = "balanced";
   state.roleFilter = "all";
   state.battleFormat = "single3";
@@ -402,6 +440,70 @@ function toggleGuideMode() {
   }
   state.activeView = "builder";
   render();
+}
+
+function generateRandomUltraTeam() {
+  const previousTeam = [...state.team];
+  state.team = [];
+  state.battleSelection = [];
+  state.teamNotice = "";
+
+  const anchors = shuffled(recommendedStartPicks()).map((item) => item.pokemon);
+  const pool = [...anchors, ...shuffled(state.pokemon)]
+    .filter((pokemon) => !needsValidationAsCore(pokemon))
+    .filter((pokemon) => selectedBuild(pokemon).status !== "generated");
+
+  while (state.team.length < maxTeamSize()) {
+    const suggestions = suggestedPokemon(12).map((item) => item.pokemon);
+    const candidates = [...suggestions, ...pool]
+      .filter((pokemon) => teamLegality(pokemon).ok)
+      .sort((a, b) => ultraTeamCandidateScore(b) - ultraTeamCandidateScore(a));
+    const choice = weightedRandom(candidates.slice(0, 10));
+    if (!choice) break;
+    state.team.push(choice);
+    invalidateCache();
+  }
+
+  if (state.team.length < maxTeamSize()) {
+    state.team = previousTeam;
+    state.teamNotice = "Kon geen volledig Ultra Team samenstellen met de huidige data.";
+  } else {
+    state.selected = state.team[0];
+    state.battleSelection = state.team
+      .slice()
+      .sort((a, b) => ultraTeamCandidateScore(b) - ultraTeamCandidateScore(a))
+      .slice(0, battleSelectionSize())
+      .map((pokemon) => pokemon.name);
+    state.hasExplored = true;
+    state.guideMode = false;
+    state.activeView = "team";
+    state.teamNotice = "Willekeurig Ultra Team samengesteld op basis van rollen, checks en setkwaliteit.";
+  }
+  invalidateCache();
+  render();
+}
+
+function shuffled(items) {
+  return [...items].sort(() => Math.random() - 0.5);
+}
+
+function weightedRandom(candidates) {
+  if (!candidates.length) return null;
+  const index = Math.floor(Math.pow(Math.random(), 1.8) * candidates.length);
+  return candidates[index];
+}
+
+function ultraTeamCandidateScore(pokemon) {
+  const role = roleFor(pokemon).label;
+  const build = selectedBuild(pokemon);
+  let score = pokemon.bst + pokemon.spe * 0.6 + Math.max(pokemon.atk, pokemon.spa);
+  if (["Sweeper", "Wallbreaker", "Speed control"].includes(role)) score += 80;
+  if (["Wall", "Bulky pivot"].includes(role)) score += 50;
+  if (build.status === "smogon-champions") score += 90;
+  else if (build.status === "smogon-sv") score += 55;
+  else if (build.status === "custom") score += 30;
+  if (isMega(pokemon)) score += 35;
+  return score + Math.random() * 80;
 }
 
 function renderTypeFilters() {
@@ -457,7 +559,6 @@ function render() {
 function renderGuideModeToggle() {
   guideModeToggle.classList.toggle("active", state.guideMode);
   guideModeToggle.setAttribute("aria-pressed", String(state.guideMode));
-  guideModeToggle.textContent = state.guideMode ? "Help mij kiezen: aan" : "Help mij kiezen: uit";
 }
 
 function switchView(view) {
@@ -481,11 +582,11 @@ function renderViewTabs() {
 }
 
 function renderFloatingTeamAction() {
-  floatingTeamLab.hidden = !state.team.length || state.activeView === "team";
-  floatingTeamCount.textContent = `${state.team.length}/${maxTeamSize()}`;
+  floatingTeamLab.hidden = true;
+  floatingTeamCount.textContent = `${state.team.length}/6`;
   floatingTeamLab.setAttribute(
     "aria-label",
-    `Ga naar Team lab. Team heeft ${state.team.length} van ${maxTeamSize()} plekken gevuld.`
+    `Ga naar Team lab. Team heeft ${state.team.length} van 6 plekken gevuld.`
   );
 }
 
@@ -603,14 +704,14 @@ function createStartControls() {
       Object.entries(BATTLE_FORMATS).map(([value, config]) => ({
         value,
         label: config.label,
-        note: `${config.maxTeamSize} Pokémon`
+        note: `Team van 6, kies ${config.selectionSize} voor battle`
       })),
       state.battleFormat,
       (value) => {
         state.battleFormat = value;
         battleFormatSelect.value = value;
         state.startSuggestionPage = 0;
-        state.team = state.team.slice(0, maxTeamSize());
+        syncBattleSelection();
         render();
       }
     )
@@ -1183,11 +1284,7 @@ function toggleCompare(pokemon) {
   if (state.compare.includes(pokemon.name)) {
     state.compare = state.compare.filter((name) => name !== pokemon.name);
   } else {
-    const current = state.compare
-      .map((name) => state.pokemon.find((item) => item.name === name))
-      .filter(Boolean);
-    const sameRole = !current.length || current.some((item) => displayRoleForBuild(item) === displayRoleForBuild(pokemon));
-    state.compare = sameRole ? [pokemon.name, ...state.compare].slice(0, 2) : [pokemon.name];
+    state.compare = [...state.compare, pokemon.name].slice(-2);
   }
   renderTeamAnalysis();
   render();
@@ -1279,6 +1376,9 @@ function trainingOverviewHtml(pokemon) {
           ${stats.map(([label], index) => radarLabel(label, index)).join("")}
         </svg>
         <div class="stat-training-list">
+          <div class="stat-training-header">
+            <span>Stat</span><span>Base</span><span>SP</span><span>Final</span>
+          </div>
           ${stats.map(([label, value]) => statTrainingRow(label, value, sp[label] ?? 0)).join("")}
         </div>
       </div>
@@ -1309,8 +1409,7 @@ function statTrainingRow(label, value, sp) {
       <strong>${label}</strong>
       <span>${value}</span>
       <strong class="sp-value">${sp}</strong>
-      <span class="meter"><span style="width:${Math.min(100, trained / 220 * 100)}%"></span></span>
-      <span class="trained-stat">${trained}</span>
+      <span class="trained-stat"><span class="meter"><span style="width:${Math.min(100, trained / 220 * 100)}%"></span></span><strong>${trained}</strong></span>
     </div>
   `;
 }
@@ -1378,6 +1477,7 @@ function addToTeam(pokemon) {
     return false;
   }
   state.team.push(pokemon);
+  syncBattleSelection();
   state.teamNotice = "";
   renderTeam();
   return true;
@@ -1421,8 +1521,8 @@ function createTeamLabSlot() {
   const button = document.createElement("button");
   button.type = "button";
   button.className = "team-lab-slot";
-  button.setAttribute("aria-label", `Ga naar Team lab. Team heeft ${state.team.length} van ${maxTeamSize()} plekken gevuld.`);
-  button.innerHTML = `<span>Team lab</span><strong>${state.team.length}/${maxTeamSize()}</strong>`;
+  button.setAttribute("aria-label", `Ga naar Team lab. Team heeft ${state.team.length} van 6 plekken gevuld.`);
+  button.innerHTML = `<span>Team lab</span><strong>${state.team.length}/6</strong>`;
   button.addEventListener("click", () => {
     switchView("team");
     teamView.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1468,12 +1568,15 @@ function createTeamInlineSummary() {
 }
 
 function removeFromTeam(index) {
+  const removed = state.team[index];
   state.team.splice(index, 1);
+  if (removed) state.battleSelection = state.battleSelection.filter((name) => name !== removed.name);
   state.teamNotice = "";
   if (!state.team.includes(state.selected)) {
     state.selected = state.team[0] ?? state.pokemon.find((pokemon) => pokemon.name === "Garchomp") ?? state.pokemon[0];
   }
   invalidateCache();
+  syncBattleSelection();
   render();
 }
 
@@ -1508,7 +1611,7 @@ function renderTeamManager() {
 }
 
 function defaultTeamName() {
-  const names = state.team.map((pokemon) => pokemon.name).slice(0, 2).join(" + ");
+  const names = state.team.map((pokemon) => pokemon.name).join(" + ");
   return names || `${BATTLE_FORMATS[state.battleFormat].label} team`;
 }
 
@@ -1520,6 +1623,7 @@ function saveCurrentTeam(name) {
     format: state.battleFormat,
     teamStyle: state.teamStyle,
     members: state.team.map((pokemon) => pokemon.name),
+    battleSelection: [...state.battleSelection],
     selectedSets: { ...state.selectedSets },
     customSets: { ...state.customSets },
     savedAt: new Date().toISOString()
@@ -1557,9 +1661,11 @@ function loadSavedTeam(id) {
   const saved = state.savedTeams.find((team) => team.id === id);
   if (!saved) return;
   const byName = new Map(state.pokemon.map((pokemon) => [pokemon.name, pokemon]));
-  state.team = saved.members.map((name) => byName.get(name)).filter(Boolean).slice(0, BATTLE_FORMATS[saved.format]?.maxTeamSize ?? 3);
+  state.team = saved.members.map((name) => byName.get(name)).filter(Boolean).slice(0, maxTeamSize());
   state.battleFormat = saved.format in BATTLE_FORMATS ? saved.format : "single3";
   state.teamStyle = saved.teamStyle in TEAM_STYLES ? saved.teamStyle : "balanced";
+  state.battleSelection = [...(saved.battleSelection ?? [])];
+  syncBattleSelection();
   state.selectedSets = { ...(saved.selectedSets ?? {}) };
   state.customSets = { ...state.customSets, ...(saved.customSets ?? {}) };
   battleFormatSelect.value = state.battleFormat;
@@ -1589,6 +1695,31 @@ function renderTeamWorkbench() {
     const pokemon = state.team[index];
     teamWorkbench.append(pokemon ? createWorkbenchCard(pokemon, index) : createEmptyWorkbenchSlot(index));
   }
+}
+
+function battleSelectionSize() {
+  return BATTLE_FORMATS[state.battleFormat].selectionSize;
+}
+
+function syncBattleSelection() {
+  const teamNames = new Set(state.team.map((pokemon) => pokemon.name));
+  state.battleSelection = state.battleSelection
+    .filter((name) => teamNames.has(name))
+    .slice(0, battleSelectionSize());
+  if (state.team.length <= battleSelectionSize()) {
+    state.battleSelection = state.team.map((pokemon) => pokemon.name);
+  }
+}
+
+function toggleBattleSelection(pokemon) {
+  if (state.battleSelection.includes(pokemon.name)) {
+    state.battleSelection = state.battleSelection.filter((name) => name !== pokemon.name);
+  } else if (state.battleSelection.length < battleSelectionSize()) {
+    state.battleSelection = [...state.battleSelection, pokemon.name];
+  } else {
+    state.teamNotice = `Je kiest maximaal ${battleSelectionSize()} Pokémon voor ${BATTLE_FORMATS[state.battleFormat].label}.`;
+  }
+  render();
 }
 
 function createWorkbenchCard(pokemon, index) {
@@ -2048,7 +2179,10 @@ function renderTeamAnalysis() {
     return;
   }
 
+  teamAnalysis.append(createBuilderExplanationPanel());
   teamAnalysis.append(createTeamSummaryPanel());
+  teamAnalysis.append(createRulesPanel());
+  teamAnalysis.append(createTeamSelectionPanel());
   teamAnalysis.append(createTeamScorePanel());
   teamAnalysis.append(createTypePanel());
   teamAnalysis.append(createThreatChecklistPanel());
@@ -2089,7 +2223,15 @@ function createFavoritesPanel() {
       `;
       item.addEventListener("click", () => showPokemonDetails(pokemon));
       item.querySelector("img").addEventListener("error", (event) => event.target.remove(), { once: true });
-      panel.append(item);
+      const row = document.createElement("div");
+      row.className = "favorite-row";
+      const compare = document.createElement("button");
+      compare.type = "button";
+      compare.className = `mini-action${state.compare.includes(pokemon.name) ? " active" : ""}`;
+      compare.textContent = state.compare.includes(pokemon.name) ? "Vergelijkt" : "Vergelijk";
+      compare.addEventListener("click", () => toggleCompare(pokemon));
+      row.append(item, compare);
+      panel.append(row);
     });
   return panel;
 }
@@ -2107,10 +2249,26 @@ function createComparePanel() {
 
   if (selected.length < 2) {
     const hint = document.createElement("p");
-    hint.textContent = "Kies nog een tweede Pokémon met Vergelijk.";
+    hint.textContent = "Kies nog een tweede Pokémon via Vergelijk.";
     panel.append(hint);
     return panel;
   }
+
+  const names = document.createElement("div");
+  names.className = "compare-name-row";
+  names.innerHTML = `
+    <span>Pokemon</span>
+    ${selected.map((pokemon) => `
+      <strong>
+        <img src="${spriteUrl(pokemon.name)}" alt="">
+        <span>${escapeHtml(pokemon.name)}<small>${escapeHtml(displayRoleForBuild(pokemon))}</small></span>
+      </strong>
+    `).join("")}
+  `;
+  names.querySelectorAll("img").forEach((img) => {
+    img.addEventListener("error", (event) => event.target.remove(), { once: true });
+  });
+  panel.append(names);
 
   const rows = [
     ["Rol", selected.map((pokemon) => displayRoleForBuild(pokemon))],
@@ -2149,12 +2307,13 @@ function createTeamSummaryPanel() {
   panel.className = "analysis-block analysis-summary";
 
   const title = document.createElement("h3");
-  title.textContent = state.team.length >= maxTeamSize() ? "Team klaar voor check" : "Team in opbouw";
+  title.textContent = state.team.length >= maxTeamSize() ? "Team van 6 klaar" : "Team in opbouw";
 
   const chips = document.createElement("div");
   chips.className = "summary-chips";
   [
-    ["Team", `${state.team.length}/${maxTeamSize()}`],
+    ["Team", `${state.team.length}/6`],
+    ["Preview", `${state.battleSelection.length}/${battleSelectionSize()} gekozen`],
     ["Format", BATTLE_FORMATS[state.battleFormat].label],
     ["Plan", TEAM_STYLES[state.teamStyle].label]
   ].forEach(([label, value]) => {
@@ -2164,6 +2323,21 @@ function createTeamSummaryPanel() {
   });
 
   panel.append(title, chips);
+  return panel;
+}
+
+function createBuilderExplanationPanel() {
+  const panel = document.createElement("details");
+  panel.className = "analysis-block builder-explainer";
+  const summary = document.createElement("summary");
+  summary.textContent = "Hoe werkt de builder?";
+  const text = document.createElement("div");
+  text.innerHTML = `
+    <p>De app bouwt eerst een team van 6. Het gekozen format bepaalt daarna hoeveel Pokémon je bij Team Preview meeneemt: 3 in Singles of 4 in Doubles.</p>
+    <p>Suggesties krijgen punten voor ontbrekende rollen, snelheid, fysieke/speciale druk, bulk, type-resists/immunities tegen gedeelde zwaktes en antwoorden op lokale threat-data. Sets met echte brondata tellen zwaarder dan generated sets.</p>
+    <p>Een optimaal team is hier dus geen absolute waarheid, maar een score op balans, matchup-dekking, setkwaliteit en formatfit. Team Preview analyseert de gekozen 3 of 4 wanneer je selectie compleet is.</p>
+  `;
+  panel.append(summary, text);
   return panel;
 }
 
@@ -2211,9 +2385,11 @@ function teamScores() {
 }
 
 function createRulesPanel() {
-  const panel = document.createElement("div");
-  panel.className = "analysis-block";
-  panel.append(createSmallTitle("Teamregels"));
+  const panel = document.createElement("details");
+  panel.className = "analysis-block collapsible-rules";
+  const summary = document.createElement("summary");
+  summary.textContent = "Teamregels";
+  panel.append(summary);
 
   if (state.teamNotice) {
     const notice = document.createElement("p");
@@ -2351,21 +2527,24 @@ function createFormatFocusPanel() {
 }
 
 function createSuggestionPanel() {
-  const suggestions = suggestedPokemon();
+  const replacementMode = state.team.length >= maxTeamSize();
+  const suggestions = replacementMode ? replacementSuggestions() : suggestedPokemon();
   const panel = document.createElement("div");
   panel.className = "analysis-block";
-  panel.append(createSmallTitle("Suggesties"));
+  panel.append(createSmallTitle(replacementMode ? "Vervang-suggesties" : "Suggesties"));
 
   if (!suggestions.length) {
     const done = document.createElement("p");
-    done.textContent = "Geen duidelijke aanvulling gevonden met de huidige filters.";
+    done.textContent = replacementMode
+      ? "Geen duidelijke vervanging gevonden met de huidige data."
+      : "Geen duidelijke aanvulling gevonden met de huidige filters.";
     panel.append(done);
     return panel;
   }
 
   const list = document.createElement("div");
   list.className = "suggestions";
-  suggestions.forEach(({ pokemon, reason }) => {
+  suggestions.forEach(({ pokemon, reason, replace }) => {
     const card = document.createElement("article");
     card.className = "suggestion";
 
@@ -2398,7 +2577,9 @@ function createSuggestionPanel() {
 
     const text = document.createElement("span");
     text.className = "suggestion-reason";
-    text.textContent = `${roleFor(pokemon).label}: ${reason}`;
+    text.textContent = replace
+      ? `Vervang ${replace.name}: ${reason}`
+      : `${roleFor(pokemon).label}: ${reason}`;
     const build = selectedBuild(pokemon);
     const quality = document.createElement("span");
     quality.className = `suggestion-quality ${setQualityClass(build)}`;
@@ -2407,9 +2588,10 @@ function createSuggestionPanel() {
     actions.className = "suggestion-actions";
     const add = document.createElement("button");
     add.type = "button";
-    add.textContent = "Voeg toe";
+    add.textContent = replace ? "Vervang" : "Voeg toe";
     add.addEventListener("click", () => {
-      addToTeam(pokemon);
+      if (replace) replaceTeamMember(replace.name, pokemon);
+      else addToTeam(pokemon);
       state.selected = pokemon;
       render();
     });
@@ -2474,35 +2656,93 @@ function createThreatChecklistPanel() {
   return panel;
 }
 
+function replacementSuggestions() {
+  const originalSelection = [...state.battleSelection];
+  state.battleSelection = [];
+  invalidateCache();
+  const baseline = teamScores().reduce((sum, item) => sum + item.value, 0);
+  const candidates = state.pokemon
+    .filter((pokemon) => !state.team.some((member) => member.name === pokemon.name))
+    .filter((pokemon) => !needsValidationAsCore(pokemon))
+    .map((pokemon) => {
+      let best = null;
+      state.team.forEach((member) => {
+        const hypotheticalTeam = state.team.map((item) => item.name === member.name ? pokemon : item);
+        const bases = hypotheticalTeam.map((item) => baseSpecies(item.name));
+        if (new Set(bases).size !== bases.length) return;
+        if (isMega(pokemon) && state.team.some((item) => item.name !== member.name && isMega(item))) return;
+        const original = [...state.team];
+        state.team = state.team.map((item) => item.name === member.name ? pokemon : item);
+        invalidateCache();
+        const scores = teamScores();
+        const score = scores.reduce((sum, item) => sum + item.value, 0);
+        state.team = original;
+        invalidateCache();
+        const gain = score - baseline;
+        if (!best || gain > best.gain) best = { replace: member, gain };
+      });
+      const reasons = suggestionReasons(pokemon).reasons;
+      return {
+        pokemon,
+        replace: best?.replace,
+        score: best?.gain ?? 0,
+        reason: reasons[0] || `verbetert mogelijk ${displayRoleForBuild(pokemon)}`
+      };
+    })
+    .filter((item) => item.replace && item.score > -20)
+    .sort((a, b) => b.score - a.score || b.pokemon.bst - a.pokemon.bst);
+  state.battleSelection = originalSelection;
+  invalidateCache();
+  return candidates.slice(0, 3);
+}
+
+function replaceTeamMember(oldName, nextPokemon) {
+  const index = state.team.findIndex((pokemon) => pokemon.name === oldName);
+  if (index === -1) return;
+  state.team[index] = nextPokemon;
+  state.battleSelection = state.battleSelection.map((name) => name === oldName ? nextPokemon.name : name);
+  state.selected = nextPokemon;
+  state.teamNotice = `${oldName} vervangen door ${nextPokemon.name}.`;
+  invalidateCache();
+}
+
 function createTeamSelectionPanel() {
   const panel = document.createElement("div");
   panel.className = "analysis-block team-selection-sim";
-  panel.append(createSmallTitle(`Teamselectie-simulatie (${BATTLE_FORMATS[state.battleFormat].label})`));
+  panel.append(createSmallTitle(`Team Preview (${BATTLE_FORMATS[state.battleFormat].label})`));
 
   const note = document.createElement("p");
   note.textContent = state.team.length < maxTeamSize()
-    ? `Vul ${maxTeamSize()} slots om een echte Champions-selectie te simuleren.`
-    : `Voor ${BATTLE_FORMATS[state.battleFormat].label} neem je precies deze ${maxTeamSize()} Pokémon mee; check of elke slot een duidelijke taak heeft.`;
+    ? `Bouw eerst richting een team van 6. Daarna kies je bij Team Preview ${battleSelectionSize()} Pokémon voor het gevecht.`
+    : `Je hebt 6 Pokémon. Kies hieronder welke ${battleSelectionSize()} je zou meenemen tegen de preview van je tegenstander.`;
 
   const list = document.createElement("div");
   list.className = "selection-list";
   state.team.forEach((pokemon, index) => {
     const build = selectedBuild(pokemon);
-    const item = document.createElement("div");
-    item.className = "selection-item";
+    const item = document.createElement("button");
+    item.type = "button";
+    const selected = state.battleSelection.includes(pokemon.name);
+    item.className = `selection-item${selected ? " selected" : ""}`;
     item.innerHTML = `
-      <span>${index + 1}</span>
+      <span>${selected ? "✓" : index + 1}</span>
       <strong>${escapeHtml(pokemon.name)}</strong>
       <small>${escapeHtml(formatFitLabel(pokemon))} · ${escapeHtml(setQualityLabel(build))}</small>
     `;
+    item.addEventListener("click", () => toggleBattleSelection(pokemon));
     list.append(item);
   });
 
+  const selectedText = document.createElement("p");
+  selectedText.className = "selection-note";
+  selectedText.textContent = state.battleSelection.length
+    ? `Gekozen: ${state.battleSelection.join(", ")} (${state.battleSelection.length}/${battleSelectionSize()})`
+    : `Nog geen battle-selectie gekozen (${battleSelectionSize()} nodig).`;
   const archetype = document.createElement("p");
   archetype.className = "selection-note";
   archetype.textContent = selectionArchetypeNote();
 
-  panel.append(note, list, archetype);
+  panel.append(note, list, selectedText, archetype);
   return panel;
 }
 
@@ -2548,7 +2788,8 @@ function relevantThreats() {
 function threatAnswerStatus(threat) {
   const answers = threat.answers ?? [];
   const attackTypes = threat.attackTypes ?? [];
-  const answerByType = state.team.find((pokemon) => isReliableThreatAnswer(pokemon) && answers.some((type) => pokemon.types.includes(type)));
+  const team = analysisTeam();
+  const answerByType = team.find((pokemon) => isReliableThreatAnswer(pokemon) && answers.some((type) => pokemon.types.includes(type)));
   if (answerByType) {
     return {
       ok: true,
@@ -2557,7 +2798,7 @@ function threatAnswerStatus(threat) {
     };
   }
 
-  const defensiveAnswer = state.team.find((pokemon) => isReliableThreatAnswer(pokemon) && attackTypes.some((type) => defensiveMultiplier(pokemon.types, type) < 1));
+  const defensiveAnswer = team.find((pokemon) => isReliableThreatAnswer(pokemon) && attackTypes.some((type) => defensiveMultiplier(pokemon.types, type) < 1));
   if (defensiveAnswer) {
     const resisted = attackTypes.filter((type) => defensiveMultiplier(defensiveAnswer.types, type) < 1);
     return {
@@ -2567,7 +2808,7 @@ function threatAnswerStatus(threat) {
     };
   }
 
-  const speedAnswer = state.team.find((pokemon) => isReliableThreatAnswer(pokemon) && pokemon.spe >= 110);
+  const speedAnswer = team.find((pokemon) => isReliableThreatAnswer(pokemon) && pokemon.spe >= 110);
   if (speedAnswer && (threat.tags ?? []).some((tag) => tag.includes("speed") || tag.includes("setup"))) {
     return {
       ok: true,
@@ -2576,7 +2817,7 @@ function threatAnswerStatus(threat) {
     };
   }
 
-  const softAnswer = state.team.find((pokemon) => answers.some((type) => pokemon.types.includes(type)) || attackTypes.some((type) => defensiveMultiplier(pokemon.types, type) < 1));
+  const softAnswer = team.find((pokemon) => answers.some((type) => pokemon.types.includes(type)) || attackTypes.some((type) => defensiveMultiplier(pokemon.types, type) < 1));
   if (softAnswer) {
     return {
       ok: false,
@@ -2655,7 +2896,16 @@ function createSmallTitle(title) {
   return heading;
 }
 
+function analysisTeam() {
+  if (state.battleSelection.length === battleSelectionSize()) {
+    const selectedNames = new Set(state.battleSelection);
+    return state.team.filter((pokemon) => selectedNames.has(pokemon.name));
+  }
+  return state.team;
+}
+
 function teamTypeSummary(team = state.team) {
+  if (team === state.team) team = analysisTeam();
   if (team !== state.team) return pureTeamTypeSummary(team);
   state.cache.teamTypeSummary ??= pureTeamTypeSummary(state.team);
   return state.cache.teamTypeSummary;
@@ -2686,8 +2936,13 @@ function teamRules() {
   return [
     {
       ok: state.team.length <= maxTeamSize(),
-      label: `${BATTLE_FORMATS[state.battleFormat].label}`,
-      note: `${state.team.length}/${maxTeamSize()} gekozen.`
+      label: "Team van 6",
+      note: `${state.team.length}/6 gekozen.`
+    },
+    {
+      ok: state.battleSelection.length === battleSelectionSize(),
+      label: `${BATTLE_FORMATS[state.battleFormat].label} selectie`,
+      note: `${state.battleSelection.length}/${battleSelectionSize()} gekozen voor Team Preview.`
     },
     {
       ok: megaCount <= 1,
@@ -2719,7 +2974,7 @@ function baseSpeciesLabel(name) {
 }
 
 function teamBalance() {
-  return state.team.reduce((totals, pokemon) => {
+  return analysisTeam().reduce((totals, pokemon) => {
     if (needsValidationAsCore(pokemon)) {
       totals.unreliable += 1;
       return totals;
@@ -2933,8 +3188,9 @@ function roleCoverage() {
   if (state.cache.roleCoverage) return state.cache.roleCoverage;
   const balance = teamBalance();
   const targets = TEAM_STYLES[state.teamStyle].targets;
-  const hasGroundImmune = state.team.some((pokemon) => defensiveMultiplier(pokemon.types, "Ground") === 0);
-  const hasSteelOrPoison = state.team.some((pokemon) => pokemon.types.includes("Steel") || pokemon.types.includes("Poison"));
+  const team = analysisTeam();
+  const hasGroundImmune = team.some((pokemon) => defensiveMultiplier(pokemon.types, "Ground") === 0);
+  const hasSteelOrPoison = team.some((pokemon) => pokemon.types.includes("Steel") || pokemon.types.includes("Poison"));
 
   state.cache.roleCoverage = [
     {
@@ -2988,7 +3244,6 @@ function buildAdviceHtml(pokemon) {
     <div class="set-advice">
       <div class="set-head">
         <h3>Set-richtlijn</h3>
-        <span>Template</span>
       </div>
       ${setSourceCardsHtml(options, build)}
       <div class="set-build-layout">

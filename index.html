@@ -21,7 +21,11 @@
             <input id="searchInput" type="search" placeholder="Naam, type of ability">
           </label>
           <button id="showAllPokemon" class="show-all-button" type="button">Lijst alle Mons</button>
-          <button id="guideModeToggle" class="guide-mode-button" type="button" aria-pressed="true">Help mij kiezen</button>
+          <button id="guideModeToggle" class="guide-mode-button" type="button" aria-pressed="false">
+            <span class="guide-mode-icon" aria-hidden="true"></span>
+            <span>Help mij kiezen</span>
+          </button>
+          <button id="randomUltraTeam" class="ultra-team-button" type="button">Willekeurig Ultra Team</button>
         </div>
         <details class="toolbar-drawer">
           <summary>Filters & teamregels</summary>
@@ -53,6 +57,12 @@
                 <option value="sun">Sun</option>
                 <option value="trickroom">Trick Room</option>
                 <option value="doublesupport">Double support</option>
+                <option value="hyperoffense">Hyper Offense</option>
+                <option value="voltturn">VoltTurn</option>
+                <option value="sand">Sand</option>
+                <option value="snow">Snow</option>
+                <option value="stall">Stall</option>
+                <option value="antiMeta">Anti-meta</option>
               </select>
             </label>
             <label>
