@@ -41,17 +41,18 @@ function toLocalPokemon(sm) {
 
 async function main() {
   const basics = await rpc('dump-basics', { gen: 'champions' });
+  const officialPokemon = basics.pokemon.filter((pokemon) => pokemon.isNonstandard !== 'CAP');
   const generatedAt = new Date().toISOString();
   const output = {
     source: 'https://www.smogon.com/dex/champions/pokemon/',
     generatedAt,
     counts: {
-      pokemon: basics.pokemon.length,
+      pokemon: officialPokemon.length,
       moves: basics.moves.length,
       abilities: basics.abilities.length,
       items: basics.items.length,
     },
-    pokemon: basics.pokemon.map(toLocalPokemon),
+    pokemon: officialPokemon.map(toLocalPokemon),
   };
 
   await fs.writeFile(POKEMON_PATH, `${JSON.stringify(output, null, 2)}\n`);

@@ -45,7 +45,7 @@ const SP_STATS = [
   ['spd', 'SpD'],
   ['spe', 'Spe'],
 ];
-const EXCLUDED_FORMAT_PATTERN = /\bBH\b|Hackmons|STABmons|Almost Any Ability|Godly Gift|Partners in Crime/i;
+const EXCLUDED_FORMAT_PATTERN = /\bBH\b|\bCAP\b|Hackmons|STABmons|Almost Any Ability|Godly Gift|Partners in Crime/i;
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 

@@ -25,28 +25,6 @@
     "errors": []
   },
   "sets": {
-    "Ababo": [
-      {
-        "id": "generated-mixed",
-        "label": "Mixed",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Pixilate",
-        "nature": "Rash / Mild",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
     "Abomasnow": [
       {
         "id": "sv-abomasnow-zu-auroraveil",
@@ -1329,50 +1307,6 @@
         ]
       }
     ],
-    "Argalis": [
-      {
-        "id": "generated-mixed",
-        "label": "Mixed",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Shed Skin",
-        "nature": "Rash / Mild",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Arghonaut": [
-      {
-        "id": "sv-arghonaut-cap-defensivepivot",
-        "label": "Defensive Pivot (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Defensive Pivot",
-        "item": "Leftovers / Heavy-Duty Boots",
-        "ability": "Unaware",
-        "nature": "Impish",
-        "evs": "31 HP / 28 Def / 5 SpD",
-        "moves": [
-          "Circle Throw",
-          "Knock Off",
-          "Recover",
-          "Spikes"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
     "Ariados": [
       {
         "id": "generated-physical",
@@ -1579,28 +1513,6 @@
         ]
       }
     ],
-    "Astrolotl": [
-      {
-        "id": "sv-astrolotl-cap-offensiveutility",
-        "label": "Offensive Utility (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Offensive Utility",
-        "item": "Heavy-Duty Boots",
-        "ability": "Regenerator",
-        "nature": "Jolly",
-        "evs": "4 HP / 32 SpD / 28 Spe",
-        "moves": [
-          "Fire Lash",
-          "Stomping Tantrum",
-          "Will-O-Wisp / Encore",
-          "Spikes / Defog"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
     "Audino": [
       {
         "id": "generated-mixed",
@@ -1642,28 +1554,6 @@
         ],
         "sourceIds": [
           "generated-local"
-        ]
-      }
-    ],
-    "Aurumoth": [
-      {
-        "id": "sv-aurumoth-cap-tailglow",
-        "label": "Tail Glow (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Tail Glow",
-        "item": "Weakness Policy / Focus Sash / Heavy-Duty Boots",
-        "ability": "Weak Armor / No Guard",
-        "nature": "Timid",
-        "evs": "32 SpA / 1 SpD / 32 Spe",
-        "moves": [
-          "Tail Glow",
-          "Psyshock / Psychic",
-          "Focus Blast",
-          "Shadow Ball"
-        ],
-        "sourceIds": [
-          "smogon-sv"
         ]
       }
     ],
@@ -2315,72 +2205,6 @@
         ]
       }
     ],
-    "Brattler": [
-      {
-        "id": "generated-physical",
-        "label": "Physical",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Harvest",
-        "nature": "Adamant / Jolly",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Breezi": [
-      {
-        "id": "generated-mixed",
-        "label": "Mixed",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Unburden",
-        "nature": "Rash / Mild",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Caimanoe": [
-      {
-        "id": "generated-mixed",
-        "label": "Mixed",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Water Veil",
-        "nature": "Rash / Mild",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
     "Camerupt": [
       {
         "id": "sv-camerupt-zu-speciallydefensive",
@@ -2425,28 +2249,6 @@
         ]
       }
     ],
-    "Caribolt": [
-      {
-        "id": "sv-caribolt-cap-talahboltswordsdance",
-        "label": "talahbolt (Swords Dance) (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "talahbolt (Swords Dance)",
-        "item": "Leftovers / Magnet",
-        "ability": "Galvanize",
-        "nature": "Jolly / Adamant",
-        "evs": "32 Atk / 1 SpD / 32 Spe",
-        "moves": [
-          "Swords Dance",
-          "Double-Edge",
-          "Horn Leech",
-          "Rapid Spin"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
     "Castform": [
       {
         "id": "generated-mixed",
@@ -2466,50 +2268,6 @@
         ],
         "sourceIds": [
           "generated-local"
-        ]
-      }
-    ],
-    "Cawdet": [
-      {
-        "id": "generated-physical",
-        "label": "Physical",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Keen Eye",
-        "nature": "Adamant / Jolly",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Cawmodore": [
-      {
-        "id": "sv-cawmodore-cap-bellydrum",
-        "label": "Belly Drum (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Belly Drum",
-        "item": "Sitrus Berry",
-        "ability": "Volt Absorb",
-        "nature": "Jolly",
-        "evs": "1 HP / 32 Atk / 32 Spe",
-        "moves": [
-          "Belly Drum",
-          "Acrobatics",
-          "Bullet Punch",
-          "Drain Punch / Knock Off"
-        ],
-        "sourceIds": [
-          "smogon-sv"
         ]
       }
     ],
@@ -3113,92 +2871,6 @@
         ]
       }
     ],
-    "Chromera": [
-      {
-        "id": "sv-chromera-cap-calmmind",
-        "label": "Calm Mind (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Calm Mind",
-        "item": "Silk Scarf",
-        "ability": "Color Change",
-        "nature": "Modest",
-        "evs": "32 SpA / 1 SpD / 32 Spe",
-        "moves": [
-          "Calm Mind",
-          "Boomburst",
-          "Dark Pulse",
-          "Recover / Trailblaze"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      },
-      {
-        "id": "sv-chromera-cap-finalgambit",
-        "label": "Final Gambit (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Final Gambit",
-        "item": "Choice Scarf",
-        "ability": "Color Change",
-        "nature": "Modest",
-        "evs": "32 HP / 2 SpA / 30 Spe",
-        "moves": [
-          "Final Gambit",
-          "Dark Pulse",
-          "Boomburst",
-          "Switcheroo"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Chuggalong": [
-      {
-        "id": "sv-chuggalong-cap-clangoroussoul",
-        "label": "Clangorous Soul (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Clangorous Soul",
-        "item": "Throat Spray",
-        "ability": "Armor Tail",
-        "nature": "Timid",
-        "evs": "32 SpA / 1 SpD / 32 Spe",
-        "moves": [
-          "Clangorous Soul",
-          "Clanging Scales / Stored Power",
-          "Sludge Bomb / Stored Power",
-          "Surf"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Chuggon": [
-      {
-        "id": "generated-special",
-        "label": "Special",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Shell Armor",
-        "nature": "Modest / Timid",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
     "Clawitzer": [
       {
         "id": "sv-clawitzer-zu-wallbreaker",
@@ -3487,28 +3159,6 @@
         ]
       }
     ],
-    "Colossoil": [
-      {
-        "id": "sv-colossoil-cap-flameorb",
-        "label": "Flame Orb (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Flame Orb",
-        "item": "Flame Orb",
-        "ability": "Guts",
-        "nature": "Jolly / Adamant",
-        "evs": "32 Atk / 1 Def / 32 Spe",
-        "moves": [
-          "Knock Off",
-          "Headlong Rush",
-          "Facade",
-          "Sucker Punch / Rapid Spin"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
     "Conkeldurr": [
       {
         "id": "sv-conkeldurr-uu-flameorbguts",
@@ -3548,28 +3198,6 @@
         ],
         "sourceIds": [
           "smogon-sv"
-        ]
-      }
-    ],
-    "Coribalis": [
-      {
-        "id": "generated-mixed",
-        "label": "Mixed",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Torrent",
-        "nature": "Rash / Mild",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
         ]
       }
     ],
@@ -3676,116 +3304,6 @@
         ],
         "sourceIds": [
           "generated-local"
-        ]
-      }
-    ],
-    "Cresceidon": [
-      {
-        "id": "sv-cresceidon-cap-fastwall",
-        "label": "Fast Wall (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Fast Wall",
-        "item": "Heavy-Duty Boots / Rocky Helmet",
-        "ability": "Multiscale / Rough Skin",
-        "nature": "Timid",
-        "evs": "32 HP / 1 SpA / 32 Spe",
-        "moves": [
-          "Scald",
-          "Moonblast",
-          "Recover",
-          "Thunder Wave"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Crucibelle": [
-      {
-        "id": "sv-crucibelle-cap-utilitypivot",
-        "label": "Utility Pivot (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Utility Pivot",
-        "item": "Assault Vest",
-        "ability": "Regenerator",
-        "nature": "Jolly",
-        "evs": "32 Atk / 1 SpD / 32 Spe",
-        "moves": [
-          "Stone Edge",
-          "U-turn",
-          "Knock Off",
-          "Gunk Shot"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Crucibelle-Mega": [
-      {
-        "id": "generated-physical",
-        "label": "Physical",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Magic Guard",
-        "nature": "Adamant / Jolly",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Cupra": [
-      {
-        "id": "generated-mixed",
-        "label": "Mixed",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Shield Dust",
-        "nature": "Rash / Mild",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Cyclohm": [
-      {
-        "id": "sv-cyclohm-cap-physicallydefensive",
-        "label": "Physically Defensive (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Physically Defensive",
-        "item": "Heavy-Duty Boots",
-        "ability": "Shield Dust / Static",
-        "nature": "Bold",
-        "evs": "32 HP / 30 Def / 2 Spe",
-        "moves": [
-          "Volt Switch / Discharge",
-          "Flamethrower / Hydro Pump",
-          "Ice Beam",
-          "Slack Off"
-        ],
-        "sourceIds": [
-          "smogon-sv"
         ]
       }
     ],
@@ -4261,28 +3779,6 @@
         ]
       }
     ],
-    "Dorsoil": [
-      {
-        "id": "generated-mixed",
-        "label": "Mixed",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Oblivious",
-        "nature": "Rash / Mild",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
     "Dragapult": [
       {
         "id": "sv-dragapult-ou-bootspivot",
@@ -4645,26 +4141,6 @@
         ]
       },
       {
-        "id": "sv-dragapult-cap-hex",
-        "label": "Hex (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Hex",
-        "item": "Heavy-Duty Boots",
-        "ability": "Infiltrator",
-        "nature": "Naive / Timid",
-        "evs": "8 Atk / 25 SpA / 32 Spe | 32 SpA / 1 SpD / 32 Spe",
-        "moves": [
-          "Hex",
-          "Will-O-Wisp / Thunder Wave",
-          "U-turn",
-          "Dragon Darts / Draco Meteor"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      },
-      {
         "id": "sv-dragapult-ubersuu-statusspam",
         "label": "Status Spam (SV)",
         "format": "Ubers UU",
@@ -4702,28 +4178,6 @@
         ],
         "sourceIds": [
           "smogon-sv"
-        ]
-      }
-    ],
-    "Draggalong": [
-      {
-        "id": "generated-special",
-        "label": "Special",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Armor Tail",
-        "nature": "Modest / Timid",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
         ]
       }
     ],
@@ -5475,72 +4929,6 @@
         ]
       }
     ],
-    "Duohm": [
-      {
-        "id": "generated-special",
-        "label": "Special",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Shield Dust",
-        "nature": "Modest / Timid",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Electrelk": [
-      {
-        "id": "generated-physical",
-        "label": "Physical",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Overgrow",
-        "nature": "Adamant / Jolly",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Embirch": [
-      {
-        "id": "generated-special",
-        "label": "Special",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Reckless",
-        "nature": "Modest / Timid",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
     "Emboar": [
       {
         "id": "sv-emboar-pu-wallbreaker",
@@ -5783,28 +5171,6 @@
           "Toxic / Roar / Knock Off",
           "Roost",
           "Stealth Rock / Defog"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Equilibra": [
-      {
-        "id": "sv-equilibra-cap-defensivespinner",
-        "label": "Defensive Spinner (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Defensive Spinner",
-        "item": "Leftovers",
-        "ability": "Levitate",
-        "nature": "Calm",
-        "evs": "32 HP / 1 Def / 32 SpD",
-        "moves": [
-          "Earth Power",
-          "Doom Desire / Flash Cannon",
-          "Rapid Spin",
-          "Pain Split / Protect / Flash Cannon"
         ],
         "sourceIds": [
           "smogon-sv"
@@ -6641,28 +6007,6 @@
         ]
       }
     ],
-    "Fawnifer": [
-      {
-        "id": "generated-mixed",
-        "label": "Mixed",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Overgrow",
-        "nature": "Rash / Mild",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
     "Feraligatr": [
       {
         "id": "sv-feraligatr-ru-setupsweeper",
@@ -6707,28 +6051,6 @@
         ]
       }
     ],
-    "Fidgit": [
-      {
-        "id": "sv-fidgit-cap-trickroomsetter",
-        "label": "Trick Room Setter (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Trick Room Setter",
-        "item": "Focus Sash / Mental Herb",
-        "ability": "Persistent",
-        "nature": "Bold",
-        "evs": "31 HP / 28 Def / 5 SpD",
-        "moves": [
-          "Trick Room",
-          "Healing Wish",
-          "Stealth Rock / Spikes / Earth Power",
-          "Encore / Earth Power"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
     "Flapple": [
       {
         "id": "generated-physical",
@@ -6751,28 +6073,6 @@
         ]
       }
     ],
-    "Flarelm": [
-      {
-        "id": "generated-special",
-        "label": "Special",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Rock Head",
-        "nature": "Modest / Timid",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
     "Flareon": [
       {
         "id": "generated-physical",
@@ -6783,28 +6083,6 @@
         "item": "Expert Belt / Heavy-Duty Boots",
         "ability": "Flash Fire",
         "nature": "Adamant / Jolly",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Floatoy": [
-      {
-        "id": "generated-mixed",
-        "label": "Mixed",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Water Veil",
-        "nature": "Rash / Mild",
         "evs": "32 Spe",
         "moves": [
           "Primary STAB",
@@ -7000,28 +6278,6 @@
         ],
         "sourceIds": [
           "smogon-sv"
-        ]
-      }
-    ],
-    "Flox": [
-      {
-        "id": "generated-special",
-        "label": "Special",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Static",
-        "nature": "Modest / Timid",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
         ]
       }
     ],
@@ -9185,46 +8441,6 @@
         ]
       },
       {
-        "id": "sv-gliscor-cap-defensivehazardsetter",
-        "label": "Defensive Hazard Setter (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Defensive Hazard Setter",
-        "item": "Toxic Orb",
-        "ability": "Poison Heal",
-        "nature": "Careful / Impish",
-        "evs": "31 HP / 5 Def / 29 SpD | 31 HP / 31 Def / 2 SpD",
-        "moves": [
-          "Spikes / Stealth Rock",
-          "Earthquake",
-          "Toxic / Knock Off / U-turn",
-          "Protect"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      },
-      {
-        "id": "sv-gliscor-cap-swordsdance",
-        "label": "Swords Dance (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Swords Dance",
-        "item": "Toxic Orb",
-        "ability": "Poison Heal",
-        "nature": "Careful / Impish",
-        "evs": "31 HP / 5 Def / 29 SpD | 31 HP / 31 Def / 2 SpD",
-        "moves": [
-          "Swords Dance",
-          "Earthquake",
-          "Knock Off / Facade",
-          "Protect"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      },
-      {
         "id": "sv-gliscor-inh-defoggerfletchinder",
         "label": "Defogger (Fletchinder) (SV)",
         "format": "Inh",
@@ -10457,28 +9673,6 @@
         ]
       }
     ],
-    "Hemogoblin": [
-      {
-        "id": "sv-hemogoblin-cap-bulkup",
-        "label": "Bulk Up (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Bulk Up",
-        "item": "Heavy-Duty Boots",
-        "ability": "Pixilate",
-        "nature": "Adamant",
-        "evs": "5 HP / 32 Atk / 27 Spe",
-        "moves": [
-          "Bulk Up",
-          "Extreme Speed",
-          "Flare Blitz",
-          "Taunt / Spikes / Tera Blast"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
     "Heracross": [
       {
         "id": "sv-heracross-pu-flameorb",
@@ -11659,70 +10853,6 @@
         ]
       }
     ],
-    "Jumbao": [
-      {
-        "id": "sv-jumbao-cap-droughtwallbreaker",
-        "label": "Drought Wallbreaker (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Drought Wallbreaker",
-        "item": "Heat Rock",
-        "ability": "Drought",
-        "nature": "Timid",
-        "evs": "1 Def / 32 SpA / 32 Spe",
-        "moves": [
-          "Solar Beam",
-          "Moonblast",
-          "Tera Blast / Focus Blast",
-          "Synthesis"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      },
-      {
-        "id": "sv-jumbao-cap-choicescarf",
-        "label": "Choice Scarf (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Choice Scarf",
-        "item": "Choice Scarf",
-        "ability": "Drought / Trace",
-        "nature": "Timid",
-        "evs": "1 Def / 32 SpA / 32 Spe",
-        "moves": [
-          "Solar Beam / Leaf Storm",
-          "Moonblast",
-          "Tera Blast / Focus Blast",
-          "Healing Wish"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Justyke": [
-      {
-        "id": "generated-mixed",
-        "label": "Mixed",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Levitate",
-        "nature": "Rash / Mild",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
     "Kangaskhan": [
       {
         "id": "sv-kangaskhan-nationaldexdoubles-seismictoss",
@@ -11807,28 +10937,6 @@
         ]
       }
     ],
-    "Kerfluffle": [
-      {
-        "id": "sv-kerfluffle-cap-valiantathome",
-        "label": "Valiant At Home (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Valiant At Home",
-        "item": "Heavy-Duty Boots",
-        "ability": "Natural Cure",
-        "nature": "Timid",
-        "evs": "32 SpA / 1 SpD / 32 Spe",
-        "moves": [
-          "Moonblast",
-          "Focus Blast",
-          "Psychic Noise",
-          "Parting Shot"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
     "Kingambit": [
       {
         "id": "champions-kingambit-battlestadiumsingles-swordsdance",
@@ -11868,28 +10976,6 @@
         ],
         "sourceIds": [
           "smogon-champions"
-        ]
-      }
-    ],
-    "Kitsunoh": [
-      {
-        "id": "sv-kitsunoh-cap-utility",
-        "label": "Utility (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Utility",
-        "item": "Heavy-Duty Boots",
-        "ability": "Trace",
-        "nature": "Jolly",
-        "evs": "13 HP / 19 Atk / 32 Spe",
-        "moves": [
-          "Shadow Strike",
-          "Strength Sap",
-          "Will-O-Wisp / Knock Off",
-          "U-turn"
-        ],
-        "sourceIds": [
-          "smogon-sv"
         ]
       }
     ],
@@ -12216,28 +11302,6 @@
         ],
         "sourceIds": [
           "generated-local"
-        ]
-      }
-    ],
-    "Krilowatt": [
-      {
-        "id": "sv-krilowatt-cap-offensivepivot",
-        "label": "Offensive Pivot (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Offensive Pivot",
-        "item": "Life Orb",
-        "ability": "Magic Guard",
-        "nature": "Timid",
-        "evs": "32 SpA / 1 SpD / 32 Spe",
-        "moves": [
-          "Volt Switch",
-          "Surf",
-          "Thunderbolt",
-          "Ice Beam"
-        ],
-        "sourceIds": [
-          "smogon-sv"
         ]
       }
     ],
@@ -12842,28 +11906,6 @@
         ],
         "sourceIds": [
           "generated-local"
-        ]
-      }
-    ],
-    "Malaconda": [
-      {
-        "id": "sv-malaconda-cap-sunsetter",
-        "label": "Sun Setter (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Sun Setter",
-        "item": "Heat Rock / Heavy-Duty Boots",
-        "ability": "Drought",
-        "nature": "Careful",
-        "evs": "32 HP / 1 Atk / 32 Def",
-        "moves": [
-          "Knock Off",
-          "Parting Shot",
-          "Glare / Synthesis / Rapid Spin",
-          "Synthesis / Rapid Spin"
-        ],
-        "sourceIds": [
-          "smogon-sv"
         ]
       }
     ],
@@ -13775,50 +12817,6 @@
         ]
       }
     ],
-    "Miasmaw": [
-      {
-        "id": "sv-miasmaw-cap-swordsdance",
-        "label": "Swords Dance (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Swords Dance",
-        "item": "Loaded Dice",
-        "ability": "Neutralizing Gas",
-        "nature": "Jolly",
-        "evs": "32 Atk / 1 SpD / 32 Spe",
-        "moves": [
-          "Swords Dance",
-          "Scale Shot",
-          "Earthquake",
-          "Gunk Shot / Substitute"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Miasmite": [
-      {
-        "id": "generated-physical",
-        "label": "Physical",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Neutralizing Gas",
-        "nature": "Adamant / Jolly",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
     "Milotic": [
       {
         "id": "sv-milotic-pu-physicallydefensive",
@@ -13965,50 +12963,6 @@
         ]
       }
     ],
-    "Mollux": [
-      {
-        "id": "sv-mollux-cap-utilitywall",
-        "label": "Utility Wall (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Utility Wall",
-        "item": "Heavy-Duty Boots",
-        "ability": "Dry Skin",
-        "nature": "Calm",
-        "evs": "31 HP / 27 SpD / 6 Spe",
-        "moves": [
-          "Stealth Rock / Rapid Spin",
-          "Lava Plume",
-          "Clear Smog / Sludge Bomb",
-          "Recover"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Monohm": [
-      {
-        "id": "generated-special",
-        "label": "Special",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Shield Dust",
-        "nature": "Modest / Timid",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
     "Morpeko": [
       {
         "id": "sv-morpeko-zu-offensiveutility",
@@ -14131,114 +13085,6 @@
           "Body Press",
           "Stealth Rock",
           "Protect / Roar"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Mumbao": [
-      {
-        "id": "generated-special",
-        "label": "Special",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Trace",
-        "nature": "Modest / Timid",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Naviathan": [
-      {
-        "id": "sv-naviathan-cap-dragondance",
-        "label": "Dragon Dance (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Dragon Dance",
-        "item": "Flame Orb",
-        "ability": "Guts",
-        "nature": "Jolly",
-        "evs": "32 Atk / 1 SpD / 32 Spe",
-        "moves": [
-          "Dragon Dance",
-          "Wave Crash",
-          "Facade",
-          "Slack Off / Wild Charge / Iron Head"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Necturine": [
-      {
-        "id": "generated-mixed",
-        "label": "Mixed",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Anticipation",
-        "nature": "Rash / Mild",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Necturna": [
-      {
-        "id": "sv-necturna-cap-protectleechseed",
-        "label": "Protect + Leech Seed (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Protect + Leech Seed",
-        "item": "Leftovers",
-        "ability": "Forewarn",
-        "nature": "Impish",
-        "evs": "32 HP / 32 Def / 1 SpD",
-        "moves": [
-          "Protect",
-          "Leech Seed",
-          "Salt Cure",
-          "Will-O-Wisp / Horn Leech"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      },
-      {
-        "id": "sv-necturna-cap-victorydance",
-        "label": "Victory Dance (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Victory Dance",
-        "item": "Leftovers",
-        "ability": "Forewarn",
-        "nature": "Adamant",
-        "evs": "32 Atk / 1 SpD / 32 Spe",
-        "moves": [
-          "Victory Dance",
-          "Power Whip",
-          "Shadow Claw",
-          "Shadow Sneak"
         ],
         "sourceIds": [
           "smogon-sv"
@@ -14389,28 +13235,6 @@
         ]
       }
     ],
-    "Nohface": [
-      {
-        "id": "generated-physical",
-        "label": "Physical",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Frisk",
-        "nature": "Adamant / Jolly",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
     "Noivern": [
       {
         "id": "sv-noivern-ru-offensivepivot",
@@ -14510,28 +13334,6 @@
         ],
         "sourceIds": [
           "smogon-sv"
-        ]
-      }
-    ],
-    "Obliteryx": [
-      {
-        "id": "generated-physical",
-        "label": "Physical",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Opportunist",
-        "nature": "Adamant / Jolly",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
         ]
       }
     ],
@@ -14773,28 +13575,6 @@
           "Stealth Rock",
           "Body Press",
           "Heavy Slam / Spikes / Iron Head"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Pajantom": [
-      {
-        "id": "sv-pajantom-cap-choiceband",
-        "label": "Choice Band (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Choice Band",
-        "item": "Choice Band",
-        "ability": "Comatose",
-        "nature": "Jolly",
-        "evs": "32 Atk / 1 Def / 32 Spe",
-        "moves": [
-          "Spirit Shackle",
-          "Outrage",
-          "Earthquake",
-          "Toxic Spikes / Brave Bird"
         ],
         "sourceIds": [
           "smogon-sv"
@@ -15541,50 +14321,6 @@
         ]
       }
     ],
-    "Plasmanta": [
-      {
-        "id": "sv-plasmanta-cap-rainwallbreaker",
-        "label": "Rain Wallbreaker (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Rain Wallbreaker",
-        "item": "Leftovers / Life Orb",
-        "ability": "Storm Drain",
-        "nature": "Timid",
-        "evs": "1 HP / 32 SpA / 32 Spe",
-        "moves": [
-          "Thunderbolt / Thunder",
-          "Sludge Bomb",
-          "Surf",
-          "Magnet Rise / Taunt"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Pluffle": [
-      {
-        "id": "generated-special",
-        "label": "Special",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Natural Cure",
-        "nature": "Modest / Timid",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
     "Politoed": [
       {
         "id": "sv-politoed-ru-perishtrapper",
@@ -15688,72 +14424,6 @@
         ],
         "sourceIds": [
           "smogon-champions"
-        ]
-      }
-    ],
-    "Privatyke": [
-      {
-        "id": "generated-physical",
-        "label": "Physical",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Unaware",
-        "nature": "Adamant / Jolly",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Protowatt": [
-      {
-        "id": "generated-mixed",
-        "label": "Mixed",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Trace",
-        "nature": "Rash / Mild",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Pyroak": [
-      {
-        "id": "sv-pyroak-cap-contrarytank",
-        "label": "Contrary Tank (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Contrary Tank",
-        "item": "Heavy-Duty Boots",
-        "ability": "Contrary",
-        "nature": "Modest",
-        "evs": "32 SpA / 17 SpD / 16 Spe",
-        "moves": [
-          "Overheat",
-          "Earth Power / Tera Blast",
-          "Giga Drain / Grass Knot",
-          "Synthesis"
-        ],
-        "sourceIds": [
-          "smogon-sv"
         ]
       }
     ],
@@ -15923,50 +14593,6 @@
         ]
       }
     ],
-    "Ramnarok": [
-      {
-        "id": "sv-ramnarok-cap-offensivetank",
-        "label": "Offensive Tank (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Offensive Tank",
-        "item": "Assault Vest / Heavy-Duty Boots",
-        "ability": "No Guard",
-        "nature": "Timid",
-        "evs": "32 SpA / 1 SpD / 32 Spe",
-        "moves": [
-          "Inferno",
-          "Polar Flare",
-          "Blizzard / Freeze-Dry",
-          "Thunder / Tera Blast"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Ramnarok-Radiant": [
-      {
-        "id": "generated-special",
-        "label": "Special",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "No Guard",
-        "nature": "Modest / Timid",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
     "Rampardos": [
       {
         "id": "generated-physical",
@@ -15977,28 +14603,6 @@
         "item": "Expert Belt / Heavy-Duty Boots",
         "ability": "Mold Breaker",
         "nature": "Adamant / Jolly",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Rebble": [
-      {
-        "id": "generated-special",
-        "label": "Special",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Levitate",
-        "nature": "Modest / Timid",
         "evs": "32 Spe",
         "moves": [
           "Primary STAB",
@@ -16227,28 +14831,6 @@
           "Future Sight",
           "Focus Blast",
           "Knock Off"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Revenankh": [
-      {
-        "id": "sv-revenankh-cap-bulkup",
-        "label": "Bulk Up (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Bulk Up",
-        "item": "Spell Tag",
-        "ability": "Triage",
-        "nature": "Adamant",
-        "evs": "22 HP / 32 Atk / 11 Spe",
-        "moves": [
-          "Bulk Up",
-          "Drain Punch",
-          "Poltergeist / Shadow Claw",
-          "Shadow Sneak / Moonlight / Earthquake"
         ],
         "sourceIds": [
           "smogon-sv"
@@ -16917,50 +15499,6 @@
         ]
       }
     ],
-    "Saharaja": [
-      {
-        "id": "sv-saharaja-cap-standardcamel",
-        "label": "Standard Camel (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Standard Camel",
-        "item": "Leftovers / Heavy-Duty Boots",
-        "ability": "Water Absorb",
-        "nature": "Jolly",
-        "evs": "11 HP / 32 Atk / 21 Spe",
-        "moves": [
-          "Earthquake",
-          "Diamond Storm",
-          "Horn Leech / Temper Flare / Rapid Spin",
-          "Swords Dance"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Saharascal": [
-      {
-        "id": "generated-physical",
-        "label": "Physical",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Water Absorb",
-        "nature": "Adamant / Jolly",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
     "Salazzle": [
       {
         "id": "sv-salazzle-pu-nastyplot",
@@ -17229,28 +15767,6 @@
         ]
       }
     ],
-    "Scattervein": [
-      {
-        "id": "generated-mixed",
-        "label": "Mixed",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Pixilate",
-        "nature": "Rash / Mild",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
     "Scizor": [
       {
         "id": "champions-scizor-battlestadiumsingles-swordsdance",
@@ -17447,28 +15963,6 @@
         "item": "Expert Belt / Heavy-Duty Boots",
         "ability": "Spicy Spray",
         "nature": "Rash / Mild",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Scratchet": [
-      {
-        "id": "generated-physical",
-        "label": "Physical",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Scrappy",
-        "nature": "Adamant / Jolly",
         "evs": "32 Spe",
         "moves": [
           "Primary STAB",
@@ -17801,28 +16295,6 @@
           "Psychic Fangs",
           "Close Combat / Ice Fang / Poison Jab",
           "Protect"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Shox": [
-      {
-        "id": "sv-shox-cap-specialwall",
-        "label": "Special Wall (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Special Wall",
-        "item": "Heavy-Duty Boots",
-        "ability": "Sticky Hold / Electromorphosis",
-        "nature": "Calm",
-        "evs": "32 HP / 1 Def / 32 SpD",
-        "moves": [
-          "Volt Switch / Discharge",
-          "Knock Off / Glare / Super Fang",
-          "Ice Beam / Glare / Super Fang",
-          "Milk Drink"
         ],
         "sourceIds": [
           "smogon-sv"
@@ -19077,114 +17549,6 @@
         ]
       }
     ],
-    "Smogecko": [
-      {
-        "id": "generated-mixed",
-        "label": "Mixed",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Blaze",
-        "nature": "Rash / Mild",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Smoguana": [
-      {
-        "id": "generated-physical",
-        "label": "Physical",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Blaze",
-        "nature": "Adamant / Jolly",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Smokomodo": [
-      {
-        "id": "sv-smokomodo-cap-bonezone",
-        "label": "Bone Zone (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Bone Zone",
-        "item": "Loaded Dice",
-        "ability": "Technician",
-        "nature": "Jolly",
-        "evs": "32 Atk / 1 SpD / 32 Spe",
-        "moves": [
-          "Bone Rush",
-          "Flame Charge",
-          "Bulk Up",
-          "Flare Blitz / Morning Sun"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Snaelstrom": [
-      {
-        "id": "sv-snaelstrom-cap-bulkyswordsdance",
-        "label": "Bulky Swords Dance (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Bulky Swords Dance",
-        "item": "Toxic Orb",
-        "ability": "Poison Heal",
-        "nature": "Careful",
-        "evs": "32 HP / 1 Def / 32 SpD",
-        "moves": [
-          "Razor Shell / Liquidation",
-          "Toxic / Facade",
-          "Swords Dance",
-          "Spiky Shield / Recover"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      },
-      {
-        "id": "sv-snaelstrom-cap-bulkypivot",
-        "label": "Bulky Pivot (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Bulky Pivot",
-        "item": "Toxic Orb",
-        "ability": "Poison Heal",
-        "nature": "Calm / Bold",
-        "evs": "32 HP / 1 Def / 32 SpD | 32 HP / 32 Def / 1 SpD",
-        "moves": [
-          "Surf / U-turn",
-          "Stealth Rock / Rapid Spin",
-          "Toxic / U-turn",
-          "Spiky Shield"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
     "Sneasler": [
       {
         "id": "champions-sneasler-battlestadiumsingles-unburdensweeper",
@@ -19286,50 +17650,6 @@
         ],
         "sourceIds": [
           "smogon-sv"
-        ]
-      }
-    ],
-    "Snugglow": [
-      {
-        "id": "generated-special",
-        "label": "Special",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Storm Drain",
-        "nature": "Modest / Timid",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Solotl": [
-      {
-        "id": "generated-special",
-        "label": "Special",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Regenerator",
-        "nature": "Modest / Timid",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
         ]
       }
     ],
@@ -19583,28 +17903,6 @@
         ]
       }
     ],
-    "Stratagem": [
-      {
-        "id": "sv-stratagem-cap-meteorbeam",
-        "label": "Meteor Beam (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Meteor Beam",
-        "item": "Power Herb",
-        "ability": "Levitate",
-        "nature": "Timid",
-        "evs": "1 Def / 32 SpA / 32 Spe",
-        "moves": [
-          "Meteor Beam",
-          "Paleo Wave",
-          "Energy Ball",
-          "Fire Blast"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
     "Stunfisk": [
       {
         "id": "generated-special",
@@ -19637,72 +17935,6 @@
         "item": "Expert Belt / Heavy-Duty Boots",
         "ability": "Mimicry",
         "nature": "Adamant / Jolly",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Swirlpool": [
-      {
-        "id": "generated-mixed",
-        "label": "Mixed",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Torrent",
-        "nature": "Rash / Mild",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Syclant": [
-      {
-        "id": "sv-syclant-cap-tailglow",
-        "label": "Tail Glow (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Tail Glow",
-        "item": "Never-Melt Ice",
-        "ability": "Mountaineer",
-        "nature": "Timid",
-        "evs": "1 Atk / 32 SpA / 32 Spe",
-        "moves": [
-          "Ice Beam",
-          "Earth Power",
-          "Tail Glow / Spikes",
-          "U-turn / Spikes"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Syclar": [
-      {
-        "id": "generated-mixed",
-        "label": "Mixed",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Compound Eyes",
-        "nature": "Rash / Mild",
         "evs": "32 Spe",
         "moves": [
           "Primary STAB",
@@ -19914,28 +18146,6 @@
         ],
         "sourceIds": [
           "smogon-sv"
-        ]
-      }
-    ],
-    "Tactite": [
-      {
-        "id": "generated-special",
-        "label": "Special",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Levitate",
-        "nature": "Modest / Timid",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
         ]
       }
     ],
@@ -20305,48 +18515,6 @@
           "Gigaton Hammer",
           "Knock Off",
           "Encore / Thunder Wave / Play Rough"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Tomohawk": [
-      {
-        "id": "sv-tomohawk-cap-physicalwall",
-        "label": "Physical Wall (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Physical Wall",
-        "item": "Rocky Helmet",
-        "ability": "Intimidate",
-        "nature": "Bold",
-        "evs": "32 HP / 32 Def / 1 SpD",
-        "moves": [
-          "Stealth Rock / Rapid Spin",
-          "Hurricane",
-          "Body Press / Heat Wave",
-          "Roost"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      },
-      {
-        "id": "sv-tomohawk-cap-hazehawk",
-        "label": "HazeHawk (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "HazeHawk",
-        "item": "Rocky Helmet",
-        "ability": "Prankster",
-        "nature": "Bold",
-        "evs": "32 HP / 32 Def / 1 SpD",
-        "moves": [
-          "Haze",
-          "Hurricane",
-          "Body Press / Heat Wave / Rapid Spin",
-          "Roost"
         ],
         "sourceIds": [
           "smogon-sv"
@@ -21683,70 +19851,6 @@
         ]
       }
     ],
-    "Venomicon": [
-      {
-        "id": "sv-venomicon-cap-physicallydefensive",
-        "label": "Physically Defensive (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Physically Defensive",
-        "item": "Heavy-Duty Boots",
-        "ability": "Stamina",
-        "nature": "Bold",
-        "evs": "31 HP / 19 Def / 14 SpD",
-        "moves": [
-          "Sludge Bomb / Hurricane",
-          "Body Press",
-          "Stealth Rock / Knock Off",
-          "Roost"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      },
-      {
-        "id": "sv-venomicon-cap-nastyplot",
-        "label": "Nasty Plot (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Nasty Plot",
-        "item": "Heavy-Duty Boots",
-        "ability": "Stamina",
-        "nature": "Calm",
-        "evs": "31 HP / 1 SpA / 32 SpD",
-        "moves": [
-          "Hurricane / Sludge Bomb",
-          "Body Press",
-          "Nasty Plot",
-          "Roost"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Venomicon-Epilogue": [
-      {
-        "id": "generated-physical",
-        "label": "Physical",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Tinted Lens",
-        "nature": "Adamant / Jolly",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
     "Venusaur": [
       {
         "id": "sv-venusaur-zu-defensive",
@@ -22717,94 +20821,6 @@
           "Flamethrower",
           "Psychic",
           "Giga Drain / Bug Buzz"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Volkraken": [
-      {
-        "id": "sv-volkraken-cap-choicedwallbreaker",
-        "label": "Choiced Wallbreaker (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Choiced Wallbreaker",
-        "item": "Choice Specs / Choice Scarf",
-        "ability": "Analytic",
-        "nature": "Timid",
-        "evs": "32 SpA / 1 SpD / 32 Spe",
-        "moves": [
-          "Hydro Pump",
-          "Overheat",
-          "Extrasensory",
-          "U-turn"
-        ],
-        "sourceIds": [
-          "smogon-sv"
-        ]
-      }
-    ],
-    "Volkritter": [
-      {
-        "id": "generated-special",
-        "label": "Special",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Anticipation",
-        "nature": "Modest / Timid",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Voodoll": [
-      {
-        "id": "generated-special",
-        "label": "Special",
-        "format": "single3",
-        "status": "generated",
-        "role": "Allrounder",
-        "item": "Expert Belt / Heavy-Duty Boots",
-        "ability": "Volt Absorb",
-        "nature": "Modest / Timid",
-        "evs": "32 Spe",
-        "moves": [
-          "Primary STAB",
-          "Second STAB or coverage",
-          "Coverage for team gaps",
-          "Utility or setup"
-        ],
-        "sourceIds": [
-          "generated-local"
-        ]
-      }
-    ],
-    "Voodoom": [
-      {
-        "id": "sv-voodoom-cap-choicespecspivot",
-        "label": "Choice Specs Pivot (SV)",
-        "format": "CAP",
-        "status": "smogon-sv",
-        "role": "Choice Specs Pivot",
-        "item": "Choice Specs",
-        "ability": "Lightning Rod",
-        "nature": "Timid",
-        "evs": "32 SpA / 1 SpD / 32 Spe",
-        "moves": [
-          "Dark Pulse",
-          "Focus Blast",
-          "Volt Switch",
-          "Flash Cannon"
         ],
         "sourceIds": [
           "smogon-sv"
