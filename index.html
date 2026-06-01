@@ -56,6 +56,17 @@
               </select>
             </label>
             <label>
+              <span>Rol</span>
+              <select id="roleFilterSelect">
+                <option value="all">Alle rollen</option>
+                <option value="Sweeper">Sweeper</option>
+                <option value="Wallbreaker">Wallbreaker</option>
+                <option value="Support">Support</option>
+                <option value="Speed control">Speed control</option>
+                <option value="Bulky pivot">Bulky pivot</option>
+              </select>
+            </label>
+            <label>
               <span>Format</span>
               <select id="battleFormatSelect">
                 <option value="single3">Single 3v3</option>
@@ -111,6 +122,7 @@
               <h2>Team aanpassen</h2>
               <button id="backToBuilder" type="button">Naar builder</button>
             </div>
+            <section class="team-manager" id="teamManager" aria-label="Teams opslaan en laden"></section>
             <div class="team-workbench" id="teamWorkbench" aria-live="polite"></div>
           </section>
           <section class="team-analysis" id="teamAnalysis" aria-live="polite"></section>
@@ -140,6 +152,6 @@
       </article>
     </template>
 
-    <script src="app.js?v=87"></script>
+    <script type="module" src="app.js?v=88"></script>
   </body>
 </html>

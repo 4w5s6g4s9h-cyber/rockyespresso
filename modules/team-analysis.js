@@ -1,0 +1,185 @@
+export const TYPE_CHART = {
+  Normal: { Rock: 0.5, Ghost: 0, Steel: 0.5 },
+  Fire: { Fire: 0.5, Water: 0.5, Grass: 2, Ice: 2, Bug: 2, Rock: 0.5, Dragon: 0.5, Steel: 2 },
+  Water: { Fire: 2, Water: 0.5, Grass: 0.5, Ground: 2, Rock: 2, Dragon: 0.5 },
+  Electric: { Water: 2, Electric: 0.5, Grass: 0.5, Ground: 0, Flying: 2, Dragon: 0.5 },
+  Grass: { Fire: 0.5, Water: 2, Grass: 0.5, Poison: 0.5, Ground: 2, Flying: 0.5, Bug: 0.5, Rock: 2, Dragon: 0.5, Steel: 0.5 },
+  Ice: { Fire: 0.5, Water: 0.5, Grass: 2, Ice: 0.5, Ground: 2, Flying: 2, Dragon: 2, Steel: 0.5 },
+  Fighting: { Normal: 2, Ice: 2, Poison: 0.5, Flying: 0.5, Psychic: 0.5, Bug: 0.5, Rock: 2, Ghost: 0, Dark: 2, Steel: 2, Fairy: 0.5 },
+  Poison: { Grass: 2, Poison: 0.5, Ground: 0.5, Rock: 0.5, Ghost: 0.5, Steel: 0, Fairy: 2 },
+  Ground: { Fire: 2, Electric: 2, Grass: 0.5, Poison: 2, Flying: 0, Bug: 0.5, Rock: 2, Steel: 2 },
+  Flying: { Electric: 0.5, Grass: 2, Fighting: 2, Bug: 2, Rock: 0.5, Steel: 0.5 },
+  Psychic: { Fighting: 2, Poison: 2, Psychic: 0.5, Dark: 0, Steel: 0.5 },
+  Bug: { Fire: 0.5, Grass: 2, Fighting: 0.5, Poison: 0.5, Flying: 0.5, Psychic: 2, Ghost: 0.5, Dark: 2, Steel: 0.5, Fairy: 0.5 },
+  Rock: { Fire: 2, Ice: 2, Fighting: 0.5, Ground: 0.5, Flying: 2, Bug: 2, Steel: 0.5 },
+  Ghost: { Normal: 0, Psychic: 2, Ghost: 2, Dark: 0.5 },
+  Dragon: { Dragon: 2, Steel: 0.5, Fairy: 0 },
+  Dark: { Fighting: 0.5, Psychic: 2, Ghost: 2, Dark: 0.5, Fairy: 0.5 },
+  Steel: { Fire: 0.5, Water: 0.5, Electric: 0.5, Ice: 2, Rock: 2, Steel: 0.5, Fairy: 2 },
+  Fairy: { Fire: 0.5, Fighting: 2, Poison: 0.5, Dragon: 2, Dark: 2, Steel: 0.5 }
+};
+
+export const TYPES = [
+  "Normal", "Fire", "Water", "Electric", "Grass", "Ice", "Fighting", "Poison", "Ground",
+  "Flying", "Psychic", "Bug", "Rock", "Ghost", "Dragon", "Dark", "Steel", "Fairy"
+];
+
+export const STAT_LABELS = ["HP", "Atk", "Def", "SpA", "SpD", "Spe"];
+export const SP_TOTAL_LIMIT = 66;
+export const SP_STAT_LIMIT = 32;
+
+export function defensiveMultiplier(defenderTypes, attackType, typeChart = TYPE_CHART) {
+  return defenderTypes.reduce((multiplier, defenderType) => {
+    return multiplier * (typeChart[attackType]?.[defenderType] ?? 1);
+  }, 1);
+}
+
+export function teamTypeSummary(team = [], types = TYPES, typeChart = TYPE_CHART) {
+  return types.map((type) => {
+    const matchups = team.map((pokemon) => defensiveMultiplier(pokemon.types, type, typeChart));
+    return {
+      type,
+      weak: matchups.filter((value) => value > 1).length,
+      resist: matchups.filter((value) => value > 0 && value < 1).length,
+      immune: matchups.filter((value) => value === 0).length
+    };
+  }).sort((a, b) => {
+    const riskA = a.weak - a.resist - a.immune;
+    const riskB = b.weak - b.resist - b.immune;
+    return riskB - riskA || b.weak - a.weak || a.type.localeCompare(b.type);
+  });
+}
+
+export function isMega(pokemonOrName) {
+  const name = typeof pokemonOrName === "string" ? pokemonOrName : pokemonOrName?.name;
+  return /-Mega(?:-|$)/.test(name ?? "");
+}
+
+export function baseSpecies(name) {
+  return String(name).replace(/-Mega(?:-[XY])?$/, "");
+}
+
+export function baseSpeciesLabel(name) {
+  return baseSpecies(name).replace(/-/g, " ");
+}
+
+export function maxTeamSize(battleFormat, battleFormats) {
+  return battleFormats[battleFormat].maxTeamSize;
+}
+
+export function teamLegality({ pokemon, team = [], battleFormat, battleFormats }) {
+  const limit = maxTeamSize(battleFormat, battleFormats);
+  if (team.some((member) => member.name === pokemon.name)) {
+    return { ok: false, reason: `${pokemon.name} zit al in je team.` };
+  }
+  if (team.length >= limit) {
+    return { ok: false, reason: `Je team is vol. ${battleFormats[battleFormat].label} gebruikt ${limit} Pokémon.` };
+  }
+  if (isMega(pokemon) && team.some(isMega)) {
+    return { ok: false, reason: "Je mag maximaal 1 Mega Pokémon in je team hebben." };
+  }
+  if (team.some((member) => baseSpecies(member.name) === baseSpecies(pokemon.name))) {
+    return { ok: false, reason: `Je hebt al een vorm van ${baseSpeciesLabel(pokemon.name)} in je team.` };
+  }
+  return { ok: true, reason: "" };
+}
+
+export function suggestedPokemon({ pokemon = [], team = [], battleFormat, battleFormats, teamStyle, teamStyles, roleFor, selectedBuild = () => ({}), limit = 3 }) {
+  const names = new Set(team.map((member) => member.name));
+  const targets = teamStyles[teamStyle].targets;
+  const balance = team.reduce((totals, member) => {
+    if (member.atk >= member.spa + 15) totals.physical += 1;
+    else if (member.spa >= member.atk + 15) totals.special += 1;
+    if (member.spe >= 100) totals.fast += 1;
+    if (member.hp + member.def + member.spd >= 280) totals.bulky += 1;
+    return totals;
+  }, { physical: 0, special: 0, fast: 0, bulky: 0 });
+  const topWeaknesses = teamTypeSummary(team)
+    .filter((item) => item.weak >= 2)
+    .map((item) => item.type);
+
+  return pokemon
+    .filter((candidate) => !names.has(candidate.name))
+    .filter((candidate) => teamLegality({ pokemon: candidate, team, battleFormat, battleFormats }).ok)
+    .map((candidate) => {
+      let score = 0;
+      const reasons = [];
+      topWeaknesses.forEach((type) => {
+        const multiplier = defensiveMultiplier(candidate.types, type);
+        if (multiplier === 0) {
+          score += 4;
+          reasons.push(`immuun voor ${type}`);
+        } else if (multiplier < 1) {
+          score += 3;
+          reasons.push(`resist ${type}`);
+        }
+      });
+      if (balance.special < targets.special && candidate.spa > candidate.atk) score += 2;
+      if (balance.physical < targets.physical && candidate.atk > candidate.spa) score += 2;
+      if (balance.fast < targets.fast && candidate.spe >= 100) score += 2;
+      if (balance.bulky < targets.bulky && candidate.hp + candidate.def + candidate.spd >= 280) score += 2;
+      if (selectedBuild(candidate).status === "generated") score -= 3;
+      return { pokemon: candidate, score, reason: reasons.join(" en ") || roleFor(candidate).description };
+    })
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score || b.pokemon.bst - a.pokemon.bst)
+    .slice(0, limit);
+}
+
+export function parseSp(spread) {
+  const values = Object.fromEntries(STAT_LABELS.map((stat) => [stat, 0]));
+  String(spread).split("/").forEach((part) => {
+    const match = part.trim().match(/^(\d+)\s+(HP|Atk|Def|SpA|SpD|Spe)$/);
+    if (match) values[match[2]] = Math.max(0, Math.min(SP_STAT_LIMIT, Number(match[1])));
+  });
+  return values;
+}
+
+export function spPartsFromValues(values) {
+  return STAT_LABELS
+    .map((stat) => [stat, values[stat] ?? 0])
+    .filter(([, value]) => value > 0)
+    .map(([stat, value]) => `${value} ${stat}`);
+}
+
+export function normalizeSpValues(values) {
+  const capped = Object.fromEntries(STAT_LABELS.map((stat) => [stat, Math.max(0, Math.min(SP_STAT_LIMIT, values[stat] ?? 0))]));
+  const total = STAT_LABELS.reduce((sum, stat) => sum + capped[stat], 0);
+  if (total <= SP_TOTAL_LIMIT) return capped;
+
+  const scaled = STAT_LABELS.map((stat) => {
+    const exact = capped[stat] * SP_TOTAL_LIMIT / total;
+    const value = Math.min(SP_STAT_LIMIT, Math.floor(exact));
+    return { stat, exact, value, remainder: exact - value };
+  });
+  let used = scaled.reduce((sum, item) => sum + item.value, 0);
+  scaled
+    .sort((a, b) => b.remainder - a.remainder)
+    .forEach((item) => {
+      if (used + 1 <= SP_TOTAL_LIMIT && item.value + 1 <= SP_STAT_LIMIT) {
+        item.value += 1;
+        used += 1;
+      }
+    });
+
+  return Object.fromEntries(scaled.map(({ stat, value }) => [stat, value]));
+}
+
+export function convertEvSpreadToSpSpread(spread) {
+  const parts = String(spread).split("/").map((part) => part.trim()).filter(Boolean);
+  const parsed = parts.map((part) => {
+    const match = part.match(/^(\d+)\s+(HP|Atk|Def|SpA|SpD|Spe)$/);
+    return match ? { value: Number(match[1]), stat: match[2] } : null;
+  }).filter(Boolean);
+  if (!parsed.some(({ value }) => value > SP_STAT_LIMIT) && parsed.reduce((sum, { value }) => sum + value, 0) <= SP_TOTAL_LIMIT) {
+    return spread;
+  }
+  return parsed
+    .map(({ value, stat }) => `${Math.max(0, Math.min(SP_STAT_LIMIT, Math.round(value * SP_STAT_LIMIT / 252)))} ${stat}`)
+    .join(" / ");
+}
+
+export function normalizeSpSpread(spread) {
+  const values = normalizeSpValues(parseSp(convertEvSpreadToSpSpread(spread)));
+  return spPartsFromValues(values).join(" / ");
+}
