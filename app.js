@@ -1360,6 +1360,8 @@ function trainingOverviewHtml(pokemon) {
   const basePoints = radarPoints(stats.map(([, value]) => value));
   const trainedStats = stats.map(([label, value]) => [label, trainedStatValue(value, sp[label] ?? 0)]);
   const trainedPoints = radarPoints(trainedStats.map(([, value]) => value));
+  const radarAxes = stats.map(([, value], index) => radarAxis(value, index)).join("");
+  const radarDots = trainedStats.map(([, value], index) => radarDot(value, index)).join("");
 
   return `
     <div class="training-overview">
@@ -1371,8 +1373,10 @@ function trainingOverviewHtml(pokemon) {
         <svg class="stat-radar" viewBox="0 0 120 120" role="img" aria-label="Stat radar">
           <polygon class="radar-grid" points="${radarPoints([160, 160, 160, 160, 160, 160])}"></polygon>
           <polygon class="radar-mid" points="${radarPoints([100, 100, 100, 100, 100, 100])}"></polygon>
+          ${radarAxes}
           <polygon class="radar-base" points="${basePoints}"></polygon>
           <polygon class="radar-trained" points="${trainedPoints}"></polygon>
+          ${radarDots}
           ${stats.map(([label], index) => radarLabel(label, index)).join("")}
         </svg>
         <div class="stat-training-list">
@@ -1458,6 +1462,29 @@ function radarPoints(values) {
     const radius = Math.min(1, value / 220) * maxRadius;
     return `${center + Math.cos(angle) * radius},${center + Math.sin(angle) * radius}`;
   }).join(" ");
+}
+
+function radarPoint(value, index, maxRadius = 43) {
+  const center = 60;
+  const angle = -Math.PI / 2 + index * (Math.PI * 2 / 6);
+  const radius = Math.min(1, value / 220) * maxRadius;
+  return {
+    x: center + Math.cos(angle) * radius,
+    y: center + Math.sin(angle) * radius
+  };
+}
+
+function radarAxis(value, index) {
+  const outer = radarPoint(160, index);
+  const level = Math.min(1, value / 220);
+  return `<line class="radar-axis" x1="60" y1="60" x2="${outer.x}" y2="${outer.y}" style="--axis-color:${valueScaleColor(level)}"></line>`;
+}
+
+function radarDot(value, index) {
+  const point = radarPoint(value, index);
+  const level = Math.min(1, value / 220);
+  const radius = value >= 180 ? 3.7 : value >= 140 ? 3.2 : 2.8;
+  return `<circle class="radar-dot" cx="${point.x}" cy="${point.y}" r="${radius}" style="--dot-color:${valueScaleColor(level)}"></circle>`;
 }
 
 function radarLabel(label, index) {
