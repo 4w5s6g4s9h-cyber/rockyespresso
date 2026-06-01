@@ -630,12 +630,29 @@ function getFilteredPokemon() {
       const matchesRole = state.roleFilter === "all"
         || role === state.roleFilter
         || (state.roleFilter === "Support" && ["Wall", "Allrounder"].includes(role));
-      return matchesQuery && matchesType && matchesRole;
+      const matchesFocus = matchesFocusFilter(pokemon, sourceSelect.value);
+      const matchesPlan = state.teamStyle === "balanced" || teamStyleMatch(pokemon, state.teamStyle);
+      return matchesQuery && matchesType && matchesRole && matchesFocus && matchesPlan;
     })
     .sort((a, b) => {
       if (sort === "name") return a.name.localeCompare(b.name);
       return b[sort] - a[sort] || a.name.localeCompare(b.name);
     });
+}
+
+function matchesFocusFilter(pokemon, focus) {
+  const build = selectedBuild(pokemon);
+  const bestAttack = Math.max(pokemon.atk, pokemon.spa);
+  const bulk = pokemon.hp + pokemon.def + pokemon.spd;
+
+  if (focus === "mega") return isMega(pokemon);
+  if (focus === "noMega") return !isMega(pokemon);
+  if (focus === "strongSets") return !needsValidationAsCore(pokemon) && build.status !== "generated";
+  if (focus === "fast") return pokemon.spe >= 100 || displayRoleForBuild(pokemon, build) === "Speed control";
+  if (focus === "bulky") return bulk >= 285 || ["Wall", "Bulky pivot"].includes(displayRoleForBuild(pokemon, build));
+  if (focus === "physical") return pokemon.atk >= pokemon.spa + 15 && pokemon.atk >= 105;
+  if (focus === "special") return pokemon.spa >= pokemon.atk + 15 && pokemon.spa >= 105;
+  return bestAttack >= 0;
 }
 
 function createStartPanel() {
@@ -3176,8 +3193,36 @@ function roleFitReason(pokemon, label) {
   return "";
 }
 
+function teamStyleMatch(pokemon, style = state.teamStyle) {
+  if (style === "balanced") return true;
+  if (needsValidationAsCore(pokemon) && !isMega(pokemon)) return false;
+
+  const build = selectedBuild(pokemon);
+  const bestAttack = Math.max(pokemon.atk, pokemon.spa);
+  const bulk = pokemon.hp + pokemon.def + pokemon.spd;
+  const role = displayRoleForBuild(pokemon, build);
+  const hasMove = (...moves) => build.moves?.some((move) => moves.some((wanted) => String(move).includes(wanted)));
+
+  if (style === "offense") return bestAttack >= 120 || pokemon.spe >= 100 || ["Sweeper", "Wallbreaker", "Speed control"].includes(role);
+  if (style === "bulky") return bulk >= 290 || ["Wall", "Bulky pivot"].includes(role);
+  if (style === "rain") return hasAbility(pokemon, "Drizzle") || hasAbility(pokemon, "Swift Swim") || pokemon.types.includes("Water") || pokemon.types.includes("Electric") || pokemon.types.includes("Grass") || pokemon.types.includes("Steel");
+  if (style === "sun") return hasAbility(pokemon, "Drought") || hasAbility(pokemon, "Chlorophyll") || pokemon.types.includes("Fire") || pokemon.types.includes("Grass") || pokemon.types.includes("Ground") || pokemon.types.includes("Dragon");
+  if (style === "trickroom") return pokemon.spe <= 65 && (bestAttack >= 105 || bulk >= 280);
+  if (style === "doublesupport") return hasAbility(pokemon, "Intimidate") || hasAbility(pokemon, "Prankster") || hasAbility(pokemon, "Friend Guard") || role === "Bulky pivot" || role === "Wall";
+  if (style === "hyperoffense") return bestAttack >= 125 || pokemon.spe >= 105 || hasMove("Swords Dance", "Dragon Dance", "Nasty Plot", "Quiver Dance", "Shell Smash");
+  if (style === "voltturn") return hasMove("U-turn", "Volt Switch", "Flip Turn", "Parting Shot") || hasAbility(pokemon, "Regenerator") || hasAbility(pokemon, "Intimidate") || (pokemon.spe >= 100 && bulk >= 260);
+  if (style === "sand") return hasAbility(pokemon, "Sand Stream") || hasAbility(pokemon, "Sand Rush") || hasAbility(pokemon, "Sand Force") || pokemon.types.some((type) => ["Rock", "Ground", "Steel"].includes(type));
+  if (style === "snow") return hasAbility(pokemon, "Snow Warning") || hasAbility(pokemon, "Slush Rush") || pokemon.types.includes("Ice") || (bulk >= 285 && pokemon.types.some((type) => ["Water", "Steel"].includes(type)));
+  if (style === "stall") return bulk >= 305 || hasAbility(pokemon, "Regenerator") || hasAbility(pokemon, "Unaware") || hasAbility(pokemon, "Poison Heal") || hasAbility(pokemon, "Magic Guard") || hasMove("Recover", "Roost", "Protect", "Will-O-Wisp", "Toxic");
+  if (style === "antiMeta") return isReliableThreatAnswer(pokemon) && (pokemon.spe >= 100 || bulk >= 285 || pokemon.types.some((type) => ["Steel", "Fairy", "Ground", "Dark", "Ghost"].includes(type)));
+  return true;
+}
+
 function styleFitReason(pokemon) {
   if (needsValidationAsCore(pokemon)) return "";
+  if (!teamStyleMatch(pokemon)) return "";
+  if (state.teamStyle === "offense") return "past bij Offense-plan";
+  if (state.teamStyle === "bulky") return "past bij Bulky-plan";
   if (state.teamStyle === "rain" && (hasAbility(pokemon, "Drizzle") || hasAbility(pokemon, "Swift Swim") || pokemon.types.includes("Water"))) {
     return "past bij Rain-plan";
   }
@@ -3190,6 +3235,12 @@ function styleFitReason(pokemon) {
   if (state.teamStyle === "doublesupport" && (hasAbility(pokemon, "Intimidate") || hasAbility(pokemon, "Prankster") || hasAbility(pokemon, "Friend Guard"))) {
     return "past bij Double support";
   }
+  if (state.teamStyle === "hyperoffense") return "past bij Hyper Offense-plan";
+  if (state.teamStyle === "voltturn") return "past bij VoltTurn-plan";
+  if (state.teamStyle === "sand") return "past bij Sand-plan";
+  if (state.teamStyle === "snow") return "past bij Snow-plan";
+  if (state.teamStyle === "stall") return "past bij Stall-plan";
+  if (state.teamStyle === "antiMeta") return "past bij Anti-meta-plan";
   if (state.battleFormat === "double4" && (hasAbility(pokemon, "Intimidate") || hasAbility(pokemon, "Prankster"))) {
     return "extra nuttig in Double 4v4";
   }
