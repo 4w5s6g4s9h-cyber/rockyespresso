@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Champions Builder</title>
-    <link rel="stylesheet" href="styles.css?v=84">
+    <link rel="stylesheet" href="styles.css?v=91">
   </head>
   <body>
     <main class="shell">
@@ -15,58 +15,65 @@
       </section>
 
       <section class="toolbar" aria-label="Filters">
-        <label class="search">
-          <span>Zoeken</span>
-          <input id="searchInput" type="search" placeholder="Naam, type of ability">
-        </label>
-        <label>
-          <span>Sorteren</span>
-          <select id="sortSelect">
-            <option value="name">Naam</option>
-            <option value="bst">Base stat totaal</option>
-            <option value="spe">Speed</option>
-            <option value="atk">Attack</option>
-            <option value="spa">Sp. Atk</option>
-            <option value="hp">HP</option>
-          </select>
-        </label>
-        <label>
-          <span>Dataset</span>
-          <select id="sourceSelect">
-            <option value="all">Alle Pokémon</option>
-            <option value="Standard">Standaard</option>
-            <option value="CAP">CAP-fanmade</option>
-          </select>
-        </label>
-        <label>
-          <span>Teamplan</span>
-          <select id="teamStyleSelect">
-            <option value="balanced">Gebalanceerd</option>
-            <option value="offense">Offensief</option>
-            <option value="bulky">Bulky</option>
-            <option value="rain">Rain</option>
-            <option value="sun">Sun</option>
-            <option value="trickroom">Trick Room</option>
-            <option value="doublesupport">Double support</option>
-          </select>
-        </label>
-        <label>
-          <span>Format</span>
-          <select id="battleFormatSelect">
-            <option value="single3">Single 3v3</option>
-            <option value="double4">Double 4v4</option>
-          </select>
-        </label>
-        <button id="showAllPokemon" class="show-all-button" type="button">Lijst alle Mons</button>
-        <div class="type-panel" aria-label="Typefilters">
-          <div class="filter-head">
-            <button id="typeToggle" class="type-toggle" type="button" aria-expanded="false">Types</button>
-            <strong id="activeTypeLabel">Alle types</strong>
-          </div>
-          <div class="type-strip" id="typeFilters"></div>
+        <div class="toolbar-primary">
+          <label class="search">
+            <span>Zoeken</span>
+            <input id="searchInput" type="search" placeholder="Naam, type of ability">
+          </label>
+          <button id="showAllPokemon" class="show-all-button" type="button">Lijst alle Mons</button>
+          <button id="guideModeToggle" class="guide-mode-button" type="button" aria-pressed="true">Help mij kiezen</button>
         </div>
-        <button id="guideModeToggle" class="guide-mode-button" type="button" aria-pressed="true">Help mij kiezen</button>
-        <button id="resetApp" class="reset-button" type="button">Reset</button>
+        <details class="toolbar-drawer">
+          <summary>Filters & teamregels</summary>
+          <div class="toolbar-controls">
+            <label>
+              <span>Sorteren</span>
+              <select id="sortSelect">
+                <option value="name">Naam</option>
+                <option value="bst">Base stat totaal</option>
+                <option value="spe">Speed</option>
+                <option value="atk">Attack</option>
+                <option value="spa">Sp. Atk</option>
+                <option value="hp">HP</option>
+              </select>
+            </label>
+            <label>
+              <span>Dataset</span>
+              <select id="sourceSelect">
+                <option value="all">Alle Pokémon</option>
+                <option value="Standard">Standaard</option>
+                <option value="CAP">CAP-fanmade</option>
+              </select>
+            </label>
+            <label>
+              <span>Teamplan</span>
+              <select id="teamStyleSelect">
+                <option value="balanced">Gebalanceerd</option>
+                <option value="offense">Offensief</option>
+                <option value="bulky">Bulky</option>
+                <option value="rain">Rain</option>
+                <option value="sun">Sun</option>
+                <option value="trickroom">Trick Room</option>
+                <option value="doublesupport">Double support</option>
+              </select>
+            </label>
+            <label>
+              <span>Format</span>
+              <select id="battleFormatSelect">
+                <option value="single3">Single 3v3</option>
+                <option value="double4">Double 4v4</option>
+              </select>
+            </label>
+            <div class="type-panel" aria-label="Typefilters">
+              <div class="filter-head">
+                <button id="typeToggle" class="type-toggle" type="button" aria-expanded="false">Types</button>
+                <strong id="activeTypeLabel">Alle types</strong>
+              </div>
+              <div class="type-strip" id="typeFilters"></div>
+            </div>
+            <button id="resetApp" class="reset-button" type="button">Reset</button>
+          </div>
+        </details>
       </section>
 
       <section class="meta-row" aria-live="polite">
@@ -86,7 +93,6 @@
           <section class="grid" id="pokemonGrid" aria-label="Pokémon"></section>
 
           <aside class="side-panel" aria-label="Details en team">
-            <section class="detail" id="detailPanel"></section>
             <section class="team">
               <div class="panel-head">
                 <h2>Team</h2>
@@ -94,6 +100,7 @@
               </div>
               <div class="team-slots" id="teamSlots"></div>
             </section>
+            <section class="detail" id="detailPanel"></section>
             <section class="team-overview" id="teamOverview" aria-live="polite"></section>
           </aside>
         </div>
@@ -135,6 +142,6 @@
       </article>
     </template>
 
-    <script src="app.js?v=79"></script>
+    <script src="app.js?v=86"></script>
   </body>
 </html>

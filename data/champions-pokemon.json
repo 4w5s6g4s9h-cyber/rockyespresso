@@ -1,8 +1,8 @@
 {
   "source": "https://www.smogon.com/dex/champions/pokemon/",
-  "generatedAt": "2026-05-25T15:50:43.017Z",
+  "generatedAt": "2026-05-31T09:51:07.121Z",
   "counts": {
-    "pokemon": 362,
+    "pokemon": 363,
     "moves": 495,
     "abilities": 314,
     "items": 121
@@ -2153,6 +2153,33 @@
       ],
       "isNonstandard": "CAP",
       "dexNumber": -8,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Obliteryx",
+      "hp": 102,
+      "atk": 128,
+      "def": 126,
+      "spa": 45,
+      "spd": 90,
+      "spe": 64,
+      "bst": 555,
+      "weight": 62,
+      "height": 1.6,
+      "types": [
+        "Dark",
+        "Flying"
+      ],
+      "abilities": [
+        "Opportunist",
+        "Analytic"
+      ],
+      "formats": [
+        "CAP"
+      ],
+      "isNonstandard": "CAP",
+      "dexNumber": -80,
       "evos": [],
       "alts": []
     },
@@ -8228,7 +8255,7 @@
         "OU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8254,7 +8281,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8280,7 +8307,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8306,7 +8333,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8331,7 +8358,7 @@
         "UUBL"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8357,7 +8384,7 @@
         "OU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8383,7 +8410,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8408,7 +8435,7 @@
         "OU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8433,7 +8460,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8459,7 +8486,7 @@
         "OU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8485,7 +8512,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8511,7 +8538,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8537,7 +8564,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8562,7 +8589,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8588,7 +8615,7 @@
         "CAP"
       ],
       "isNonstandard": "CAP",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8614,7 +8641,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8640,7 +8667,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8666,7 +8693,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8690,7 +8717,7 @@
       ],
       "formats": [],
       "isNonstandard": "CAP",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8716,7 +8743,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8742,7 +8769,7 @@
         "Uber"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8768,7 +8795,7 @@
         "OU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8794,7 +8821,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8820,7 +8847,7 @@
         "OU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8845,7 +8872,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8871,7 +8898,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8897,7 +8924,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8923,7 +8950,7 @@
         "Uber"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8949,7 +8976,7 @@
         "OU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -8975,7 +9002,7 @@
         "Uber"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9001,7 +9028,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9027,7 +9054,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9053,7 +9080,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9079,7 +9106,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9105,7 +9132,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9131,7 +9158,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9157,7 +9184,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9183,7 +9210,7 @@
         "UUBL"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9209,7 +9236,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9235,7 +9262,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9261,7 +9288,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9287,7 +9314,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9313,7 +9340,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9339,7 +9366,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9365,7 +9392,7 @@
         "OU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9390,7 +9417,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9416,7 +9443,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9442,7 +9469,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9468,7 +9495,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9494,7 +9521,7 @@
         "OU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9519,7 +9546,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9545,7 +9572,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9571,7 +9598,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9596,7 +9623,7 @@
         "Uber"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9622,7 +9649,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9648,7 +9675,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9674,7 +9701,7 @@
         "OU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9700,7 +9727,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9726,7 +9753,7 @@
         "UUBL"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9751,7 +9778,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9777,7 +9804,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9802,7 +9829,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9828,7 +9855,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9853,7 +9880,7 @@
         "Uber"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     },
@@ -9878,7 +9905,7 @@
         "UU"
       ],
       "isNonstandard": "Standard",
-      "dexNumber": null,
+      "dexNumber": -1,
       "evos": [],
       "alts": []
     }

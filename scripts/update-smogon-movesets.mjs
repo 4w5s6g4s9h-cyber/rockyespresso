@@ -35,6 +35,18 @@ const STATUS_LABELS = {
   sv: 'Smogon SV fallback',
 };
 
+const SP_TOTAL_LIMIT = 66;
+const SP_STAT_LIMIT = 32;
+const SP_STATS = [
+  ['hp', 'HP'],
+  ['atk', 'Atk'],
+  ['def', 'Def'],
+  ['spa', 'SpA'],
+  ['spd', 'SpD'],
+  ['spe', 'Spe'],
+];
+const EXCLUDED_FORMAT_PATTERN = /\bBH\b|Hackmons|STABmons|Almost Any Ability|Godly Gift|Partners in Crime/i;
+
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function alias(name) {
@@ -85,6 +97,7 @@ function flattenStrategies(payload) {
 function matchingSets(sets, pokemonName, megaItems = []) {
   const itemMatches = new Set(megaItems);
   return sets.filter((set) => {
+    if (EXCLUDED_FORMAT_PATTERN.test(String(set.format || ''))) return false;
     if (set.pokemon === pokemonName) return true;
     return itemMatches.size > 0 && set.items?.some((item) => itemMatches.has(item));
   });
@@ -120,21 +133,53 @@ function moveSlotLabel(slot) {
     .join(' / ');
 }
 
-function evLabel(evconfigs = []) {
+function spLabel(evconfigs = [], set = {}) {
   if (!evconfigs.length) return '';
   return evconfigs.map((config) => {
-    const parts = [
-      ['hp', 'HP'],
-      ['atk', 'Atk'],
-      ['def', 'Def'],
-      ['spa', 'SpA'],
-      ['spd', 'SpD'],
-      ['spe', 'Spe'],
-    ]
-      .filter(([key]) => Number(config[key]) > 0)
-      .map(([key, label]) => `${config[key]} ${label}`);
+    const normalized = normalizeSpConfig(config, set);
+    const parts = SP_STATS
+      .filter(([key]) => normalized[key] > 0)
+      .map(([key, label]) => `${normalized[key]} ${label}`);
     return parts.join(' / ');
   }).filter(Boolean).join(' | ');
+}
+
+function normalizeSpConfig(config = {}, set = {}) {
+  const rawTotal = SP_STATS.reduce((sum, [key]) => sum + (Number(config[key]) || 0), 0);
+  if (rawTotal > 510) return fallbackSpConfig(set);
+
+  const capped = Object.fromEntries(SP_STATS.map(([key]) => [
+    key,
+    Math.max(0, Math.min(SP_STAT_LIMIT, Math.round((Number(config[key]) || 0) * SP_STAT_LIMIT / 252))),
+  ]));
+  const total = SP_STATS.reduce((sum, [key]) => sum + capped[key], 0);
+  if (total <= SP_TOTAL_LIMIT) return capped;
+
+  const scaled = SP_STATS.map(([key]) => {
+    const exact = capped[key] * SP_TOTAL_LIMIT / total;
+    const value = Math.min(SP_STAT_LIMIT, Math.floor(exact));
+    return { key, exact, value, remainder: exact - value };
+  });
+  let used = scaled.reduce((sum, item) => sum + item.value, 0);
+  scaled
+    .sort((a, b) => b.remainder - a.remainder)
+    .forEach((item) => {
+      if (used + 1 <= SP_TOTAL_LIMIT && item.value + 1 <= SP_STAT_LIMIT) {
+        item.value += 1;
+        used += 1;
+      }
+    });
+
+  return Object.fromEntries(scaled.map(({ key, value }) => [key, value]));
+}
+
+function fallbackSpConfig(set = {}) {
+  const natureText = String(set.natures?.join(' / ') || '').toLowerCase();
+  if (/(timid|modest|quiet|calm mind|nasty)/.test(natureText)) return { hp: 2, atk: 0, def: 0, spa: 32, spd: 0, spe: 32 };
+  if (/(jolly|adamant|impish)/.test(natureText)) return { hp: 2, atk: 32, def: 0, spa: 0, spd: 0, spe: 32 };
+  if (/(bold)/.test(natureText)) return { hp: 32, atk: 0, def: 32, spa: 0, spd: 2, spe: 0 };
+  if (/(careful|calm)/.test(natureText)) return { hp: 32, atk: 0, def: 2, spa: 0, spd: 32, spe: 0 };
+  return { hp: 2, atk: 0, def: 0, spa: 32, spd: 0, spe: 32 };
 }
 
 function formatLabel(format) {
@@ -156,7 +201,7 @@ function toLocalSet(set, source) {
     item: set.items.join(' / ') || 'No Item',
     ability: set.abilities.join(' / ') || '[ability]',
     nature: set.natures.join(' / ') || '[nature]',
-    evs: evLabel(set.evconfigs) || 'Geen EV-spread vermeld',
+    evs: spLabel(set.evconfigs, set) || 'Geen SP-spread vermeld',
     moves: set.moveslots.map(moveSlotLabel).filter(Boolean).slice(0, 4),
     sourceIds: [source === 'sv' ? SOURCE_IDS.sv : SOURCE_IDS.champions],
   };
@@ -176,10 +221,17 @@ function generatedSet(pokemon, oldSets) {
     item: mode === 'bulky' ? 'Leftovers / Heavy-Duty Boots' : 'Expert Belt / Heavy-Duty Boots',
     ability: pokemon.abilities?.[0] || '[ability]',
     nature: mode === 'special' ? 'Modest / Timid' : mode === 'physical' ? 'Adamant / Jolly' : 'Rash / Mild',
-    evs: mode === 'bulky' ? '252 HP / 252 Def / 4 SpD' : '252 offensive stat / 252 Spe',
+    evs: generatedSpSpread(mode),
     moves: ['Primary STAB', 'Second STAB or coverage', 'Coverage for team gaps', 'Utility or setup'],
     sourceIds: [SOURCE_IDS.generated],
   };
+}
+
+function generatedSpSpread(mode) {
+  if (mode === 'bulky') return '32 HP / 32 Def / 2 SpD';
+  if (mode === 'special') return '2 HP / 32 SpA / 32 Spe';
+  if (mode === 'physical') return '2 HP / 32 Atk / 32 Spe';
+  return '2 HP / 32 Atk / 32 SpA';
 }
 
 function ensureUniqueSetIds(sets) {
