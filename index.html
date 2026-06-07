@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Champions Builder</title>
-    <link rel="stylesheet" href="styles.css?v=99">
+    <link rel="stylesheet" href="styles.css?v=110">
   </head>
   <body>
     <main class="shell">
@@ -42,6 +42,7 @@
           </button>
           <button id="favoritesToggle" class="favorites-toggle-button" type="button" aria-pressed="false">Favorieten</button>
           <button id="randomUltraTeam" class="ultra-team-button" type="button">Willekeurig Ultra Team</button>
+          <button id="resetApp" class="reset-button" type="button">Reset alles</button>
         </div>
         <details class="toolbar-drawer">
           <summary>Filters & teamregels</summary>
@@ -84,6 +85,7 @@
                 <option value="Sweeper">Sweeper</option>
                 <option value="Wallbreaker">Wallbreaker</option>
                 <option value="Support">Support</option>
+                <option value="Wall">Wall</option>
                 <option value="Speed control">Speed control</option>
                 <option value="Bulky pivot">Bulky pivot</option>
               </select>
@@ -102,7 +104,6 @@
               </div>
               <div class="type-strip" id="typeFilters"></div>
             </div>
-            <button id="resetApp" class="reset-button" type="button">Reset</button>
           </div>
         </details>
       </section>
@@ -121,6 +122,7 @@
 
       <section id="builderView" class="tab-view active" aria-label="Builder">
         <div class="workspace">
+          <nav class="team-quick-nav builder-team-quick-nav" id="builderTeamQuickNav" aria-label="Builder team snelnavigatie" hidden></nav>
           <section class="grid" id="pokemonGrid" aria-label="Pokémon"></section>
 
           <aside class="side-panel" aria-label="Details en team">
@@ -143,7 +145,7 @@
           <section class="team-workbench-panel">
             <div class="panel-head">
               <h2>Team aanpassen</h2>
-              <button id="backToBuilder" type="button">Naar builder</button>
+              <button id="backToBuilder" type="button" hidden>Naar builder</button>
             </div>
             <section class="team-manager" id="teamManager" aria-label="Teams opslaan en laden"></section>
             <div class="team-workbench" id="teamWorkbench" aria-live="polite"></div>
@@ -157,6 +159,7 @@
         <strong id="floatingTeamCount">0/3</strong>
       </button>
       <section id="floatingCompare" class="floating-compare" aria-live="polite"></section>
+      <button id="goTopButton" class="go-top-button" type="button" hidden>↑</button>
     </main>
 
     <template id="cardTemplate">
@@ -176,6 +179,7 @@
       </article>
     </template>
 
-    <script type="module" src="app.js?v=91"></script>
+    <script src="data/local-data.js"></script>
+    <script type="module" src="app.js?v=105"></script>
   </body>
 </html>

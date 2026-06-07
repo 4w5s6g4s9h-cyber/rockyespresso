@@ -1,5 +1,11 @@
 export function bindEvents(ctx) {
-  ctx.searchInput.addEventListener("input", ctx.render);
+  ctx.searchInput.addEventListener("input", () => {
+    if (ctx.searchInput.value.trim()) {
+      ctx.state.hasExplored = true;
+      ctx.state.guideMode = false;
+    }
+    ctx.render();
+  });
   ctx.sortSelect.addEventListener("change", () => {
     ctx.state.hasExplored = !ctx.state.guideMode;
     ctx.render();
@@ -44,6 +50,13 @@ export function bindEvents(ctx) {
   ctx.favoritesToggle.addEventListener("click", ctx.toggleFavoritesFilter);
   ctx.showAllPokemon.addEventListener("click", ctx.showAllPokemonList);
   ctx.randomUltraTeam.addEventListener("click", ctx.generateRandomUltraTeam);
+  ctx.goTopButton.addEventListener("click", () => {
+    ctx.builderView.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  window.addEventListener("scroll", () => {
+    const show = ctx.state.activeView === "builder" && window.scrollY > 720;
+    ctx.goTopButton.hidden = !show;
+  }, { passive: true });
   ctx.clearTeam.addEventListener("click", () => {
     ctx.state.team = [];
     ctx.state.teamNotice = "";

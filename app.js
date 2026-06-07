@@ -1,7 +1,7 @@
-import { loadChampionsMeta as fetchChampionsMeta, loadPokemonData, officialPokemon } from './modules/data.js';
+import { loadChampionsMeta as fetchChampionsMeta, loadPokemonData, officialPokemon } from './modules/data.js?v=2';
 import { loadMovesets as fetchMovesets } from './modules/movesets.js';
 import { renderApp, renderWithoutScrollJump } from './modules/rendering.js';
-import { bindEvents as bindUiEvents } from './modules/ui-events.js';
+import { bindEvents as bindUiEvents } from './modules/ui-events.js?v=3';
 import { baseSpecies as pureBaseSpecies, baseSpeciesLabel as pureBaseSpeciesLabel, defensiveMultiplier as pureDefensiveMultiplier, isMega as pureIsMega, normalizeSpSpread as pureNormalizeSpSpread, normalizeSpValues as pureNormalizeSpValues, parseSp as pureParseSp, spPartsFromValues as pureSpPartsFromValues, teamLegality as pureTeamLegality, teamTypeSummary as pureTeamTypeSummary } from './modules/team-analysis.js';
 
 const TYPES = [
@@ -197,6 +197,7 @@ const state = {
   compare: [],
   compareMinimized: false,
   explanationOpen: "",
+  expandedCards: [],
   cache: {},
   hasExplored: false,
   guideMode: false,
@@ -241,7 +242,9 @@ const backToBuilder = document.querySelector("#backToBuilder");
 const floatingTeamLab = document.querySelector("#floatingTeamLab");
 const floatingTeamCount = document.querySelector("#floatingTeamCount");
 const teamQuickNav = document.querySelector("#teamQuickNav");
+const builderTeamQuickNav = document.querySelector("#builderTeamQuickNav");
 const floatingCompare = document.querySelector("#floatingCompare");
+const goTopButton = document.querySelector("#goTopButton");
 
 init();
 
@@ -300,6 +303,7 @@ function appContext() {
     randomUltraTeam,
     backToBuilder,
     floatingTeamLab,
+    goTopButton,
     typeToggle,
     render,
     renderTypeFilters,
@@ -392,8 +396,8 @@ function showLoadError(error) {
   const message = document.createElement("article");
   message.className = "load-error";
   message.innerHTML = `
-    <h2>Open de app via het startbestand</h2>
-    <p>De Pokémon-data kan niet worden geladen als je <strong>index.html</strong> direct opent. Gebruik <strong>Open Champions Dex.command</strong> in deze map, of open de app via <strong>http://localhost:8000</strong>.</p>
+    <h2>Data kon niet worden geladen</h2>
+    <p>Controleer of de map <strong>data</strong> naast <strong>index.html</strong> staat. Via <strong>file://</strong> gebruikt de app automatisch <strong>data/local-data.js</strong> als fallback.</p>
   `;
   grid.append(message);
 }
@@ -433,7 +437,7 @@ function resetToStart() {
   render();
   resetApp.textContent = "Gereset";
   window.setTimeout(() => {
-    resetApp.textContent = "Reset";
+    resetApp.textContent = "Reset alles";
   }, 900);
   document.querySelector(".hero").scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -510,6 +514,94 @@ function generateRandomUltraTeam() {
   render();
 }
 
+function buildTeamAround(anchor, style = state.teamStyle) {
+  const previousTeam = [...state.team];
+  const previousSelection = [...state.battleSelection];
+  const previousStyle = state.teamStyle;
+  const nextStyle = TEAM_STYLES[style] ? style : state.teamStyle;
+
+  state.teamStyle = nextStyle;
+  teamStyleSelect.value = nextStyle;
+  searchInput.value = "";
+  state.selectedTypes = [];
+  state.hasExplored = true;
+  state.guideMode = false;
+  state.favoritesOnly = false;
+  state.activeView = "team";
+  state.team = [anchor];
+  state.selected = anchor;
+  state.battleSelection = [];
+  state.teamNotice = "";
+  state.startSuggestionPage = 0;
+  invalidateCache();
+
+  while (state.team.length < maxTeamSize()) {
+    const candidates = teamAroundCandidates(anchor);
+    const choice = candidates.find((pokemon) => teamLegality(pokemon).ok);
+    if (!choice) break;
+    state.team.push(choice);
+    invalidateCache();
+  }
+
+  if (state.team.length < maxTeamSize()) {
+    state.team = previousTeam;
+    state.battleSelection = previousSelection;
+    state.teamStyle = previousStyle;
+    teamStyleSelect.value = previousStyle;
+    state.selected = anchor;
+    state.activeView = "builder";
+    state.teamNotice = `Kon geen volledig team rond ${anchor.name} samenstellen met de huidige regels.`;
+  } else {
+    state.battleSelection = state.team
+      .slice()
+      .sort((a, b) => teamAroundCandidateScore(b, anchor) - teamAroundCandidateScore(a, anchor))
+      .slice(0, battleSelectionSize())
+      .map((pokemon) => pokemon.name);
+    state.teamNotice = `Team rond ${anchor.name} gebouwd met ${TEAM_STYLES[nextStyle].label}-plan.`;
+  }
+
+  renderTypeFilters();
+  invalidateCache();
+  render();
+}
+
+function teamAroundCandidates(anchor) {
+  const suggested = suggestedPokemon(18).map((item) => item.pokemon);
+  const suggestedNames = new Set(suggested.map((pokemon) => pokemon.name));
+  const fallback = state.pokemon.filter((pokemon) => !suggestedNames.has(pokemon.name));
+  return [...suggested, ...fallback]
+    .filter((pokemon) => pokemon.name !== anchor.name)
+    .filter((pokemon) => !state.team.some((member) => member.name === pokemon.name))
+    .filter((pokemon) => teamLegality(pokemon).ok)
+    .sort((a, b) => teamAroundCandidateScore(b, anchor) - teamAroundCandidateScore(a, anchor));
+}
+
+function teamAroundCandidateScore(pokemon, anchor) {
+  const build = selectedBuild(pokemon);
+  const reasons = suggestionReasons(pokemon);
+  const role = roleFor(pokemon).label;
+  let score = ultraTeamBaseScore(pokemon) + reasons.score * 45;
+
+  if (teamStyleMatch(pokemon)) score += 90;
+  if (build.status === "generated") score -= 70;
+  if (needsValidationAsCore(pokemon) && !isMega(pokemon)) score -= 120;
+  if (["Support", "Bulky pivot", "Wall"].includes(role)) score += state.team.length < 3 ? 35 : 10;
+  if (["Sweeper", "Wallbreaker", "Speed control"].includes(role)) score += state.team.length >= 3 ? 30 : 10;
+
+  anchor.types.forEach((type) => {
+    const multiplier = defensiveMultiplier(pokemon.types, type);
+    if (multiplier === 0) score += 36;
+    else if (multiplier < 1) score += 26;
+  });
+
+  pokemon.types.forEach((type) => {
+    const multiplier = defensiveMultiplier(anchor.types, type);
+    if (multiplier < 1) score += 8;
+  });
+
+  return score;
+}
+
 function shuffled(items) {
   return [...items].sort(() => Math.random() - 0.5);
 }
@@ -521,6 +613,10 @@ function weightedRandom(candidates) {
 }
 
 function ultraTeamCandidateScore(pokemon) {
+  return ultraTeamBaseScore(pokemon) + Math.random() * 80;
+}
+
+function ultraTeamBaseScore(pokemon) {
   const role = roleFor(pokemon).label;
   const build = selectedBuild(pokemon);
   let score = pokemon.bst + pokemon.spe * 0.6 + Math.max(pokemon.atk, pokemon.spa);
@@ -530,7 +626,7 @@ function ultraTeamCandidateScore(pokemon) {
   else if (build.status === "smogon-sv") score += 55;
   else if (build.status === "custom") score += 30;
   if (isMega(pokemon)) score += 35;
-  return score + Math.random() * 80;
+  return score;
 }
 
 function renderTypeFilters() {
@@ -613,6 +709,7 @@ function renderViewTabs() {
 
 function renderFloatingTeamAction() {
   floatingTeamLab.hidden = true;
+  goTopButton.hidden = state.activeView !== "builder" || window.scrollY <= 720;
   floatingTeamCount.textContent = `${state.team.length}/6`;
   floatingTeamLab.setAttribute(
     "aria-label",
@@ -647,7 +744,7 @@ function getFilteredPokemon() {
   if (query) state.hasExplored = true;
   const sort = sortSelect.value;
 
-  const ranked = state.pokemon
+  const filtered = state.pokemon
     .filter((pokemon) => {
       const haystack = normalize([
         pokemon.name,
@@ -669,6 +766,15 @@ function getFilteredPokemon() {
       if (sort === "name") return a.name.localeCompare(b.name);
       return sortValue(b, sort) - sortValue(a, sort) || a.name.localeCompare(b.name);
     });
+
+  if (!filtered.length && state.pokemon.length && !query && !state.selectedTypes.length) {
+    return [...state.pokemon].sort((a, b) => {
+      if (sort === "name") return a.name.localeCompare(b.name);
+      return sortValue(b, sort) - sortValue(a, sort) || a.name.localeCompare(b.name);
+    });
+  }
+
+  return filtered;
 }
 
 function sortValue(pokemon, sort) {
@@ -710,6 +816,7 @@ function createStartPanel() {
   helper.append(createStartControls());
   copy.append(helper);
   if (state.team.length) copy.append(createStartDashboard());
+  copy.append(createPlanGuidePanel());
 
   const groups = document.createElement("div");
   groups.className = state.team.length ? "starter-groups wide-picks" : "starter-groups";
@@ -729,6 +836,47 @@ function createStartPanel() {
 
   panel.append(copy, groups);
   return panel;
+}
+
+function createPlanGuidePanel() {
+  const style = TEAM_STYLES[state.teamStyle];
+  const panel = document.createElement("div");
+  panel.className = "plan-guide";
+  const title = document.createElement("strong");
+  title.textContent = `${style.label}-plan`;
+  const text = document.createElement("p");
+  text.textContent = style.description;
+  const list = document.createElement("ul");
+  planGuideItems(state.teamStyle).forEach((item) => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    list.append(li);
+  });
+  panel.append(title, text, list);
+  return panel;
+}
+
+function planGuideItems(style) {
+  const generic = [
+    "Kies eerst 1 duidelijke wincon of stabiele kern.",
+    "Vul daarna snelheid, fysieke/speciale druk en veilige switch-ins aan."
+  ];
+  const items = {
+    balanced: ["Houd minimaal één snelle aanvaller en twee veilige wissels.", "Voorkom dat drie teamleden dezelfde zwakte delen."],
+    offense: ["Prioriteer tempo, setup en revenge-kill opties.", "Neem genoeg directe damage mee om walls te breken."],
+    bulky: ["Begin met switch-ins en recovery/status.", "Voeg daarna genoeg druk toe om niet passief te worden."],
+    rain: ["Zoek Drizzle, Swift Swim en Water-druk.", "Dek Electric en Grass vroeg af."],
+    sun: ["Zoek Drought, Fire-druk en Chlorophyll-abusers.", "Dek Rock, Water en Dragon checks af."],
+    trickroom: ["Kies langzame, sterke attackers en setters.", "In Doubles is protect/support extra belangrijk."],
+    doublesupport: ["Combineer Intimidate, speed-control en spread damage.", "Let op welke 4 Pokémon samen starten."],
+    hyperoffense: ["Stapelt wincons en snelle druk.", "Accepteer minder defensieve marge, maar dek priority en scarfers af."],
+    voltturn: ["Zoek pivot-moves en Regenerator/Intimidate.", "Gebruik chip damage om late-game schoon te maken."],
+    sand: ["Combineer Sand Stream met Rock/Ground/Steel druk.", "Dek Water, Grass en Fighting consequent af."],
+    snow: ["Gebruik Ice-druk met stevige Water/Steel rugdekking.", "Dek Fire, Rock en Steel extra vroeg af."],
+    stall: ["Stapelt recovery, status en harde antwoorden.", "Zorg dat je niet verliest van setup of Taunt."],
+    antiMeta: ["Kies eerst antwoorden op populaire threats.", "Laat vaste archetypes los als matchup-dekking beter wordt."]
+  };
+  return items[style] ?? generic;
 }
 
 function createSuggestionRefreshBar() {
@@ -1282,7 +1430,8 @@ function createCard(pokemon) {
   const spriteWrap = node.querySelector(".sprite-wrap");
 
   node.classList.toggle("selected", state.selected?.name === pokemon.name);
-  node.querySelector(".name").textContent = pokemon.name;
+  node.classList.toggle("expanded", state.expandedCards.includes(pokemon.name));
+  node.querySelector(".name").textContent = displayPokemonName(pokemon);
   node.querySelector(".bst").textContent = `BST ${pokemon.bst}`;
   node.querySelector(".types").replaceChildren(...pokemon.types.map(createTypeChip));
   node.querySelector(".abilities").textContent = pokemon.abilities.join(" / ");
@@ -1306,7 +1455,7 @@ function createCard(pokemon) {
   compare.type = "button";
   compare.className = `mini-action${state.compare.includes(pokemon.name) ? " active" : ""}`;
   compare.textContent = state.compare.includes(pokemon.name) ? "Vergelijkt" : "Vergelijk";
-  compare.title = "Voeg toe aan vergelijking";
+  compare.title = state.compare.includes(pokemon.name) ? "Verwijder uit vergelijking" : "Voeg toe aan vergelijking (max 6)";
   compare.addEventListener("mousedown", (event) => event.preventDefault());
   compare.addEventListener("click", (event) => {
     event.stopPropagation();
@@ -1314,6 +1463,28 @@ function createCard(pokemon) {
   });
   actions.append(favorite, compare);
   node.append(actions);
+
+  const expand = document.createElement("button");
+  expand.type = "button";
+  const isExpanded = state.expandedCards.includes(pokemon.name);
+  expand.className = `card-expand-button${isExpanded ? " expanded" : ""}`;
+  expand.title = isExpanded ? "Minder info" : "Meer info";
+  expand.setAttribute("aria-label", isExpanded ? "Minder info" : "Meer info");
+  expand.setAttribute("aria-expanded", String(isExpanded));
+  expand.innerHTML = `<span aria-hidden="true"></span>`;
+  expand.addEventListener("mousedown", (event) => event.preventDefault());
+  expand.addEventListener("click", (event) => {
+    event.stopPropagation();
+    toggleCardExpanded(pokemon);
+  });
+  node.append(expand);
+
+  if (state.expandedCards.includes(pokemon.name)) {
+    const extra = document.createElement("div");
+    extra.className = "card-expanded-info";
+    extra.innerHTML = cardExpandedInfoHtml(pokemon);
+    node.append(extra);
+  }
 
   sprite.src = spriteUrl(pokemon.name);
   sprite.alt = pokemon.name;
@@ -1336,6 +1507,37 @@ function createCard(pokemon) {
   return node;
 }
 
+function toggleCardExpanded(pokemon) {
+  state.expandedCards = state.expandedCards.includes(pokemon.name)
+    ? state.expandedCards.filter((name) => name !== pokemon.name)
+    : [pokemon.name, ...state.expandedCards].slice(0, 8);
+  render();
+}
+
+function cardExpandedInfoHtml(pokemon) {
+  const build = selectedBuild(pokemon);
+  const weaknesses = TYPES
+    .filter((type) => defensiveMultiplier(pokemon.types, type) > 1)
+    .slice(0, 4);
+  const stats = [
+    ["Aanval", Math.max(pokemon.atk, pokemon.spa)],
+    ["Bulk", pokemon.hp + pokemon.def + pokemon.spd],
+    ["Speed", pokemon.spe],
+    ["Set", setQualityLabel(build)]
+  ];
+  return `
+    <div class="card-info-grid">
+      ${stats.map(([label, value]) => `<span><small>${escapeHtml(label)}</small><strong>${escapeHtml(value)}</strong></span>`).join("")}
+    </div>
+    <p>${escapeHtml(suggestionExplanation(pokemon, formatFitLabel(pokemon)))}</p>
+    <div class="card-info-tags">
+      <span>${escapeHtml(build.item || "Geen item")}</span>
+      <span>${escapeHtml(build.ability || preferredAbility(pokemon))}</span>
+      ${weaknesses.map((type) => `<span>zwak: ${escapeHtml(type)}</span>`).join("")}
+    </div>
+  `;
+}
+
 function toggleFavorite(pokemon) {
   state.favorites = state.favorites.includes(pokemon.name)
     ? state.favorites.filter((name) => name !== pokemon.name)
@@ -1348,7 +1550,7 @@ function toggleCompare(pokemon) {
   if (state.compare.includes(pokemon.name)) {
     state.compare = state.compare.filter((name) => name !== pokemon.name);
   } else {
-    state.compare = [...state.compare, pokemon.name].slice(-2);
+    state.compare = [...state.compare, pokemon.name].slice(-6);
   }
   state.compareMinimized = false;
   renderTeamAnalysis();
@@ -1390,7 +1592,7 @@ function renderDetail(pokemon) {
     <div class="detail-head">
       <span class="sprite-wrap"><img class="sprite" src="${spriteUrl(pokemon.name)}" alt="${escapeHtml(pokemon.name)}"></span>
       <div>
-        <h2>${escapeHtml(pokemon.name)}</h2>
+      <h2>${escapeHtml(displayPokemonName(pokemon))}</h2>
         <div class="types">${pokemon.types.map(typeChipHtml).join("")}</div>
       </div>
     </div>
@@ -1402,6 +1604,7 @@ function renderDetail(pokemon) {
     <div class="fact"><span>Abilities</span><strong>${escapeHtml(pokemon.abilities.join(" / "))}</strong></div>
     <div class="fact"><span>Rol</span><strong>${escapeHtml(roleFor(pokemon).label)}</strong></div>
     <p class="role-note">${escapeHtml(roleFor(pokemon).description)}</p>
+    ${teamAroundBuilderHtml(pokemon)}
     ${buildAdviceHtml(pokemon)}
     ${trainingOverviewHtml(pokemon)}
   `;
@@ -1414,7 +1617,41 @@ function renderDetail(pokemon) {
       renderDetail(pokemon);
     });
   });
+  const aroundStyle = wrapper.querySelector(".team-around-style");
+  const aroundText = wrapper.querySelector(".team-around-description");
+  aroundStyle?.addEventListener("change", () => {
+    const plan = TEAM_STYLES[aroundStyle.value] ?? TEAM_STYLES[state.teamStyle];
+    if (aroundText) aroundText.textContent = plan.description;
+  });
+  wrapper.querySelector(".team-around-action")?.addEventListener("click", () => {
+    buildTeamAround(pokemon, aroundStyle?.value ?? state.teamStyle);
+  });
   detailPanel.append(wrapper);
+}
+
+function teamAroundBuilderHtml(pokemon) {
+  const options = Object.entries(TEAM_STYLES)
+    .map(([value, config]) => `
+      <option value="${value}"${value === state.teamStyle ? " selected" : ""}>${escapeHtml(config.label)}</option>
+    `)
+    .join("");
+  const plan = TEAM_STYLES[state.teamStyle];
+  return `
+    <div class="team-around-builder">
+      <div class="set-head">
+        <h3>Bouw verder rond je core</h3>
+        <span>Team van 6</span>
+      </div>
+      <p class="team-around-description">${escapeHtml(plan.description)}</p>
+      <div class="team-around-controls">
+        <label>
+          <span>Teamplan</span>
+          <select class="team-around-style">${options}</select>
+        </label>
+        <button class="team-around-action" type="button">Bouw rond ${escapeHtml(displayPokemonName(pokemon))}</button>
+      </div>
+    </div>
+  `;
 }
 
 function trainingOverviewHtml(pokemon) {
@@ -1562,6 +1799,10 @@ function radarLabel(label, index) {
 }
 
 function addToTeam(pokemon) {
+  if (searchInput.value.trim()) {
+    state.hasExplored = true;
+    state.guideMode = false;
+  }
   const legality = teamLegality(pokemon);
   if (!legality.ok) {
     state.teamNotice = legality.reason;
@@ -1577,28 +1818,28 @@ function addToTeam(pokemon) {
 
 function renderTeam() {
   teamSlots.replaceChildren();
+  renderBuilderQuickNav();
   document.querySelector(".team .panel-head h2").textContent = `Team`;
   document.querySelector(".team .team-inline-summary")?.remove();
   for (let index = 0; index < maxTeamSize(); index += 1) {
     const member = state.team[index];
-    const slot = document.createElement(member ? "div" : "button");
+    const slot = document.createElement("button");
+    slot.type = "button";
     slot.className = `team-slot${member ? " filled" : ""}${member && member.name === state.selected?.name ? " selected" : ""}`;
     if (member) {
       slot.innerHTML = `
-        <button class="team-slot-main" type="button" title="${escapeHtml(member.name)}">
-          <img src="${spriteUrl(member.name)}" alt="">
-        </button>
-        <button class="remove-member" type="button" title="Verwijder ${escapeHtml(member.name)}">×</button>
+        <img src="${spriteUrl(member.name)}" alt="">
       `;
-      slot.querySelector(".team-slot-main").addEventListener("click", () => {
+      slot.title = displayPokemonName(member);
+      slot.addEventListener("click", () => {
         state.selected = member;
         render();
       });
       slot.querySelector("img").addEventListener("error", (event) => event.target.remove(), { once: true });
-      slot.querySelector(".remove-member").addEventListener("click", () => removeFromTeam(index));
     } else {
-      slot.type = "button";
-      slot.textContent = `Slot ${index + 1}`;
+      slot.classList.add("empty");
+      slot.textContent = "";
+      slot.title = `Slot ${index + 1} leeg`;
     }
     teamSlots.append(slot);
   }
@@ -1784,36 +2025,57 @@ function renderTeamWorkbench() {
     return;
   }
 
-  for (let index = 0; index < maxTeamSize(); index += 1) {
-    const pokemon = state.team[index];
-    teamWorkbench.append(pokemon ? createWorkbenchCard(pokemon, index) : createEmptyWorkbenchSlot(index));
-  }
+  state.team.forEach((pokemon, index) => {
+    teamWorkbench.append(createWorkbenchCard(pokemon, index));
+  });
 }
 
 function renderTeamQuickNav() {
-  teamQuickNav.replaceChildren();
-  teamQuickNav.hidden = !state.team.length;
+  renderQuickNav(teamQuickNav, (pokemon) => {
+    const card = teamWorkbench.querySelector(`[data-pokemon="${cssEscape(pokemon.name)}"]`);
+    card?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
+function renderBuilderQuickNav() {
+  renderQuickNav(builderTeamQuickNav, (pokemon) => {
+    state.selected = pokemon;
+    render();
+    scrollDetailPanelToTop();
+  });
+}
+
+function renderQuickNav(nav, onSelect) {
+  if (!nav) return;
+  nav.replaceChildren();
+  nav.hidden = !state.team.length;
   if (!state.team.length) return;
 
   state.team.forEach((pokemon, index) => {
+    const item = document.createElement("div");
+    item.className = "team-quick-item";
     const button = document.createElement("button");
     button.type = "button";
     button.className = "team-quick-button";
-    button.setAttribute("aria-label", `Ga naar ${pokemon.name}`);
-    button.title = pokemon.name;
+    button.setAttribute("aria-label", `Ga naar ${displayPokemonName(pokemon)}`);
+    button.title = displayPokemonName(pokemon);
     button.innerHTML = `
       <span>${index + 1}</span>
       <img src="${spriteUrl(pokemon.name)}" alt="">
     `;
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "team-quick-remove";
+    remove.title = `Verwijder ${displayPokemonName(pokemon)}`;
+    remove.textContent = "×";
     button.querySelector("img").addEventListener("error", (event) => {
       event.currentTarget.remove();
       button.dataset.fallback = pokemon.name.slice(0, 2).toUpperCase();
     });
-    button.addEventListener("click", () => {
-      const card = teamWorkbench.querySelector(`[data-pokemon="${cssEscape(pokemon.name)}"]`);
-      card?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-    teamQuickNav.append(button);
+    button.addEventListener("click", () => onSelect(pokemon, index));
+    remove.addEventListener("click", () => removeFromTeam(index));
+    item.append(button, remove);
+    nav.append(item);
   });
 }
 
@@ -1851,10 +2113,13 @@ function createWorkbenchCard(pokemon, index) {
   const header = document.createElement("div");
   header.className = "workbench-head";
   header.innerHTML = `
-    <span class="slot-badge">Slot ${index + 1}</span>
+    <div class="workbench-slot-row">
+      <span class="slot-badge">Slot ${index + 1}</span>
+      <button class="workbench-remove" type="button" title="Verwijder ${escapeHtml(displayPokemonName(pokemon))}">Verwijder</button>
+    </div>
     <span class="sprite-wrap"><img class="sprite" src="${spriteUrl(pokemon.name)}" alt=""></span>
     <div>
-      <h3>${escapeHtml(pokemon.name)}</h3>
+      <h3>${escapeHtml(displayPokemonName(pokemon))}</h3>
       <div class="types">${pokemon.types.map(typeChipHtml).join("")}</div>
     </div>
   `;
@@ -1867,6 +2132,7 @@ function createWorkbenchCard(pokemon, index) {
     switchView("builder");
     renderDetail(pokemon);
   });
+  header.querySelector(".workbench-remove").addEventListener("click", () => removeFromTeam(index));
 
   const tabs = createSetSourceCards(buildOptions(pokemon), build, (option) => {
     const scrollY = window.scrollY;
@@ -1889,6 +2155,10 @@ function createWorkbenchCard(pokemon, index) {
     grid.append(item);
   });
 
+  const snapshot = document.createElement("div");
+  snapshot.className = "workbench-snapshot";
+  snapshot.innerHTML = workbenchSnapshotHtml(pokemon, build);
+
   const training = document.createElement("div");
   training.className = "workbench-training";
   training.innerHTML = trainingOverviewHtml(pokemon);
@@ -1907,19 +2177,6 @@ function createWorkbenchCard(pokemon, index) {
 
   const actions = document.createElement("div");
   actions.className = "workbench-actions";
-  const viewButton = document.createElement("button");
-  viewButton.type = "button";
-  viewButton.textContent = "Bekijk in builder";
-  viewButton.addEventListener("click", () => {
-    state.selected = pokemon;
-    switchView("builder");
-    renderDetail(pokemon);
-  });
-  const removeButton = document.createElement("button");
-  removeButton.type = "button";
-  removeButton.textContent = "Verwijder";
-  removeButton.addEventListener("click", () => removeFromTeam(index));
-  actions.append(viewButton);
   if (build.status === "custom") {
     const resetCustomButton = document.createElement("button");
     resetCustomButton.type = "button";
@@ -1932,12 +2189,32 @@ function createWorkbenchCard(pokemon, index) {
     });
     actions.append(resetCustomButton);
   }
-  actions.append(removeButton);
 
-  card.append(header, tabs, grid);
+  card.append(header, snapshot, tabs, grid);
   if (customEditor) card.append(customEditor);
-  card.append(training, movesTitle, moves, actions);
+  card.append(training, movesTitle, moves);
+  if (actions.children.length) card.append(actions);
   return card;
+}
+
+function workbenchSnapshotHtml(pokemon, build) {
+  const weaknesses = TYPES
+    .filter((type) => defensiveMultiplier(pokemon.types, type) > 1)
+    .slice(0, 4);
+  const cover = TYPES
+    .filter((type) => defensiveMultiplier(pokemon.types, type) < 1)
+    .slice(0, 5);
+  const speedTier = pokemon.spe >= 110 ? "Snel" : pokemon.spe >= 85 ? "Midden" : "Traag";
+  const offense = pokemon.atk > pokemon.spa ? `Fysiek ${pokemon.atk}` : pokemon.spa > pokemon.atk ? `Speciaal ${pokemon.spa}` : `Mixed ${pokemon.atk}`;
+  const fit = suggestionExplanation(pokemon, displayRoleForBuild(pokemon, build)).split(" · ").slice(0, 2).join(" · ");
+
+  return `
+    <div class="snapshot-pill strong">${escapeHtml(offense)}</div>
+    <div class="snapshot-pill">${escapeHtml(speedTier)} · Spe ${pokemon.spe}</div>
+    <div class="snapshot-line"><span>Zwak</span><strong>${weaknesses.length ? weaknesses.map(typeChipHtml).join("") : "geen duidelijke"}</strong></div>
+    <div class="snapshot-line"><span>Dekt</span><strong>${cover.length ? cover.map(typeChipHtml).join("") : "neutraal"}</strong></div>
+    <div class="snapshot-note">${escapeHtml(fit || roleFor(pokemon).description)}</div>
+  `;
 }
 
 function createSetSourceCards(options, build, onSelect, context = "team") {
@@ -2303,6 +2580,7 @@ function renderTeamAnalysis() {
   teamAnalysis.append(createTeamSummaryPanel());
   teamAnalysis.append(createRulesPanel());
   teamAnalysis.append(createTeamSelectionPanel());
+  teamAnalysis.append(createTeamUsagePanel());
   teamAnalysis.append(createTeamScorePanel());
   teamAnalysis.append(createTypePanel());
   teamAnalysis.append(createThreatChecklistPanel());
@@ -2312,18 +2590,9 @@ function renderTeamAnalysis() {
 
 function renderTeamOverview() {
   teamOverview.replaceChildren();
-  const hasContent = state.team.length || state.favorites.length;
+  const hasContent = state.team.length;
   teamOverview.hidden = !hasContent;
   if (!hasContent) return;
-
-  teamOverview.append(createSmallTitle("Favorieten"));
-  if (state.favorites.length) teamOverview.append(createFavoritesPanel());
-  if (!state.favorites.length) {
-    const empty = document.createElement("p");
-    empty.className = "empty-detail";
-    empty.textContent = "Markeer Pokémon als favoriet om ze later snel terug te vinden.";
-    teamOverview.append(empty);
-  }
 }
 
 function createFavoritesPanel() {
@@ -2361,17 +2630,15 @@ function createComparePanel() {
     .filter(Boolean);
   const panel = document.createElement("div");
   panel.className = "compare-panel";
-  const head = document.createElement("div");
-  head.className = "compare-head";
-  head.innerHTML = `<strong>Vergelijking</strong><small>${selected.length}/2 gekozen</small>`;
-  panel.append(head);
 
-  if (selected.length < 2) {
+  if (selected.length < 1) {
     const hint = document.createElement("p");
-    hint.textContent = "Kies nog een tweede Pokémon via Vergelijk.";
+    hint.textContent = "Kies Pokémon via Vergelijk.";
     panel.append(hint);
     return panel;
   }
+
+  panel.style.setProperty("--compare-count", selected.length);
 
   const names = document.createElement("div");
   names.className = "compare-name-row";
@@ -2379,13 +2646,20 @@ function createComparePanel() {
     <span>Pokemon</span>
     ${selected.map((pokemon) => `
       <strong>
+        <button type="button" class="compare-remove" data-pokemon="${escapeHtml(pokemon.name)}" aria-label="Verwijder ${escapeHtml(pokemon.name)}">×</button>
         <img src="${spriteUrl(pokemon.name)}" alt="">
-        <span>${escapeHtml(pokemon.name)}<small>${escapeHtml(displayRoleForBuild(pokemon))}</small></span>
+        <span>${escapeHtml(displayPokemonName(pokemon))}<small>${escapeHtml(displayRoleForBuild(pokemon))}</small></span>
       </strong>
     `).join("")}
   `;
   names.querySelectorAll("img").forEach((img) => {
     img.addEventListener("error", (event) => event.target.remove(), { once: true });
+  });
+  names.querySelectorAll(".compare-remove").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.compare = state.compare.filter((name) => name !== button.dataset.pokemon);
+      render();
+    });
   });
   panel.append(names);
 
@@ -2397,7 +2671,7 @@ function createComparePanel() {
     ["Aanval", selected.map((pokemon) => Math.max(pokemon.atk, pokemon.spa))],
     ["Bulk", selected.map((pokemon) => pokemon.hp + pokemon.def + pokemon.spd)],
     ["Speed", selected.map((pokemon) => pokemon.spe)],
-    ["Stats", selected.map((pokemon) => `HP ${pokemon.hp} / Atk ${pokemon.atk} / Def ${pokemon.def} / SpA ${pokemon.spa} / SpD ${pokemon.spd} / Spe ${pokemon.spe}`)],
+    ["Stats", selected.map((pokemon) => `${pokemon.hp}/${pokemon.atk}/${pokemon.def}/${pokemon.spa}/${pokemon.spd}/${pokemon.spe}`)],
     ["Set", selected.map((pokemon) => setQualityLabel(selectedBuild(pokemon)))],
     ["Item", selected.map((pokemon) => selectedBuild(pokemon).item || "n.v.t.")],
     ["Teamfit", selected.map((pokemon) => suggestionReasons(pokemon).reasons[0] ?? formatFitLabel(pokemon))]
@@ -2407,21 +2681,10 @@ function createComparePanel() {
     row.className = "compare-row";
     row.innerHTML = `
       <span>${escapeHtml(label)}</span>
-      <strong>${escapeHtml(values[0])}</strong>
-      <strong>${escapeHtml(values[1])}</strong>
+      ${values.map((value) => `<strong>${escapeHtml(value)}</strong>`).join("")}
     `;
     panel.append(row);
   });
-
-  const clear = document.createElement("button");
-  clear.type = "button";
-  clear.className = "compare-clear";
-  clear.textContent = "Vergelijking leegmaken";
-  clear.addEventListener("click", () => {
-    state.compare = [];
-    render();
-  });
-  panel.append(clear);
   return panel;
 }
 
@@ -2437,9 +2700,9 @@ function renderFloatingCompare() {
   const bar = document.createElement("div");
   bar.className = "floating-compare-bar";
   const count = document.createElement("strong");
-  count.textContent = `Vergelijker ${state.compare.length}/2`;
+  count.textContent = `Vergelijker ${state.compare.length}/6`;
   const names = document.createElement("span");
-  names.textContent = state.compare.join(" vs ");
+  names.textContent = state.compare.map(displayPokemonName).join(" vs ");
   const minimize = document.createElement("button");
   minimize.type = "button";
   minimize.textContent = state.compareMinimized ? "Open" : "Minimaliseer";
@@ -2692,7 +2955,7 @@ function createFormatFocusPanel() {
 
 function createSuggestionPanel() {
   const replacementMode = state.team.length >= maxTeamSize();
-  const suggestions = replacementMode ? replacementSuggestions() : suggestedPokemon();
+  const suggestions = replacementMode ? replacementSuggestions().slice(0, 3) : suggestedPokemon(3);
   const panel = document.createElement("div");
   panel.className = "analysis-block";
   panel.append(createSmallTitle(replacementMode ? "Vervang-suggesties" : "Suggesties"));
@@ -2900,24 +3163,110 @@ function createTeamSelectionPanel() {
     item.className = `selection-item${selected ? " selected" : ""}`;
     item.innerHTML = `
       <span>${selected ? "✓" : index + 1}</span>
-      <strong>${escapeHtml(pokemon.name)}</strong>
+      <strong>${escapeHtml(displayPokemonName(pokemon))}</strong>
       <small>${escapeHtml(formatFitLabel(pokemon))} · ${escapeHtml(setQualityLabel(build))}</small>
     `;
     item.addEventListener("click", () => toggleBattleSelection(pokemon));
     list.append(item);
   });
 
-  const selectedText = document.createElement("p");
-  selectedText.className = "selection-note";
-  selectedText.textContent = state.battleSelection.length
-    ? `Gekozen: ${state.battleSelection.join(", ")} (${state.battleSelection.length}/${battleSelectionSize()})`
-    : `Nog geen battle-selectie gekozen (${battleSelectionSize()} nodig).`;
-  const archetype = document.createElement("p");
-  archetype.className = "selection-note";
-  archetype.textContent = selectionArchetypeNote();
-
-  panel.append(note, list, selectedText, archetype);
+  panel.append(note, list);
   return panel;
+}
+
+function createTeamUsagePanel() {
+  const panel = document.createElement("details");
+  panel.className = "analysis-block team-usage";
+  const summary = document.createElement("summary");
+  summary.textContent = "Zo gebruik je dit team";
+
+  const picks = state.battleSelection
+    .map((name) => state.team.find((pokemon) => pokemon.name === name))
+    .filter(Boolean);
+  const active = picks.length ? picks : state.team.slice(0, battleSelectionSize());
+  const lead = recommendedLead(active);
+  const wincons = active.filter((pokemon) => ["Sweeper", "Wallbreaker", "Speed control"].includes(displayRoleForBuild(pokemon))).slice(0, 2);
+  const pivots = active.filter((pokemon) => ["Wall", "Bulky pivot", "Support", "Allrounder"].includes(displayRoleForBuild(pokemon))).slice(0, 2);
+  const risks = teamTypeSummary()
+    .filter((item) => item.weak >= 2)
+    .slice(0, 3)
+    .map((item) => item.type);
+
+  const body = document.createElement("div");
+  body.className = "team-usage-body";
+
+  const intro = document.createElement("p");
+  intro.className = "usage-intro";
+  intro.textContent = state.battleSelection.length === battleSelectionSize()
+    ? `Gebaseerd op je huidige Team Preview-selectie: ${active.map(displayPokemonName).join(", ")}.`
+    : `Kies eerst ${battleSelectionSize()} Pokémon in Team Preview voor een scherper gameplan.`;
+
+  const list = document.createElement("div");
+  list.className = "usage-grid";
+  usageRows({
+    lead,
+    wincons,
+    pivots,
+    risks,
+    complete: state.team.length >= maxTeamSize(),
+    selected: state.battleSelection.length === battleSelectionSize()
+  }).forEach(([label, value]) => {
+    const row = document.createElement("div");
+    row.innerHTML = `<span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong>`;
+    list.append(row);
+  });
+
+  const sequence = document.createElement("ol");
+  sequence.className = "usage-sequence";
+  teamGamePlanSteps({ lead, wincons, pivots, risks }).forEach((step) => {
+    const item = document.createElement("li");
+    item.textContent = step;
+    sequence.append(item);
+  });
+
+  body.append(intro, list, sequence);
+  panel.append(summary, body);
+  return panel;
+}
+
+function recommendedLead(team) {
+  return team.find((pokemon) => selectedBuild(pokemon).moves?.some((move) => /stealth rock|spikes|sticky web|tailwind|fake out/i.test(move)))
+    ?? team.find((pokemon) => pokemon.spe >= 100)
+    ?? team[0];
+}
+
+function usageRows({ lead, wincons, pivots, risks, complete, selected }) {
+  const plan = TEAM_STYLES[state.teamStyle].label;
+  const format = BATTLE_FORMATS[state.battleFormat].label;
+  return [
+    ["Teamplan", `${plan}: ${planGuideItems(state.teamStyle)[0]}`],
+    ["Preview", selected ? `Speel vanuit je gekozen ${battleSelectionSize()} voor ${format}.` : `Kies nog ${battleSelectionSize()} Pokémon voor een concreet gameplan.`],
+    ["Lead", lead ? `Start vaak met ${displayPokemonName(lead)} als tempo- of informatielead.` : "Kies eerst een stabiele lead."],
+    ["Winconditie", wincons.length ? `${wincons.map(displayPokemonName).join(" / ")} bewaart druk voor mid- of late-game.` : "Voeg een duidelijke cleaner of breaker toe."],
+    ["Veilige wissel", pivots.length ? `${pivots.map(displayPokemonName).join(" / ")} gebruiken om momentum terug te pakken.` : "Je mist nog een comfortabele switch-in."],
+    ["Let op", risks.length ? `Bescherm tegen ${risks.join(", ")}.` : complete ? "Geen grote gedeelde typezwakte gevonden." : "Team nog in opbouw; check gedeelde zwaktes later opnieuw."]
+  ];
+}
+
+function teamGamePlanSteps({ lead, wincons, pivots, risks }) {
+  const steps = [
+    lead
+      ? `Open met ${displayPokemonName(lead)} wanneer je tempo, hazards of eerste informatie nodig hebt.`
+      : "Open met je veiligste Pokémon en scout eerst de belangrijkste threat.",
+    pivots.length
+      ? `Gebruik ${pivots.map(displayPokemonName).join(" / ")} om ongunstige matchups op te vangen.`
+      : "Vermijd onnodige harde switches totdat je een defensieve pivot hebt gekozen.",
+    wincons.length
+      ? `Bewaar ${wincons.map(displayPokemonName).join(" / ")} tot checks verzwakt of verwijderd zijn.`
+      : "Zoek nog een duidelijke late-game cleaner of wallbreaker.",
+    risks.length
+      ? `Speel rond ${risks.join(", ")}: geef die types geen gratis switch-in.`
+      : "Als de matchup neutraal is, speel rond positionering en behoud je snelste slot."
+  ];
+  if (state.battleFormat === "double4") {
+    steps.splice(1, 0, "In Doubles: kies leads die elkaar beschermen, niet alleen de twee sterkste losse Pokémon.");
+  }
+  return steps;
 }
 
 function createDataStatusPanel() {
@@ -3181,7 +3530,7 @@ function suggestedPokemon(limit = 3) {
     .filter((item) => item.weak >= 2)
     .map((item) => item.type);
 
-  return state.pokemon
+  const ranked = state.pokemon
     .filter((pokemon) => !names.has(pokemon.name))
     .filter((pokemon) => teamLegality(pokemon).ok)
     .map((pokemon) => {
@@ -3973,6 +4322,13 @@ function createTypeChip(type) {
 
 function typeChipHtml(type) {
   return `<span class="type-chip" style="--type-color:${TYPE_COLORS[type] || "#167a90"}">${escapeHtml(type)}</span>`;
+}
+
+function displayPokemonName(pokemonOrName) {
+  const name = typeof pokemonOrName === "string" ? pokemonOrName : pokemonOrName.name;
+  const megaMatch = name.match(/^(.+)-Mega(?:-([XY]))?$/);
+  if (!megaMatch) return name;
+  return `Mega ${megaMatch[1]}${megaMatch[2] ? ` ${megaMatch[2]}` : ""}`;
 }
 
 function spriteUrl(name) {
