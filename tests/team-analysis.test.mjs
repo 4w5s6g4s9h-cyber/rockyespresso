@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import {
   baseSpecies,
+  megaBaseFromItem,
   normalizeSpSpread,
+  pokemonUsesMegaSlot,
   suggestedPokemon,
   teamLegality,
   teamTypeSummary
@@ -21,9 +23,13 @@ const megaChomp = { ...garchomp, name: "Garchomp-Mega" };
 const dragonite = { name: "Dragonite", hp: 91, atk: 134, def: 95, spa: 100, spd: 100, spe: 80, bst: 600, types: ["Dragon", "Flying"], abilities: [], evos: [] };
 const corviknight = { name: "Corviknight", hp: 98, atk: 87, def: 105, spa: 53, spd: 85, spe: 67, bst: 495, types: ["Flying", "Steel"], abilities: [], evos: [] };
 const starmie = { name: "Starmie", hp: 60, atk: 75, def: 85, spa: 100, spd: 85, spe: 115, bst: 520, types: ["Water", "Psychic"], abilities: [], evos: [] };
+const charizard = { name: "Charizard", hp: 78, atk: 104, def: 78, spa: 159, spd: 115, spe: 100, bst: 634, types: ["Fire", "Flying"], abilities: [], evos: [] };
 
 assert.equal(baseSpecies("Charizard-Mega-Y"), "Charizard");
 assert.equal(baseSpecies("Garchomp-Mega"), "Garchomp");
+assert.equal(megaBaseFromItem("Charizardite Y"), "Charizard");
+assert.equal(pokemonUsesMegaSlot(charizard, { item: "Charizardite Y" }), true);
+assert.equal(pokemonUsesMegaSlot(garchomp, { item: "Venusaurite" }), false);
 
 assert.equal(normalizeSpSpread("252 Atk / 252 Spe / 4 HP"), "1 HP / 32 Atk / 32 Spe");
 assert.equal(normalizeSpSpread("40 HP / 40 Atk / 40 Def"), "5 HP / 5 Atk / 5 Def");
@@ -31,6 +37,13 @@ assert.equal(normalizeSpSpread("40 HP / 40 Atk / 40 Def"), "5 HP / 5 Atk / 5 Def
 assert.deepEqual(teamLegality({ pokemon: garchomp, team: [], battleFormat: "single3", battleFormats }), { ok: true, reason: "" });
 assert.equal(teamLegality({ pokemon: garchomp, team: [garchomp], battleFormat: "single3", battleFormats }).ok, false);
 assert.equal(teamLegality({ pokemon: megaChomp, team: [garchomp], battleFormat: "single3", battleFormats }).ok, false);
+assert.equal(teamLegality({
+  pokemon: megaChomp,
+  team: [charizard],
+  battleFormat: "single3",
+  battleFormats,
+  selectedBuild: (pokemon) => pokemon.name === "Charizard" ? { item: "Charizardite Y" } : {}
+}).ok, false);
 assert.equal(teamLegality({ pokemon: dragonite, team: [garchomp, starmie, corviknight], battleFormat: "single3", battleFormats }).ok, true);
 assert.equal(teamLegality({ pokemon: dragonite, team: [garchomp, starmie, corviknight, starmie, corviknight, starmie], battleFormat: "single3", battleFormats }).ok, false);
 

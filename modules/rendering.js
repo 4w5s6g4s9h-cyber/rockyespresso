@@ -3,9 +3,10 @@ export function renderApp(ctx) {
   ctx.renderGuideModeToggle();
   const list = ctx.getFilteredPokemon();
   const isStart = ctx.state.guideMode && !ctx.state.hasExplored && !ctx.normalize(ctx.searchInput.value);
-  ctx.metaRow.classList.toggle("hidden", isStart);
-  ctx.resultCount.textContent = isStart ? "Start" : list.length.toLocaleString("nl-NL");
-  ctx.resultLabel.textContent = isStart ? "team-builder" : "resultaten";
+  ctx.metaRow?.classList.toggle("hidden", true);
+  if (ctx.resultCount) ctx.resultCount.textContent = isStart ? "Start" : list.length.toLocaleString("nl-NL");
+  if (ctx.resultLabel) ctx.resultLabel.textContent = isStart ? "team-builder" : "resultaten";
+  if (ctx.resultInline) ctx.resultInline.textContent = isStart ? "(start)" : `(${list.length.toLocaleString("nl-NL")})`;
   ctx.grid.replaceChildren();
 
   if (isStart) {

@@ -1,8 +1,8 @@
 import { loadChampionsMeta as fetchChampionsMeta, loadPokemonData, officialPokemon } from './modules/data.js?v=2';
 import { loadMovesets as fetchMovesets } from './modules/movesets.js';
-import { renderApp, renderWithoutScrollJump } from './modules/rendering.js';
-import { bindEvents as bindUiEvents } from './modules/ui-events.js?v=3';
-import { baseSpecies as pureBaseSpecies, baseSpeciesLabel as pureBaseSpeciesLabel, defensiveMultiplier as pureDefensiveMultiplier, isMega as pureIsMega, normalizeSpSpread as pureNormalizeSpSpread, normalizeSpValues as pureNormalizeSpValues, parseSp as pureParseSp, spPartsFromValues as pureSpPartsFromValues, teamLegality as pureTeamLegality, teamTypeSummary as pureTeamTypeSummary } from './modules/team-analysis.js';
+import { renderApp, renderWithoutScrollJump } from './modules/rendering.js?v=2';
+import { bindEvents as bindUiEvents } from './modules/ui-events.js?v=4';
+import { baseSpecies as pureBaseSpecies, baseSpeciesLabel as pureBaseSpeciesLabel, defensiveMultiplier as pureDefensiveMultiplier, isMega as pureIsMega, megaBaseFromItem as pureMegaBaseFromItem, normalizeSpSpread as pureNormalizeSpSpread, normalizeSpValues as pureNormalizeSpValues, parseSp as pureParseSp, pokemonUsesMegaSlot as purePokemonUsesMegaSlot, spPartsFromValues as pureSpPartsFromValues, teamLegality as pureTeamLegality, teamTypeSummary as pureTeamTypeSummary } from './modules/team-analysis.js';
 
 const TYPES = [
   "Normal", "Fire", "Water", "Electric", "Grass", "Ice", "Fighting", "Poison", "Ground",
@@ -189,6 +189,7 @@ const state = {
   battleSelection: [],
   teamNotice: "",
   selectedSets: {},
+  manualSets: {},
   customSets: {},
   savedTeams: [],
   favorites: [],
@@ -221,6 +222,7 @@ const activeTypeLabel = document.querySelector("#activeTypeLabel");
 const metaRow = document.querySelector(".meta-row");
 const resultCount = document.querySelector("#resultCount");
 const resultLabel = document.querySelector("#resultLabel");
+const resultInline = document.querySelector("#resultInline");
 const builderTab = document.querySelector("#builderTab");
 const teamTab = document.querySelector("#teamTab");
 const builderView = document.querySelector("#builderView");
@@ -291,6 +293,7 @@ function appContext() {
     metaRow,
     resultCount,
     resultLabel,
+    resultInline,
     builderTab,
     teamTab,
     builderView,
@@ -313,6 +316,7 @@ function appContext() {
     generateRandomUltraTeam,
     showAllPokemonList,
     switchView,
+    optimizeTeamSets,
     maxTeamSize,
     invalidateCache,
     normalize,
@@ -384,8 +388,9 @@ function saveFavorites() {
 
 function showLoadError(error) {
   console.error(error);
-  resultCount.textContent = "0";
-  resultLabel.textContent = "resultaten";
+  if (resultCount) resultCount.textContent = "0";
+  if (resultLabel) resultLabel.textContent = "resultaten";
+  if (resultInline) resultInline.textContent = "(0)";
   grid.replaceChildren();
   detailPanel.replaceChildren();
   teamSlots.replaceChildren();
@@ -426,6 +431,8 @@ function resetToStart() {
   state.team = [];
   state.battleSelection = [];
   state.teamNotice = "";
+  state.manualSets = {};
+  state.selectedSets = {};
   state.selected = state.pokemon.find((pokemon) => pokemon.name === "Garchomp") ?? state.pokemon[0];
   state.hasExplored = false;
   state.guideMode = false;
@@ -437,7 +444,7 @@ function resetToStart() {
   render();
   resetApp.textContent = "Gereset";
   window.setTimeout(() => {
-    resetApp.textContent = "Reset alles";
+    resetApp.textContent = "Reset";
   }, 900);
   document.querySelector(".hero").scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -475,9 +482,13 @@ function toggleFavoritesFilter() {
 
 function generateRandomUltraTeam() {
   const previousTeam = [...state.team];
+  const previousSelectedSets = { ...state.selectedSets };
+  const previousManualSets = { ...state.manualSets };
   state.team = [];
   state.battleSelection = [];
   state.teamNotice = "";
+  state.selectedSets = {};
+  state.manualSets = {};
 
   const anchors = shuffled(recommendedStartPicks()).map((item) => item.pokemon);
   const pool = [...anchors, ...shuffled(state.pokemon)]
@@ -497,18 +508,17 @@ function generateRandomUltraTeam() {
 
   if (state.team.length < maxTeamSize()) {
     state.team = previousTeam;
+    state.selectedSets = previousSelectedSets;
+    state.manualSets = previousManualSets;
     state.teamNotice = "Kon geen volledig Ultra Team samenstellen met de huidige data.";
   } else {
     state.selected = state.team[0];
-    state.battleSelection = state.team
-      .slice()
-      .sort((a, b) => ultraTeamCandidateScore(b) - ultraTeamCandidateScore(a))
-      .slice(0, battleSelectionSize())
-      .map((pokemon) => pokemon.name);
+    optimizeTeamSets();
+    state.battleSelection = state.team.slice(0, battleSelectionSize()).map((pokemon) => pokemon.name);
     state.hasExplored = true;
     state.guideMode = false;
     state.activeView = "team";
-    state.teamNotice = "Willekeurig Ultra Team samengesteld op basis van rollen, checks en setkwaliteit.";
+    state.teamNotice = "Random Team samengesteld op basis van rollen, checks en setkwaliteit.";
   }
   invalidateCache();
   render();
@@ -518,6 +528,8 @@ function buildTeamAround(anchor, style = state.teamStyle) {
   const previousTeam = [...state.team];
   const previousSelection = [...state.battleSelection];
   const previousStyle = state.teamStyle;
+  const previousSelectedSets = { ...state.selectedSets };
+  const previousManualSets = { ...state.manualSets };
   const nextStyle = TEAM_STYLES[style] ? style : state.teamStyle;
 
   state.teamStyle = nextStyle;
@@ -531,12 +543,17 @@ function buildTeamAround(anchor, style = state.teamStyle) {
   state.team = [anchor];
   state.selected = anchor;
   state.battleSelection = [];
+  state.selectedSets = {};
+  state.manualSets = {};
   state.teamNotice = "";
   state.startSuggestionPage = 0;
   invalidateCache();
 
   while (state.team.length < maxTeamSize()) {
-    const candidates = teamAroundCandidates(anchor);
+    const forced = requiredPlanCandidate(anchor);
+    const candidates = forced
+      ? [forced, ...teamAroundCandidates(anchor).filter((pokemon) => pokemon.name !== forced.name)]
+      : teamAroundCandidates(anchor);
     const choice = candidates.find((pokemon) => teamLegality(pokemon).ok);
     if (!choice) break;
     state.team.push(choice);
@@ -544,20 +561,25 @@ function buildTeamAround(anchor, style = state.teamStyle) {
   }
 
   if (state.team.length < maxTeamSize()) {
-    state.team = previousTeam;
-    state.battleSelection = previousSelection;
-    state.teamStyle = previousStyle;
-    teamStyleSelect.value = previousStyle;
-    state.selected = anchor;
-    state.activeView = "builder";
-    state.teamNotice = `Kon geen volledig team rond ${anchor.name} samenstellen met de huidige regels.`;
+    if (state.team.length <= 1) {
+      state.team = previousTeam;
+      state.battleSelection = previousSelection;
+      state.teamStyle = previousStyle;
+      state.selectedSets = previousSelectedSets;
+      state.manualSets = previousManualSets;
+      teamStyleSelect.value = previousStyle;
+      state.selected = anchor;
+      state.activeView = "builder";
+      state.teamNotice = `Kon geen team rond ${displayPokemonName(anchor)} samenstellen met de huidige regels.`;
+    } else {
+      optimizeTeamSets();
+      state.battleSelection = state.team.slice(0, battleSelectionSize()).map((pokemon) => pokemon.name);
+      state.teamNotice = `Gedeeltelijk team rond ${displayPokemonName(anchor)} gebouwd (${state.team.length}/6).`;
+    }
   } else {
-    state.battleSelection = state.team
-      .slice()
-      .sort((a, b) => teamAroundCandidateScore(b, anchor) - teamAroundCandidateScore(a, anchor))
-      .slice(0, battleSelectionSize())
-      .map((pokemon) => pokemon.name);
-    state.teamNotice = `Team rond ${anchor.name} gebouwd met ${TEAM_STYLES[nextStyle].label}-plan.`;
+    optimizeTeamSets();
+    state.battleSelection = state.team.slice(0, battleSelectionSize()).map((pokemon) => pokemon.name);
+    state.teamNotice = `Team rond ${displayPokemonName(anchor)} gebouwd met ${TEAM_STYLES[nextStyle].label}-plan.`;
   }
 
   renderTypeFilters();
@@ -576,6 +598,16 @@ function teamAroundCandidates(anchor) {
     .sort((a, b) => teamAroundCandidateScore(b, anchor) - teamAroundCandidateScore(a, anchor));
 }
 
+function requiredPlanCandidate(anchor) {
+  const missing = stylePlanChecks().filter((check) => !check.ok);
+  if (!missing.length) return null;
+  const priority = missing.find((check) => /drought|setter|weather/i.test(check.label))
+    ?? missing.find((check) => /speed|trick|rain|sun/i.test(check.label))
+    ?? missing[0];
+  const candidate = bestPlanCheckCandidate(priority);
+  return candidate && candidate.name !== anchor.name ? candidate : null;
+}
+
 function teamAroundCandidateScore(pokemon, anchor) {
   const build = selectedBuild(pokemon);
   const reasons = suggestionReasons(pokemon);
@@ -583,8 +615,9 @@ function teamAroundCandidateScore(pokemon, anchor) {
   let score = ultraTeamBaseScore(pokemon) + reasons.score * 45;
 
   if (teamStyleMatch(pokemon)) score += 90;
+  if (weatherConflictsWithStyle(pokemon)) score -= 180;
   if (build.status === "generated") score -= 70;
-  if (needsValidationAsCore(pokemon) && !isMega(pokemon)) score -= 120;
+  if (needsValidationAsCore(pokemon, build) && !usesMegaSlot(pokemon, build)) score -= 120;
   if (["Support", "Bulky pivot", "Wall"].includes(role)) score += state.team.length < 3 ? 35 : 10;
   if (["Sweeper", "Wallbreaker", "Speed control"].includes(role)) score += state.team.length >= 3 ? 30 : 10;
 
@@ -625,7 +658,8 @@ function ultraTeamBaseScore(pokemon) {
   if (build.status === "smogon-champions") score += 90;
   else if (build.status === "smogon-sv") score += 55;
   else if (build.status === "custom") score += 30;
-  if (isMega(pokemon)) score += 35;
+  if (weatherConflictsWithStyle(pokemon)) score -= 110;
+  if (usesMegaSlot(pokemon, build)) score += 35;
   return score;
 }
 
@@ -884,6 +918,11 @@ function createSuggestionRefreshBar() {
   bar.className = "suggestion-refresh-row";
   const text = document.createElement("span");
   text.textContent = "Suggesties";
+  bar.append(text, createSuggestionRefreshButton());
+  return bar;
+}
+
+function createSuggestionRefreshButton() {
   const refresh = document.createElement("button");
   refresh.type = "button";
   refresh.className = "start-refresh";
@@ -892,8 +931,7 @@ function createSuggestionRefreshBar() {
     state.startSuggestionPage += 1;
     render();
   });
-  bar.append(text, refresh);
-  return bar;
+  return refresh;
 }
 
 function createStartControls() {
@@ -914,6 +952,7 @@ function createStartControls() {
         battleFormatSelect.value = value;
         state.startSuggestionPage = 0;
         syncBattleSelection();
+        optimizeTeamSets();
         render();
       }
     )
@@ -932,6 +971,7 @@ function createStartControls() {
         state.teamStyle = value;
         teamStyleSelect.value = value;
         state.startSuggestionPage = 0;
+        optimizeTeamSets();
         render();
       }
     )
@@ -984,12 +1024,12 @@ function createStartDashboard() {
 function startGuidanceItems() {
   const concern = mainTypeConcern();
   const missingRole = roleCoverage().find((role) => !role.done);
-  const mega = state.team.find(isMega);
+  const mega = state.team.find(usesMegaSlot);
 
   return [
     ["Type aandacht", concern ? `${concern.type}: ${concern.weak} zwak, geen antwoord` : "Geen grote gedeelde zwakte"],
     ["Rol mist", missingRole ? missingRole.label : "Basisrollen op orde"],
-    ["Mega-slot", mega ? mega.name : "Nog vrij"]
+    ["Mega-slot", mega ? displayPokemonName(mega) : "Nog vrij"]
   ];
 }
 
@@ -1004,7 +1044,7 @@ function createStarterPick(pokemon, reason = starterReason(pokemon)) {
   const spriteWrap = document.createElement("button");
   spriteWrap.type = "button";
   spriteWrap.className = "starter-sprite-wrap";
-  spriteWrap.title = `Bekijk details van ${pokemon.name}`;
+  spriteWrap.title = `Bekijk details van ${displayPokemonName(pokemon)}`;
   spriteWrap.addEventListener("click", () => showPokemonDetails(pokemon));
 
   const sprite = document.createElement("img");
@@ -1016,7 +1056,7 @@ function createStarterPick(pokemon, reason = starterReason(pokemon)) {
   const body = document.createElement("span");
   body.className = "starter-pick-body";
   const name = document.createElement("strong");
-  name.textContent = pokemon.name;
+  name.textContent = displayPokemonName(pokemon);
   const meta = document.createElement("span");
   meta.className = "starter-pick-meta";
   meta.textContent = `BST ${pokemon.bst} · ${pokemon.types.join(" / ")}`;
@@ -1331,9 +1371,9 @@ function planStartCandidates(used) {
       page + 1
     ),
     ...topStartCandidates(
-      (pokemon) => pokemon.spe >= 110 || isMega(pokemon),
+      (pokemon) => pokemon.spe >= 110 || usesMegaSlot(pokemon),
       1,
-      (pokemon) => isMega(pokemon) ? "Sterke Mega-optie; let op de 1-Mega-regel." : "Helpt om sneller druk te zetten.",
+      (pokemon) => usesMegaSlot(pokemon) ? "Sterke Mega-optie; let op de 1-Mega-regel." : "Helpt om sneller druk te zetten.",
       used,
       page + 2
     )
@@ -1461,7 +1501,17 @@ function createCard(pokemon) {
     event.stopPropagation();
     toggleCompare(pokemon);
   });
-  actions.append(favorite, compare);
+  const autoTeam = document.createElement("button");
+  autoTeam.type = "button";
+  autoTeam.className = "mini-action auto-team-action";
+  autoTeam.textContent = "Auto team";
+  autoTeam.title = `Bouw automatisch een team rond ${displayPokemonName(pokemon)}`;
+  autoTeam.addEventListener("mousedown", (event) => event.preventDefault());
+  autoTeam.addEventListener("click", (event) => {
+    event.stopPropagation();
+    buildTeamAround(pokemon, state.teamStyle);
+  });
+  actions.append(favorite, compare, autoTeam);
   node.append(actions);
 
   const expand = document.createElement("button");
@@ -1488,7 +1538,7 @@ function createCard(pokemon) {
 
   sprite.src = spriteUrl(pokemon.name);
   sprite.alt = pokemon.name;
-  spriteWrap.title = `Bekijk details van ${pokemon.name}`;
+  spriteWrap.title = `Bekijk details van ${displayPokemonName(pokemon)}`;
   sprite.addEventListener("error", () => showSpriteFallback(spriteWrap, pokemon.name), { once: true });
 
   mainButton.addEventListener("mousedown", (event) => event.preventDefault());
@@ -1596,6 +1646,7 @@ function renderDetail(pokemon) {
         <div class="types">${pokemon.types.map(typeChipHtml).join("")}</div>
       </div>
     </div>
+    ${teamAroundBuilderHtml(pokemon)}
     <div class="quick-facts">
       <div class="fact"><span>BST</span><strong>${pokemon.bst}</strong></div>
       <div class="fact"><span>Hoogte</span><strong>${formatNumber(pokemon.height)} m</strong></div>
@@ -1604,7 +1655,6 @@ function renderDetail(pokemon) {
     <div class="fact"><span>Abilities</span><strong>${escapeHtml(pokemon.abilities.join(" / "))}</strong></div>
     <div class="fact"><span>Rol</span><strong>${escapeHtml(roleFor(pokemon).label)}</strong></div>
     <p class="role-note">${escapeHtml(roleFor(pokemon).description)}</p>
-    ${teamAroundBuilderHtml(pokemon)}
     ${buildAdviceHtml(pokemon)}
     ${trainingOverviewHtml(pokemon)}
   `;
@@ -1614,6 +1664,7 @@ function renderDetail(pokemon) {
   wrapper.querySelectorAll(".set-tab").forEach((button) => {
     button.addEventListener("click", () => {
       state.selectedSets[pokemon.name] = button.dataset.setId;
+      state.manualSets[pokemon.name] = true;
       renderDetail(pokemon);
     });
   });
@@ -1811,6 +1862,7 @@ function addToTeam(pokemon) {
   }
   state.team.push(pokemon);
   syncBattleSelection();
+  optimizeTeamSets();
   state.teamNotice = "";
   renderTeam();
   return true;
@@ -1873,7 +1925,7 @@ function createTeamInlineSummary() {
   const concern = teamTypeSummary().find((item) => item.weak >= 2 && item.resist + item.immune === 0);
   [
     ["Plan", TEAM_STYLES[state.teamStyle].label],
-    ["Mega", state.team.find(isMega)?.name ?? "Nog vrij"],
+    ["Mega", state.team.find(usesMegaSlot) ? displayPokemonName(state.team.find(usesMegaSlot)) : "Nog vrij"],
     ["Rol mist", missingRole ? missingRole.label : "Basis op orde"],
     ["Type aandacht", concern ? concern.type : "Geen grote gedeelde zwakte"]
   ].forEach(([label, value]) => {
@@ -1916,6 +1968,17 @@ function removeFromTeam(index) {
 function renderTeamManager() {
   if (!teamManager) return;
   teamManager.replaceChildren();
+  teamManager.classList.toggle("is-empty", !state.savedTeams.length);
+
+  const head = document.createElement("div");
+  head.className = "team-manager-head";
+  const title = document.createElement("strong");
+  title.textContent = "Teams opslaan";
+  const help = document.createElement("small");
+  help.textContent = state.savedTeams.length
+    ? `${state.savedTeams.length} opgeslagen team${state.savedTeams.length === 1 ? "" : "s"}`
+    : "Bewaar je huidige team inclusief plan en preview.";
+  head.append(title, help);
 
   const saveRow = document.createElement("div");
   saveRow.className = "team-manager-save";
@@ -1940,11 +2003,11 @@ function renderTeamManager() {
     state.savedTeams.forEach((team) => list.append(createSavedTeamRow(team)));
   }
 
-  teamManager.append(saveRow, list);
+  teamManager.append(head, saveRow, list);
 }
 
 function defaultTeamName() {
-  const names = state.team.map((pokemon) => pokemon.name).join(" + ");
+  const names = state.team.map(displayPokemonName).join(" + ");
   return names || `${BATTLE_FORMATS[state.battleFormat].label} team`;
 }
 
@@ -1972,7 +2035,7 @@ function createSavedTeamRow(savedTeam) {
   const meta = document.createElement("span");
   meta.innerHTML = `
     <strong>${escapeHtml(savedTeam.name)}</strong>
-    <small>${escapeHtml(BATTLE_FORMATS[savedTeam.format]?.label ?? savedTeam.format)} · ${escapeHtml(savedTeam.members.join(", "))}</small>
+    <small>${escapeHtml(BATTLE_FORMATS[savedTeam.format]?.label ?? savedTeam.format)} · ${escapeHtml(savedTeam.members.map(displayPokemonName).join(", "))}</small>
   `;
   const load = document.createElement("button");
   load.type = "button";
@@ -2000,6 +2063,7 @@ function loadSavedTeam(id) {
   state.battleSelection = [...(saved.battleSelection ?? [])];
   syncBattleSelection();
   state.selectedSets = { ...(saved.selectedSets ?? {}) };
+  state.manualSets = Object.fromEntries(Object.keys(state.selectedSets).map((name) => [name, true]));
   state.customSets = { ...state.customSets, ...(saved.customSets ?? {}) };
   battleFormatSelect.value = state.battleFormat;
   teamStyleSelect.value = state.teamStyle;
@@ -2090,6 +2154,14 @@ function syncBattleSelection() {
     .slice(0, battleSelectionSize());
   if (state.team.length <= battleSelectionSize()) {
     state.battleSelection = state.team.map((pokemon) => pokemon.name);
+  } else if (state.battleSelection.length < battleSelectionSize()) {
+    const selected = new Set(state.battleSelection);
+    state.team.forEach((pokemon) => {
+      if (state.battleSelection.length < battleSelectionSize() && !selected.has(pokemon.name)) {
+        state.battleSelection.push(pokemon.name);
+        selected.add(pokemon.name);
+      }
+    });
   }
 }
 
@@ -2107,7 +2179,7 @@ function toggleBattleSelection(pokemon) {
 function createWorkbenchCard(pokemon, index) {
   const build = selectedBuild(pokemon);
   const card = document.createElement("article");
-  card.className = `workbench-card${build.status === "generated" ? " generated" : ""}`;
+  card.className = `workbench-card${build.status === "generated" ? " generated" : ""}${index === 0 ? " core-slot" : ""}`;
   card.dataset.pokemon = pokemon.name;
 
   const header = document.createElement("div");
@@ -2126,7 +2198,7 @@ function createWorkbenchCard(pokemon, index) {
   header.querySelector("img").addEventListener("error", (event) => {
     showSpriteFallback(event.target.closest(".sprite-wrap"), pokemon.name);
   }, { once: true });
-  header.querySelector(".sprite-wrap").title = `Bekijk ${pokemon.name} in Builder`;
+  header.querySelector(".sprite-wrap").title = `Bekijk ${displayPokemonName(pokemon)} in Builder`;
   header.querySelector(".sprite-wrap").addEventListener("click", () => {
     state.selected = pokemon;
     switchView("builder");
@@ -2137,6 +2209,7 @@ function createWorkbenchCard(pokemon, index) {
   const tabs = createSetSourceCards(buildOptions(pokemon), build, (option) => {
     const scrollY = window.scrollY;
     state.selectedSets[pokemon.name] = option.id;
+    state.manualSets[pokemon.name] = true;
     state.selected = pokemon;
     render();
     window.scrollTo({ top: scrollY, left: 0, behavior: "instant" });
@@ -2573,11 +2646,13 @@ function renderTeamAnalysis() {
     empty.className = "empty-detail";
     empty.textContent = "Voeg Pokémon toe aan je team. Dan zie je hier zwaktes, balans en passende suggesties.";
     teamAnalysis.append(empty);
+    if (teamManager) teamAnalysis.append(teamManager);
     return;
   }
 
   teamAnalysis.append(createBuilderExplanationPanel());
   teamAnalysis.append(createTeamSummaryPanel());
+  teamAnalysis.append(createStylePlanPanel());
   teamAnalysis.append(createRulesPanel());
   teamAnalysis.append(createTeamSelectionPanel());
   teamAnalysis.append(createTeamUsagePanel());
@@ -2586,6 +2661,7 @@ function renderTeamAnalysis() {
   teamAnalysis.append(createThreatChecklistPanel());
   teamAnalysis.append(createRoleChecklistPanel());
   teamAnalysis.append(createSuggestionPanel());
+  if (teamManager) teamAnalysis.append(teamManager);
 }
 
 function renderTeamOverview() {
@@ -2607,7 +2683,7 @@ function createFavoritesPanel() {
       item.className = "favorite-item";
       item.innerHTML = `
         <img src="${spriteUrl(pokemon.name)}" alt="">
-        <span><strong>${escapeHtml(pokemon.name)}</strong><small>${escapeHtml(displayRoleForBuild(pokemon))} · BST ${pokemon.bst}</small></span>
+        <span><strong>${escapeHtml(displayPokemonName(pokemon))}</strong><small>${escapeHtml(displayRoleForBuild(pokemon))} · BST ${pokemon.bst}</small></span>
       `;
       item.addEventListener("click", () => showPokemonDetails(pokemon));
       item.querySelector("img").addEventListener("error", (event) => event.target.remove(), { once: true });
@@ -2646,7 +2722,7 @@ function createComparePanel() {
     <span>Pokemon</span>
     ${selected.map((pokemon) => `
       <strong>
-        <button type="button" class="compare-remove" data-pokemon="${escapeHtml(pokemon.name)}" aria-label="Verwijder ${escapeHtml(pokemon.name)}">×</button>
+        <button type="button" class="compare-remove" data-pokemon="${escapeHtml(pokemon.name)}" aria-label="Verwijder ${escapeHtml(displayPokemonName(pokemon))}">×</button>
         <img src="${spriteUrl(pokemon.name)}" alt="">
         <span>${escapeHtml(displayPokemonName(pokemon))}<small>${escapeHtml(displayRoleForBuild(pokemon))}</small></span>
       </strong>
@@ -2733,8 +2809,21 @@ function createTeamSummaryPanel() {
   const panel = document.createElement("div");
   panel.className = "analysis-block analysis-summary";
 
+  const head = document.createElement("div");
+  head.className = "analysis-summary-head";
   const title = document.createElement("h3");
   title.textContent = state.team.length >= maxTeamSize() ? "Team van 6 klaar" : "Team in opbouw";
+  const optimize = document.createElement("button");
+  optimize.type = "button";
+  optimize.className = "analysis-action-button optimize-sets-action";
+  optimize.textContent = "Optimaliseer sets";
+  optimize.disabled = !state.team.length;
+  optimize.addEventListener("click", () => {
+    optimizeTeamSets({ force: true });
+    state.teamNotice = "Sets opnieuw gekozen op basis van teamplan en teamcontext.";
+    render();
+  });
+  head.append(title, optimize);
 
   const chips = document.createElement("div");
   chips.className = "summary-chips";
@@ -2749,7 +2838,7 @@ function createTeamSummaryPanel() {
     chips.append(item);
   });
 
-  panel.append(title, chips);
+  panel.append(head, chips);
   return panel;
 }
 
@@ -2769,9 +2858,11 @@ function createBuilderExplanationPanel() {
 }
 
 function createTeamScorePanel() {
-  const panel = document.createElement("div");
+  const panel = document.createElement("details");
   panel.className = "analysis-block score-overview";
-  panel.append(createSmallTitle("Team score"));
+  const summary = document.createElement("summary");
+  summary.textContent = "Team score";
+  panel.append(summary);
   const scores = teamScores();
   const grid = document.createElement("div");
   grid.className = "score-grid";
@@ -2795,6 +2886,7 @@ function teamScores() {
   const typeRisk = teamTypeSummary().filter((item) => item.weak >= 2 && item.resist + item.immune === 0).length;
   const threats = relevantThreats().slice(0, 6);
   const coveredThreats = threats.filter((threat) => threatAnswerStatus(threat).ok).length;
+  const core = sunCoreScore();
   const score = (value, label, note) => ({
     label,
     value: Math.max(0, Math.min(100, Math.round(value))),
@@ -2808,7 +2900,7 @@ function teamScores() {
     score(targets.bulky ? balance.bulky / targets.bulky * 100 : 100, "Bulk", `${balance.bulky}/${targets.bulky} bulky`),
     score(100 - typeRisk * 25, "Type-risico", typeRisk ? `${typeRisk} onbeantwoorde gedeelde zwakte${typeRisk === 1 ? "" : "s"}` : "Geen grote gedeelde zwakte"),
     score(threats.length ? coveredThreats / threats.length * 100 : 100, "Threats", `${coveredThreats}/${threats.length || 0} checks afgedekt`)
-  ];
+  ].concat(state.teamStyle === "sun" ? [score(core.value, "Sun-core", core.note)] : []);
 }
 
 function createRulesPanel() {
@@ -2853,7 +2945,192 @@ function createStylePlanPanel() {
   const note = document.createElement("p");
   note.textContent = style.description;
   panel.append(note);
+
+  const checks = stylePlanChecks();
+  if (checks.length) {
+    const list = document.createElement("div");
+    list.className = "plan-check-list";
+    checks.forEach((check) => {
+      const item = document.createElement("div");
+      item.className = `plan-check-item ${check.ok ? "ok" : "missing"}`;
+      item.innerHTML = `
+        <span>${check.ok ? "OK" : "Nog nodig"}</span>
+        <strong>${escapeHtml(check.label)}</strong>
+        <small>${escapeHtml(check.note)}</small>
+      `;
+      if (!check.ok) {
+        const candidate = bestPlanCheckCandidate(check);
+        const action = candidate ? createNeedAction(candidate, `Beste optie voor ${check.label}`) : null;
+        if (action) item.append(action);
+      }
+      list.append(item);
+    });
+    panel.append(list);
+  }
   return panel;
+}
+
+function bestPlanCheckCandidate(check) {
+  const available = state.pokemon.filter((pokemon) => !state.team.some((member) => member.name === pokemon.name));
+  const byNames = (names) => names.map((name) => state.pokemon.find((pokemon) => pokemon.name === name)).filter(Boolean);
+  const legalFirst = (candidates) => candidates
+    .filter(candidateIsActionable)
+    .sort((a, b) => planCandidateScore(b) - planCandidateScore(a))[0];
+
+  if (/drought/i.test(check.label)) {
+    return legalFirst(byNames(["Charizard-Mega-Y", "Torkoal", "Ninetales"]).concat(available.filter((pokemon) => hasAbility(pokemon, "Drought"))));
+  }
+  if (/venusaur/i.test(check.label)) {
+    return legalFirst(byNames(["Venusaur"]).concat(available.filter((pokemon) => hasAbility(pokemon, "Chlorophyll"))));
+  }
+  if (/fire/i.test(check.label)) {
+    return legalFirst(available.filter((pokemon) => pokemon.types.includes("Fire") || selectedBuild(pokemon).moves?.some((move) =>
+      moveOptionsForDisplay(move).some((option) => moveDetails(option).type === "Fire")
+    )));
+  }
+  const typeMatch = check.label.match(/^(Rock|Water|Dragon)-antwoord$/);
+  if (typeMatch) {
+    const type = typeMatch[1];
+    return legalFirst(available.filter((pokemon) => defensiveMultiplier(pokemon.types, type) < 1));
+  }
+  return null;
+}
+
+function planCandidateScore(pokemon) {
+  return teamAroundCandidateScore(pokemon, state.team[0] ?? state.selected ?? pokemon) + pokemon.bst / 10;
+}
+
+function createNeedAction(pokemon, reason) {
+  const action = document.createElement("div");
+  action.className = "need-action";
+
+  const spriteWrap = document.createElement("span");
+  spriteWrap.className = "need-action-sprite";
+  const sprite = document.createElement("img");
+  sprite.src = spriteUrl(pokemon.name);
+  sprite.alt = "";
+  sprite.addEventListener("error", () => showSpriteFallback(spriteWrap, pokemon.name), { once: true });
+  spriteWrap.append(sprite);
+
+  const text = document.createElement("span");
+  text.innerHTML = `<strong>${escapeHtml(displayPokemonName(pokemon))}</strong><small>${escapeHtml(reason)}</small>`;
+
+  const button = document.createElement("button");
+  button.type = "button";
+  if (state.team.length >= maxTeamSize()) {
+    const replace = replacementTargetFor(pokemon);
+    if (!replace) return null;
+    button.textContent = "Vervang";
+    button.title = `Vervang ${displayPokemonName(replace)} door ${displayPokemonName(pokemon)}`;
+    button.addEventListener("click", () => {
+      replaceTeamMember(replace.name, pokemon);
+      render();
+    });
+  } else {
+    const legality = teamLegality(pokemon);
+    button.textContent = "+";
+    button.disabled = !legality.ok;
+    button.title = legality.ok ? `Voeg ${displayPokemonName(pokemon)} toe` : legality.reason;
+    button.addEventListener("click", () => {
+      addToTeam(pokemon);
+      state.selected = pokemon;
+      render();
+    });
+  }
+  action.append(spriteWrap, text, button);
+  return action;
+}
+
+function candidateIsActionable(pokemon) {
+  if (!pokemon || state.team.some((member) => member.name === pokemon.name)) return false;
+  if (state.team.length < maxTeamSize()) return teamLegality(pokemon).ok;
+  return Boolean(replacementTargetFor(pokemon));
+}
+
+function replacementTargetFor(nextPokemon) {
+  if (!state.team.length) return null;
+  return state.team
+    .filter((member, index) => {
+      if (index === 0) return false;
+      const hypothetical = state.team.map((pokemon) => pokemon.name === member.name ? nextPokemon : pokemon);
+      const bases = hypothetical.map((pokemon) => baseSpecies(pokemon.name));
+      if (new Set(bases).size !== bases.length) return false;
+      return !usesMegaSlot(nextPokemon) || !hypothetical.some((pokemon) => pokemon.name !== nextPokemon.name && usesMegaSlot(pokemon));
+    })
+    .sort((a, b) => teamMemberKeepScore(a) - teamMemberKeepScore(b))[0] ?? null;
+}
+
+function teamMemberKeepScore(pokemon) {
+  return teamAroundCandidateScore(pokemon, state.team[0] ?? state.selected ?? pokemon) + (state.battleSelection.includes(pokemon.name) ? 25 : 0);
+}
+
+function stylePlanChecks() {
+  if (state.teamStyle !== "sun") return [];
+  return sunPlanChecks();
+}
+
+function sunPlanChecks(team = state.team) {
+  const members = team;
+  const drought = members.filter((pokemon) => hasAbility(pokemon, "Drought"));
+  const chlorophyll = members.filter((pokemon) => hasAbility(pokemon, "Chlorophyll") && !usesMegaSlot(pokemon));
+  const megaVenusaur = members.find((pokemon) => pokemon.name === "Venusaur-Mega");
+  const firePressure = members.filter((pokemon) =>
+    pokemon.types.includes("Fire") || selectedBuild(pokemon).moves?.some((move) => moveOptionsForDisplay(move).some((option) => moveDetails(option).type === "Fire"))
+  );
+  const conflict = weatherConflictMembers(members);
+  const checkTypes = ["Rock", "Water", "Dragon"];
+
+  return [
+    {
+      ok: drought.length > 0,
+      label: "Drought setter",
+      note: drought.length ? `${drought.map(displayPokemonName).join(", ")} zet sun.` : "Voeg Torkoal, Ninetales of Mega Charizard Y toe."
+    },
+    {
+      ok: chlorophyll.length > 0 || Boolean(megaVenusaur),
+      label: "Venusaur-rol",
+      note: chlorophyll.length
+        ? `${chlorophyll.map(displayPokemonName).join(", ")} kan als Chlorophyll sweeper spelen.`
+        : megaVenusaur
+          ? "Mega Venusaur is vooral een bulky Sun-anchor; gewone Venusaur is de echte Chlorophyll sweeper."
+          : "Voeg een Chlorophyll-abuser toe als je echt via sun wilt sweepen."
+    },
+    {
+      ok: firePressure.length >= 1,
+      label: "Fire-druk",
+      note: firePressure.length ? `${firePressure.map(displayPokemonName).slice(0, 2).join(", ")} profiteert offensief van sun.` : "Sun wil minimaal een Fire-breaker of Fire-coverage."
+    },
+    ...checkTypes.map((type) => {
+      const answers = members.filter((pokemon) => defensiveMultiplier(pokemon.types, type) < 1);
+      return {
+        ok: answers.length > 0,
+        label: `${type}-antwoord`,
+        note: answers.length ? `${answers.map(displayPokemonName).slice(0, 2).join(", ")} vangt ${type} op.` : `Sun-teams moeten ${type}-druk niet gratis laten binnenkomen.`
+      };
+    }),
+    {
+      ok: conflict.length === 0,
+      label: "Geen weather-conflict",
+      note: conflict.length ? `${conflict.map(displayPokemonName).join(", ")} zet ander weer en verstoort Sun.` : "Geen Rain/Sand/Snow setter in je Sun-plan."
+    }
+  ];
+}
+
+function weatherConflictMembers(team = state.team) {
+  if (state.teamStyle !== "sun") return [];
+  return team.filter((pokemon) =>
+    hasAbility(pokemon, "Drizzle") || hasAbility(pokemon, "Sand Stream") || hasAbility(pokemon, "Snow Warning")
+  );
+}
+
+function sunCoreScore(team = state.team) {
+  if (state.teamStyle !== "sun") return { value: 100, note: "Geen Sun-plan actief" };
+  const checks = sunPlanChecks(team);
+  const done = checks.filter((check) => check.ok).length;
+  return {
+    value: checks.length ? done / checks.length * 100 : 100,
+    note: `${done}/${checks.length} Sun-checks afgedekt`
+  };
 }
 
 function createBalancePanel() {
@@ -2884,9 +3161,11 @@ function createBalancePanel() {
 }
 
 function createRoleChecklistPanel() {
-  const panel = document.createElement("div");
+  const panel = document.createElement("details");
   panel.className = "analysis-block";
-  panel.append(createSmallTitle("Rollen"));
+  const summary = document.createElement("summary");
+  summary.textContent = "Rollen";
+  panel.append(summary);
 
   const roles = roleCoverage();
   const list = document.createElement("div");
@@ -2903,11 +3182,40 @@ function createRoleChecklistPanel() {
     note.textContent = role.note;
 
     item.append(mark, text, note);
+    if (!role.done) {
+      const candidate = bestRoleCandidate(role);
+      const action = candidate ? createNeedAction(candidate, `Beste optie voor ${role.label}`) : null;
+      if (action) item.append(action);
+    }
     list.append(item);
   });
 
   panel.append(list);
   return panel;
+}
+
+function bestRoleCandidate(role) {
+  const available = state.pokemon.filter((pokemon) => !state.team.some((member) => member.name === pokemon.name));
+  const scored = available
+    .filter(candidateIsActionable)
+    .map((pokemon) => ({ pokemon, score: roleCandidateScore(pokemon, role.label) }))
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score || b.pokemon.bst - a.pokemon.bst);
+  return scored[0]?.pokemon ?? null;
+}
+
+function roleCandidateScore(pokemon, label) {
+  const build = selectedBuild(pokemon);
+  const role = displayRoleForBuild(pokemon);
+  const offense = Math.max(pokemon.atk, pokemon.spa);
+  const bulk = pokemon.hp + pokemon.def + pokemon.spd;
+  if (/fysieke druk/i.test(label)) return pokemon.atk >= pokemon.spa && offense >= 110 ? offense + pokemon.spe / 2 : 0;
+  if (/speciale druk/i.test(label)) return pokemon.spa > pokemon.atk && offense >= 110 ? offense + pokemon.spe / 2 : 0;
+  if (/speed/i.test(label)) return pokemon.spe >= 100 || /speed|sweeper/i.test(role) ? pokemon.spe + offense / 4 : 0;
+  if (/defensieve/i.test(label)) return bulk >= 260 || /wall|support|pivot/i.test(role) ? bulk + pokemon.spe / 4 : 0;
+  if (/ground/i.test(label)) return defensiveMultiplier(pokemon.types, "Ground") < 1 ? bulk + pokemon.bst / 5 : 0;
+  if (/fairy/i.test(label)) return defensiveMultiplier(pokemon.types, "Fairy") < 1 ? bulk + pokemon.bst / 5 : 0;
+  return setQualityClass(build) === "good" ? pokemon.bst : pokemon.bst / 2;
 }
 
 function createTypePanel() {
@@ -2958,8 +3266,7 @@ function createSuggestionPanel() {
   const suggestions = replacementMode ? replacementSuggestions().slice(0, 3) : suggestedPokemon(3);
   const panel = document.createElement("div");
   panel.className = "analysis-block";
-  panel.append(createSmallTitle(replacementMode ? "Vervang-suggesties" : "Suggesties"));
-  panel.append(createSuggestionRefreshBar());
+  panel.append(createSuggestionHeader(replacementMode ? "Vervang-suggesties" : "Suggesties"));
 
   if (!suggestions.length) {
     const done = document.createElement("p");
@@ -2978,7 +3285,7 @@ function createSuggestionPanel() {
 
     const spriteWrap = document.createElement("span");
     spriteWrap.className = "suggestion-sprite";
-    spriteWrap.title = `Bekijk details van ${pokemon.name}`;
+    spriteWrap.title = `Bekijk details van ${displayPokemonName(pokemon)}`;
     spriteWrap.addEventListener("click", (event) => {
       event.stopPropagation();
       showPokemonDetails(pokemon);
@@ -2994,7 +3301,7 @@ function createSuggestionPanel() {
     const top = document.createElement("span");
     top.className = "suggestion-top";
     const name = document.createElement("strong");
-    name.textContent = pokemon.name;
+    name.textContent = displayPokemonName(pokemon);
     const bst = document.createElement("small");
     bst.textContent = `BST ${pokemon.bst}`;
     top.append(name, bst);
@@ -3006,7 +3313,7 @@ function createSuggestionPanel() {
     const text = document.createElement("span");
     text.className = "suggestion-reason";
     text.textContent = replace
-      ? `Vervang ${replace.name}: ${reason}`
+      ? `Vervang ${displayPokemonName(replace)}: ${reason}`
       : `${roleFor(pokemon).label}: ${reason}`;
     const build = selectedBuild(pokemon);
     const quality = document.createElement("span");
@@ -3049,6 +3356,14 @@ function createSuggestionPanel() {
   return panel;
 }
 
+function createSuggestionHeader(title) {
+  const header = document.createElement("div");
+  header.className = "suggestion-title-row";
+  header.append(createSmallTitle(title));
+  header.append(createSuggestionRefreshButton());
+  return header;
+}
+
 function suggestionDetailLine(pokemon, build = selectedBuild(pokemon)) {
   const offense = pokemon.atk >= pokemon.spa ? `Atk ${pokemon.atk}` : `SpA ${pokemon.spa}`;
   const bulk = pokemon.hp + pokemon.def + pokemon.spd;
@@ -3057,9 +3372,11 @@ function suggestionDetailLine(pokemon, build = selectedBuild(pokemon)) {
 
 function createThreatChecklistPanel() {
   const threats = relevantThreats();
-  const panel = document.createElement("div");
+  const panel = document.createElement("details");
   panel.className = "analysis-block threat-checklist";
-  panel.append(createSmallTitle("Threat-check"));
+  const summary = document.createElement("summary");
+  summary.textContent = "Threat-check";
+  panel.append(summary);
 
   if (!threats.length) {
     const empty = document.createElement("p");
@@ -3077,15 +3394,27 @@ function createThreatChecklistPanel() {
 
     const mark = document.createElement("span");
     mark.textContent = status.ok ? "OK" : "Check";
+    const threatPokemon = state.pokemon.find((pokemon) => pokemon.name === threat.name);
+    const spriteWrap = document.createElement("span");
+    spriteWrap.className = "threat-sprite";
+    if (threatPokemon) {
+      const sprite = document.createElement("img");
+      sprite.src = spriteUrl(threatPokemon.name);
+      sprite.alt = "";
+      sprite.addEventListener("error", () => showSpriteFallback(spriteWrap, threatPokemon.name), { once: true });
+      spriteWrap.append(sprite);
+    } else {
+      spriteWrap.textContent = threat.name.slice(0, 2).toUpperCase();
+    }
     const body = document.createElement("div");
     const top = document.createElement("strong");
-    top.textContent = threat.name;
+    top.textContent = displayPokemonName(threat.name);
     const tags = document.createElement("small");
     tags.textContent = `${(threat.tags ?? []).join(" · ")}${status.answer ? ` · ${status.answer}` : ""}`;
     const note = document.createElement("p");
     note.textContent = status.ok ? status.note : threat.note;
     body.append(top, tags, note);
-    item.append(mark, body);
+    item.append(mark, spriteWrap, body);
     list.append(item);
   });
 
@@ -3105,9 +3434,10 @@ function replacementSuggestions() {
       let best = null;
       state.team.forEach((member) => {
         const hypotheticalTeam = state.team.map((item) => item.name === member.name ? pokemon : item);
+        if (state.team.indexOf(member) === 0) return;
         const bases = hypotheticalTeam.map((item) => baseSpecies(item.name));
         if (new Set(bases).size !== bases.length) return;
-        if (isMega(pokemon) && state.team.some((item) => item.name !== member.name && isMega(item))) return;
+        if (usesMegaSlot(pokemon) && state.team.some((item) => item.name !== member.name && usesMegaSlot(item))) return;
         const original = [...state.team];
         state.team = state.team.map((item) => item.name === member.name ? pokemon : item);
         invalidateCache();
@@ -3136,17 +3466,40 @@ function replacementSuggestions() {
 function replaceTeamMember(oldName, nextPokemon) {
   const index = state.team.findIndex((pokemon) => pokemon.name === oldName);
   if (index === -1) return;
+  if (index === 0) {
+    state.teamNotice = `${displayPokemonName(state.team[0])} is je core in slot 1 en wordt niet automatisch vervangen.`;
+    return;
+  }
   state.team[index] = nextPokemon;
   state.battleSelection = state.battleSelection.map((name) => name === oldName ? nextPokemon.name : name);
   state.selected = nextPokemon;
-  state.teamNotice = `${oldName} vervangen door ${nextPokemon.name}.`;
+  delete state.manualSets[oldName];
+  delete state.selectedSets[oldName];
+  optimizeTeamSets();
+  state.teamNotice = `${displayPokemonName(oldName)} vervangen door ${displayPokemonName(nextPokemon)}.`;
   invalidateCache();
 }
 
 function createTeamSelectionPanel() {
   const panel = document.createElement("div");
   panel.className = "analysis-block team-selection-sim";
-  panel.append(createSmallTitle(`Team Preview (${BATTLE_FORMATS[state.battleFormat].label})`));
+
+  const head = document.createElement("div");
+  head.className = "selection-head";
+  head.append(createSmallTitle(`Team Preview (${BATTLE_FORMATS[state.battleFormat].label})`));
+  const autoPick = document.createElement("button");
+  autoPick.type = "button";
+  autoPick.className = "analysis-action-button";
+  autoPick.textContent = `Beste ${battleSelectionSize()}`;
+  autoPick.disabled = state.team.length < battleSelectionSize();
+  autoPick.title = `Kies automatisch de beste ${battleSelectionSize()} voor ${BATTLE_FORMATS[state.battleFormat].label}`;
+  autoPick.addEventListener("click", () => {
+    selectBestBattleTeam();
+    state.teamNotice = `Beste ${battleSelectionSize()} gekozen voor ${BATTLE_FORMATS[state.battleFormat].label}.`;
+    render();
+  });
+  head.append(autoPick);
+  panel.append(head);
 
   const note = document.createElement("p");
   note.textContent = state.team.length < maxTeamSize()
@@ -3172,6 +3525,34 @@ function createTeamSelectionPanel() {
 
   panel.append(note, list);
   return panel;
+}
+
+function selectBestBattleTeam() {
+  state.battleSelection = state.team
+    .map((pokemon, index) => ({ pokemon, score: previewCandidateScore(pokemon, index) }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, battleSelectionSize())
+    .sort((a, b) => state.team.indexOf(a.pokemon) - state.team.indexOf(b.pokemon))
+    .map((item) => item.pokemon.name);
+}
+
+function previewCandidateScore(pokemon, index) {
+  const build = selectedBuild(pokemon);
+  const role = displayRoleForBuild(pokemon, build);
+  const balance = teamBalance();
+  let score = teamAroundCandidateScore(pokemon, state.team[0] ?? pokemon);
+  if (index === 0) score += 55;
+  if (teamStyleMatch(pokemon)) score += 45;
+  if (build.status === "smogon-champions") score += 38;
+  else if (build.status === "smogon-sv") score += 24;
+  if (["Sweeper", "Wallbreaker", "Speed control"].includes(role)) score += 25;
+  if (pokemon.spe >= 100) score += 18;
+  if (state.teamStyle === "sun" && (hasAbility(pokemon, "Drought") || pokemon.types.includes("Fire") || hasAbility(pokemon, "Chlorophyll"))) score += 26;
+  if (state.battleFormat === "double4" && selectedBuild(pokemon).moves?.some((move) => /protect|fake out|tailwind|icy wind|helping hand/i.test(move))) score += 32;
+  if (balance.physical === 0 && pokemon.atk >= pokemon.spa) score += 18;
+  if (balance.special === 0 && pokemon.spa > pokemon.atk) score += 18;
+  if (weatherConflictsWithStyle(pokemon)) score -= 70;
+  return score;
 }
 
 function createTeamUsagePanel() {
@@ -3281,7 +3662,7 @@ function createDataStatusPanel() {
     const row = document.createElement("div");
     row.className = "data-status-row";
     row.innerHTML = `
-      <strong>${escapeHtml(pokemon.name)}</strong>
+      <strong>${escapeHtml(displayPokemonName(pokemon))}</strong>
       <span>${escapeHtml(setQualityLabel(build))}</span>
       <small>${escapeHtml(buildSourceLabel(build))}</small>
     `;
@@ -3443,12 +3824,18 @@ function teamLegality(pokemon) {
     pokemon,
     team: state.team,
     battleFormat: state.battleFormat,
-    battleFormats: BATTLE_FORMATS
+    battleFormats: BATTLE_FORMATS,
+    selectedBuild
   });
 }
 
 function teamRules() {
-  const megaCount = state.team.filter(isMega).length;
+  const megaUsers = state.team.filter(usesMegaSlot);
+  const mismatchedMegaItems = state.team.filter((pokemon) => {
+    const build = selectedBuild(pokemon);
+    const itemBase = pureMegaBaseFromItem(build.item);
+    return itemBase && itemBase !== baseSpecies(pokemon.name);
+  });
   const baseSpeciesCounts = state.team.reduce((counts, pokemon) => {
     const base = baseSpecies(pokemon.name);
     counts.set(base, (counts.get(base) ?? 0) + 1);
@@ -3468,9 +3855,16 @@ function teamRules() {
       note: `${state.battleSelection.length}/${battleSelectionSize()} gekozen voor Team Preview.`
     },
     {
-      ok: megaCount <= 1,
+      ok: megaUsers.length <= 1,
       label: "Maximaal 1 Mega",
-      note: megaCount ? `${megaCount} Mega gekozen.` : "Nog geen Mega gekozen."
+      note: megaUsers.length ? `${megaUsers.map(displayPokemonName).join(", ")} gebruikt Mega-slot.` : "Nog geen Mega gekozen."
+    },
+    {
+      ok: !mismatchedMegaItems.length,
+      label: "Mega-stone klopt",
+      note: mismatchedMegaItems.length
+        ? `${mismatchedMegaItems.map(displayPokemonName).join(", ")} heeft een stone voor een andere species.`
+        : "Mega-stones passen bij hun Pokémon."
     },
     {
       ok: !duplicateBase,
@@ -3486,6 +3880,10 @@ function maxTeamSize() {
 
 function isMega(pokemon) {
   return pureIsMega(pokemon);
+}
+
+function usesMegaSlot(pokemon, build = selectedBuild(pokemon)) {
+  return purePokemonUsesMegaSlot(pokemon, build);
 }
 
 function baseSpecies(name) {
@@ -3598,7 +3996,7 @@ function suggestionReasons(pokemon, context = {}) {
   const reasons = [];
   let score = 0;
 
-  if (isMega(pokemon) && state.team.some(isMega)) {
+  if (usesMegaSlot(pokemon) && state.team.some(usesMegaSlot)) {
     return { score: -10, reasons: ["valt af: je Mega-slot is al gebruikt"] };
   }
 
@@ -3626,6 +4024,19 @@ function suggestionReasons(pokemon, context = {}) {
   if (styleReason) {
     score += 2;
     reasons.push(styleReason);
+  }
+
+  if (weatherConflictsWithStyle(pokemon)) {
+    score -= 6;
+    reasons.push("botst met je weather-plan");
+  }
+
+  if (state.teamStyle === "sun") {
+    const sunReason = sunFitReason(pokemon);
+    if (sunReason) {
+      score += 3;
+      reasons.push(sunReason);
+    }
   }
 
   if (balance.special < targets.special && pokemon.spa > pokemon.atk) {
@@ -3677,7 +4088,8 @@ function roleFitReason(pokemon, label) {
 
 function teamStyleMatch(pokemon, style = state.teamStyle) {
   if (style === "balanced") return true;
-  if (needsValidationAsCore(pokemon) && !isMega(pokemon)) return false;
+  if (weatherConflictsWithStyle(pokemon, style)) return false;
+  if (needsValidationAsCore(pokemon) && !usesMegaSlot(pokemon)) return false;
 
   const build = selectedBuild(pokemon);
   const bestAttack = Math.max(pokemon.atk, pokemon.spa);
@@ -3698,6 +4110,23 @@ function teamStyleMatch(pokemon, style = state.teamStyle) {
   if (style === "stall") return bulk >= 305 || hasAbility(pokemon, "Regenerator") || hasAbility(pokemon, "Unaware") || hasAbility(pokemon, "Poison Heal") || hasAbility(pokemon, "Magic Guard") || hasMove("Recover", "Roost", "Protect", "Will-O-Wisp", "Toxic");
   if (style === "antiMeta") return isReliableThreatAnswer(pokemon) && (pokemon.spe >= 100 || bulk >= 285 || pokemon.types.some((type) => ["Steel", "Fairy", "Ground", "Dark", "Ghost"].includes(type)));
   return true;
+}
+
+function weatherConflictsWithStyle(pokemon, style = state.teamStyle) {
+  if (style !== "sun") return false;
+  return hasAbility(pokemon, "Drizzle") || hasAbility(pokemon, "Sand Stream") || hasAbility(pokemon, "Snow Warning");
+}
+
+function sunFitReason(pokemon) {
+  if (weatherConflictsWithStyle(pokemon, "sun")) return "";
+  if (hasAbility(pokemon, "Drought")) return "zet sun met Drought";
+  if (hasAbility(pokemon, "Chlorophyll") && !usesMegaSlot(pokemon)) return "kan als Chlorophyll-sweeper";
+  if (pokemon.name === "Venusaur-Mega") return "bulky Sun-anchor; niet je primaire Chlorophyll-sweeper";
+  if (pokemon.types.includes("Fire")) return "profiteert van sun-boosted Fire-druk";
+  if (["Rock", "Water", "Dragon"].some((type) => defensiveMultiplier(pokemon.types, type) < 1)) {
+    return "dekt typische Sun-checks af";
+  }
+  return "";
 }
 
 function styleFitReason(pokemon) {
@@ -3735,11 +4164,11 @@ function currentTeamNeeds() {
     label: role.label,
     note: role.done ? "Afgedekt door je huidige team." : role.note
   }));
-  const mega = state.team.find(isMega);
+  const mega = state.team.find(usesMegaSlot);
   needs.push({
     done: !!mega,
     label: "Mega-slot",
-    note: mega ? `${mega.name} gebruikt je Mega-slot.` : "Nog vrij; Mega-opties blijven beschikbaar."
+    note: mega ? `${displayPokemonName(mega)} gebruikt je Mega-slot.` : "Nog vrij; Mega-opties blijven beschikbaar."
   });
   return needs.slice(0, 5);
 }
@@ -3879,6 +4308,8 @@ function quickDecisionLabel(pokemon, build = selectedBuild(pokemon)) {
 }
 
 function displayRoleForBuild(pokemon, build = selectedBuild(pokemon)) {
+  if (state.teamStyle === "sun" && pokemon.name === "Venusaur-Mega") return "Bulky Sun anchor";
+  if (state.teamStyle === "sun" && pokemon.name === "Venusaur" && hasAbility(pokemon, "Chlorophyll")) return "Chlorophyll sweeper";
   if (build.status === "custom") return build.role || roleFor(pokemon).label;
   return roleFor(pokemon).label;
 }
@@ -3924,13 +4355,84 @@ function moveOptionsForDisplay(move) {
 
 function selectedBuild(pokemon) {
   state.cache.selectedBuilds ??= new Map();
-  const cacheKey = `${pokemon.name}:${state.selectedSets[pokemon.name] ?? ""}:${state.customSets[pokemon.name] ? JSON.stringify(state.customSets[pokemon.name]) : ""}`;
+  const cacheKey = `${pokemon.name}:${state.selectedSets[pokemon.name] ?? ""}:${state.teamStyle}:${state.team.map((member) => member.name).join("|")}:${state.customSets[pokemon.name] ? JSON.stringify(state.customSets[pokemon.name]) : ""}`;
   if (state.cache.selectedBuilds.has(cacheKey)) return state.cache.selectedBuilds.get(cacheKey);
   const options = buildOptions(pokemon);
-  const selectedId = state.selectedSets[pokemon.name] ?? options[0].id;
+  const selectedId = state.selectedSets[pokemon.name] ?? bestBuildForTeam(pokemon, options).id;
   const build = options.find((option) => option.id === selectedId) ?? options[0];
   state.cache.selectedBuilds.set(cacheKey, build);
   return build;
+}
+
+function optimizeTeamSets({ force = false } = {}) {
+  state.team.forEach((pokemon) => {
+    const options = buildOptions(pokemon);
+    const current = options.find((option) => option.id === state.selectedSets[pokemon.name]);
+    if (!force && state.manualSets[pokemon.name]) return;
+    if (!force && current?.status === "custom") return;
+    state.selectedSets[pokemon.name] = bestBuildForTeam(pokemon, options).id;
+  });
+  invalidateCache();
+}
+
+function bestBuildForTeam(pokemon, options = buildOptions(pokemon)) {
+  return options
+    .filter((option) => option.status !== "custom" || state.selectedSets[pokemon.name] === "custom")
+    .map((option) => ({ option, score: buildTeamFitScore(pokemon, option) }))
+    .sort((a, b) => b.score - a.score)[0]?.option ?? options[0];
+}
+
+function buildTeamFitScore(pokemon, build) {
+  const label = `${build.label ?? ""} ${build.role ?? ""} ${build.item ?? ""} ${build.nature ?? ""}`.toLowerCase();
+  const moves = (build.moves ?? []).flatMap(moveOptionsForDisplay);
+  const moveText = moves.join(" ").toLowerCase();
+  const hasMove = (...needles) => needles.some((needle) => moveText.includes(needle.toLowerCase()));
+  const moveTypes = moves.map((move) => moveDetails(move).type);
+  const role = build.role || roleFor(pokemon).label;
+  const balance = teamBalance();
+  const targets = TEAM_STYLES[state.teamStyle].targets;
+  let score = 0;
+
+  if (build.status === "smogon-champions") score += 90;
+  else if (build.status === "smogon-sv") score += 62;
+  else if (build.status === "custom") score += 24;
+  else score += 36;
+
+  if (/choice scarf|boots|leftovers|life orb|booster|sitrus|assault vest/i.test(build.item ?? "")) score += 12;
+  if (state.teamStyle === "sun") {
+    if (hasAbility(pokemon, "Drought")) score += /sun|drought|solar|weather/i.test(label + moveText) ? 95 : 55;
+    if (hasAbility(pokemon, "Chlorophyll") && !usesMegaSlot(pokemon, build)) score += /sun|sweeper|growth|solar/i.test(label + moveText) ? 90 : 45;
+    if (pokemon.name === "Venusaur-Mega") score += /tank|defensive|bulky|anchor/i.test(label) ? 92 : 30;
+    if (moveTypes.includes("Fire") || pokemon.types.includes("Fire")) score += 35;
+    if (weatherConflictsWithStyle(pokemon, "sun")) score -= 160;
+  }
+  if (state.teamStyle === "hyperoffense" && (/sweeper|dance|setup|nasty|quiver|shell/i.test(label + moveText))) score += 50;
+  if (state.teamStyle === "bulky" && (/defensive|tank|wall|pivot|boots|leftovers/i.test(label))) score += 45;
+  if (state.teamStyle === "voltturn" && hasMove("U-turn", "Volt Switch", "Flip Turn", "Parting Shot")) score += 55;
+  if (state.teamStyle === "trickroom" && pokemon.spe <= 65) score += 40;
+  if (state.battleFormat === "double4" && hasMove("Protect", "Fake Out", "Tailwind", "Icy Wind", "Helping Hand")) score += 45;
+
+  if (balance.physical < targets.physical && pokemon.atk >= pokemon.spa && ["Sweeper", "Wallbreaker"].includes(role)) score += 35;
+  if (balance.special < targets.special && pokemon.spa > pokemon.atk && ["Sweeper", "Wallbreaker"].includes(role)) score += 35;
+  if (balance.fast < targets.fast && (pokemon.spe >= 100 || /scarf|speed|tailwind/i.test(label + moveText))) score += 28;
+  if (balance.bulky < targets.bulky && (pokemon.hp + pokemon.def + pokemon.spd >= 280 || /defensive|tank|wall|pivot/i.test(label))) score += 28;
+
+  if (hasMove("Stealth Rock", "Spikes", "Thunder Wave", "Will-O-Wisp", "Recover", "Roost")) score += 10;
+  if (build.status === "generated") score -= 35;
+  return score;
+}
+
+function rawTeamBalanceForBuild(targetPokemon, targetBuild) {
+  return state.team.reduce((balance, pokemon) => {
+    const build = pokemon.name === targetPokemon.name ? targetBuild : buildOptions(pokemon)[0];
+    const role = build.role || roleFor(pokemon).label;
+    const bestAttack = Math.max(pokemon.atk, pokemon.spa);
+    if (pokemon.atk >= pokemon.spa && bestAttack >= 105) balance.physical += 1;
+    if (pokemon.spa > pokemon.atk && bestAttack >= 105) balance.special += 1;
+    if (pokemon.spe >= 100 || /speed|scarf|tailwind/i.test(`${role} ${build.label ?? ""} ${build.item ?? ""}`)) balance.fast += 1;
+    if (pokemon.hp + pokemon.def + pokemon.spd >= 280 || /wall|pivot|support|tank|defensive/i.test(`${role} ${build.label ?? ""}`)) balance.bulky += 1;
+    return balance;
+  }, { physical: 0, special: 0, fast: 0, bulky: 0 });
 }
 
 function buildOptions(pokemon) {
@@ -4059,9 +4561,8 @@ function isLowPowerCandidate(pokemon) {
   return pokemon.bst < 480;
 }
 
-function needsValidationAsCore(pokemon) {
-  const build = selectedBuild(pokemon);
-  return isDevelopmentCandidate(pokemon) || isLowPowerCandidate(pokemon) || build.status === "generated";
+function needsValidationAsCore(pokemon, build = null) {
+  return isDevelopmentCandidate(pokemon) || isLowPowerCandidate(pokemon) || build?.status === "generated";
 }
 
 function teamMemberIssues(pokemon, build = selectedBuild(pokemon)) {
@@ -4081,6 +4582,15 @@ function isReliableThreatAnswer(pokemon) {
 }
 
 function formatFitLabel(pokemon) {
+  if (state.teamStyle === "sun" && pokemon.name === "Venusaur-Mega") {
+    return "bulky Sun-anchor, geen pure Chlorophyll-sweeper";
+  }
+  if (state.teamStyle === "sun" && pokemon.name === "Venusaur" && hasAbility(pokemon, "Chlorophyll")) {
+    return "klassieke Chlorophyll Sun-sweeper";
+  }
+  if (weatherConflictsWithStyle(pokemon)) {
+    return "weather-conflict met je Sun-plan";
+  }
   if (needsValidationAsCore(pokemon)) {
     return "niet als hard Champions-antwoord tellen";
   }

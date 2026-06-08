@@ -28,6 +28,40 @@ export const STAT_LABELS = ["HP", "Atk", "Def", "SpA", "SpD", "Spe"];
 export const SP_TOTAL_LIMIT = 66;
 export const SP_STAT_LIMIT = 32;
 
+export const MEGA_STONE_BASES = {
+  Absolite: "Absol",
+  Aerodactylite: "Aerodactyl",
+  Aggronite: "Aggron",
+  Altarianite: "Altaria",
+  Audinite: "Audino",
+  Beedrillite: "Beedrill",
+  Cameruptite: "Camerupt",
+  "Charizardite X": "Charizard",
+  "Charizardite Y": "Charizard",
+  Delphoxite: "Delphox",
+  Galladite: "Gallade",
+  Garchompite: "Garchomp",
+  Gardevoirite: "Gardevoir",
+  Gyaradosite: "Gyarados",
+  Heracronite: "Heracross",
+  Houndoominite: "Houndoom",
+  Kangaskhanite: "Kangaskhan",
+  Latiasite: "Latias",
+  Lopunnite: "Lopunny",
+  Manectite: "Manectric",
+  Meganiumite: "Meganium",
+  Pidgeotite: "Pidgeot",
+  Pinsirite: "Pinsir",
+  Sablenite: "Sableye",
+  Salamencite: "Salamence",
+  Scizorite: "Scizor",
+  Sharpedonite: "Sharpedo",
+  Slowbronite: "Slowbro",
+  Steelixite: "Steelix",
+  Tyranitarite: "Tyranitar",
+  Venusaurite: "Venusaur"
+};
+
 export function defensiveMultiplier(defenderTypes, attackType, typeChart = TYPE_CHART) {
   return defenderTypes.reduce((multiplier, defenderType) => {
     return multiplier * (typeChart[attackType]?.[defenderType] ?? 1);
@@ -55,6 +89,17 @@ export function isMega(pokemonOrName) {
   return /-Mega(?:-|$)/.test(name ?? "");
 }
 
+export function megaBaseFromItem(item = "") {
+  return MEGA_STONE_BASES[String(item).trim()] ?? "";
+}
+
+export function pokemonUsesMegaSlot(pokemonOrName, build = {}) {
+  const name = typeof pokemonOrName === "string" ? pokemonOrName : pokemonOrName?.name;
+  if (isMega(name)) return true;
+  const itemBase = megaBaseFromItem(build.item);
+  return Boolean(itemBase && itemBase === baseSpecies(name));
+}
+
 export function baseSpecies(name) {
   return String(name).replace(/-Mega(?:-[XY])?$/, "");
 }
@@ -67,7 +112,7 @@ export function maxTeamSize(battleFormat, battleFormats) {
   return battleFormats[battleFormat].maxTeamSize;
 }
 
-export function teamLegality({ pokemon, team = [], battleFormat, battleFormats }) {
+export function teamLegality({ pokemon, team = [], battleFormat, battleFormats, selectedBuild = () => ({}) }) {
   const limit = maxTeamSize(battleFormat, battleFormats);
   if (team.some((member) => member.name === pokemon.name)) {
     return { ok: false, reason: `${pokemon.name} zit al in je team.` };
@@ -75,7 +120,10 @@ export function teamLegality({ pokemon, team = [], battleFormat, battleFormats }
   if (team.length >= limit) {
     return { ok: false, reason: `Je team is vol. ${battleFormats[battleFormat].label} gebruikt ${limit} Pokémon.` };
   }
-  if (isMega(pokemon) && team.some(isMega)) {
+  const candidateBuild = selectedBuild(pokemon);
+  const candidateUsesMega = pokemonUsesMegaSlot(pokemon, candidateBuild);
+  const teamMega = team.find((member) => pokemonUsesMegaSlot(member, selectedBuild(member)));
+  if (candidateUsesMega && teamMega) {
     return { ok: false, reason: "Je mag maximaal 1 Mega Pokémon in je team hebben." };
   }
   if (team.some((member) => baseSpecies(member.name) === baseSpecies(pokemon.name))) {

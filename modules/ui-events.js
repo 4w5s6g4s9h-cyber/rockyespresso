@@ -18,6 +18,7 @@ export function bindEvents(ctx) {
   ctx.teamStyleSelect.addEventListener("change", () => {
     ctx.state.teamStyle = ctx.teamStyleSelect.value;
     ctx.state.startSuggestionPage = 0;
+    ctx.optimizeTeamSets?.();
     ctx.invalidateCache();
     ctx.render();
   });
@@ -31,6 +32,7 @@ export function bindEvents(ctx) {
     ctx.state.startSuggestionPage = 0;
     ctx.syncBattleSelection();
     ctx.state.teamNotice = "";
+    ctx.optimizeTeamSets?.();
     ctx.invalidateCache();
     ctx.render();
   });
@@ -53,9 +55,18 @@ export function bindEvents(ctx) {
   ctx.goTopButton.addEventListener("click", () => {
     ctx.builderView.scrollIntoView({ behavior: "smooth", block: "start" });
   });
+  let scrollFrame = 0;
   window.addEventListener("scroll", () => {
-    const show = ctx.state.activeView === "builder" && window.scrollY > 720;
-    ctx.goTopButton.hidden = !show;
+    if (scrollFrame) return;
+    scrollFrame = window.requestAnimationFrame(() => {
+      scrollFrame = 0;
+      const show = ctx.state.activeView === "builder" && window.scrollY > 720;
+      const compact = window.scrollY > 260;
+      ctx.goTopButton.hidden = !show;
+      if (document.body.classList.contains("compact-toolbar") !== compact) {
+        document.body.classList.toggle("compact-toolbar", compact);
+      }
+    });
   }, { passive: true });
   ctx.clearTeam.addEventListener("click", () => {
     ctx.state.team = [];

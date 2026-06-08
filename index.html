@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Champions Builder</title>
-    <link rel="stylesheet" href="styles.css?v=110">
+    <link rel="stylesheet" href="styles.css?v=117">
   </head>
   <body>
     <main class="shell">
@@ -17,7 +17,7 @@
       <section class="toolbar" aria-label="Filters">
         <div class="toolbar-primary">
           <label class="search">
-            <span>Zoeken</span>
+            <span>Zoeken <small id="resultInline">(0)</small></span>
             <input id="searchInput" type="search" placeholder="Naam, type of ability">
           </label>
           <label class="sort-quick">
@@ -35,83 +35,76 @@
               <option value="hp">HP</option>
             </select>
           </label>
+          <details class="toolbar-drawer">
+            <summary>Filters & teamregels</summary>
+            <div class="toolbar-controls">
+              <label>
+                <span>Focus</span>
+                <select id="sourceSelect">
+                  <option value="all">Alles tonen</option>
+                  <option value="mega">Alleen Mega's</option>
+                  <option value="noMega">Geen Mega's</option>
+                  <option value="strongSets">Sterke setdata</option>
+                  <option value="fast">Snelheid</option>
+                  <option value="bulky">Bulk / switch-in</option>
+                  <option value="physical">Fysieke druk</option>
+                  <option value="special">Speciale druk</option>
+                </select>
+              </label>
+              <label>
+                <span>Teamplan</span>
+                <select id="teamStyleSelect">
+                  <option value="balanced">Gebalanceerd</option>
+                  <option value="offense">Offensief</option>
+                  <option value="bulky">Bulky</option>
+                  <option value="rain">Rain</option>
+                  <option value="sun">Sun</option>
+                  <option value="trickroom">Trick Room</option>
+                  <option value="doublesupport">Double support</option>
+                  <option value="hyperoffense">Hyper Offense</option>
+                  <option value="voltturn">VoltTurn</option>
+                  <option value="sand">Sand</option>
+                  <option value="snow">Snow</option>
+                  <option value="stall">Stall</option>
+                  <option value="antiMeta">Anti-meta</option>
+                </select>
+              </label>
+              <label>
+                <span>Rol</span>
+                <select id="roleFilterSelect">
+                  <option value="all">Alle rollen</option>
+                  <option value="Sweeper">Sweeper</option>
+                  <option value="Wallbreaker">Wallbreaker</option>
+                  <option value="Support">Support</option>
+                  <option value="Wall">Wall</option>
+                  <option value="Speed control">Speed control</option>
+                  <option value="Bulky pivot">Bulky pivot</option>
+                </select>
+              </label>
+              <label class="format-filter">
+                <span>Format</span>
+                <select id="battleFormatSelect">
+                  <option value="single3">Single 3v3</option>
+                  <option value="double4">Double 4v4</option>
+                </select>
+              </label>
+              <div class="type-panel" aria-label="Typefilters">
+                <div class="filter-head">
+                  <button id="typeToggle" class="type-toggle" type="button" aria-expanded="false">Types</button>
+                  <strong id="activeTypeLabel">Alle types</strong>
+                </div>
+                <div class="type-strip" id="typeFilters"></div>
+              </div>
+            </div>
+          </details>
           <button id="showAllPokemon" class="show-all-button" type="button">Lijst alle Mons</button>
           <button id="guideModeToggle" class="guide-mode-button" type="button" aria-pressed="false">
             <span class="guide-mode-icon" aria-hidden="true"></span>
             <span>Help mij kiezen</span>
           </button>
           <button id="favoritesToggle" class="favorites-toggle-button" type="button" aria-pressed="false">Favorieten</button>
-          <button id="randomUltraTeam" class="ultra-team-button" type="button">Willekeurig Ultra Team</button>
-          <button id="resetApp" class="reset-button" type="button">Reset alles</button>
-        </div>
-        <details class="toolbar-drawer">
-          <summary>Filters & teamregels</summary>
-          <div class="toolbar-controls">
-            <label>
-              <span>Focus</span>
-              <select id="sourceSelect">
-                <option value="all">Alles tonen</option>
-                <option value="mega">Alleen Mega's</option>
-                <option value="noMega">Geen Mega's</option>
-                <option value="strongSets">Sterke setdata</option>
-                <option value="fast">Snelheid</option>
-                <option value="bulky">Bulk / switch-in</option>
-                <option value="physical">Fysieke druk</option>
-                <option value="special">Speciale druk</option>
-              </select>
-            </label>
-            <label>
-              <span>Teamplan</span>
-              <select id="teamStyleSelect">
-                <option value="balanced">Gebalanceerd</option>
-                <option value="offense">Offensief</option>
-                <option value="bulky">Bulky</option>
-                <option value="rain">Rain</option>
-                <option value="sun">Sun</option>
-                <option value="trickroom">Trick Room</option>
-                <option value="doublesupport">Double support</option>
-                <option value="hyperoffense">Hyper Offense</option>
-                <option value="voltturn">VoltTurn</option>
-                <option value="sand">Sand</option>
-                <option value="snow">Snow</option>
-                <option value="stall">Stall</option>
-                <option value="antiMeta">Anti-meta</option>
-              </select>
-            </label>
-            <label>
-              <span>Rol</span>
-              <select id="roleFilterSelect">
-                <option value="all">Alle rollen</option>
-                <option value="Sweeper">Sweeper</option>
-                <option value="Wallbreaker">Wallbreaker</option>
-                <option value="Support">Support</option>
-                <option value="Wall">Wall</option>
-                <option value="Speed control">Speed control</option>
-                <option value="Bulky pivot">Bulky pivot</option>
-              </select>
-            </label>
-            <label class="format-filter">
-              <span>Format</span>
-              <select id="battleFormatSelect">
-                <option value="single3">Single 3v3</option>
-                <option value="double4">Double 4v4</option>
-              </select>
-            </label>
-            <div class="type-panel" aria-label="Typefilters">
-              <div class="filter-head">
-                <button id="typeToggle" class="type-toggle" type="button" aria-expanded="false">Types</button>
-                <strong id="activeTypeLabel">Alle types</strong>
-              </div>
-              <div class="type-strip" id="typeFilters"></div>
-            </div>
-          </div>
-        </details>
-      </section>
-
-      <section class="meta-row" aria-live="polite">
-        <div>
-          <strong id="resultCount">0</strong>
-          <span id="resultLabel">resultaten</span>
+          <button id="randomUltraTeam" class="ultra-team-button" type="button">Random Team</button>
+          <button id="resetApp" class="reset-button" type="button">Reset</button>
         </div>
       </section>
 
@@ -147,8 +140,8 @@
               <h2>Team aanpassen</h2>
               <button id="backToBuilder" type="button" hidden>Naar builder</button>
             </div>
-            <section class="team-manager" id="teamManager" aria-label="Teams opslaan en laden"></section>
             <div class="team-workbench" id="teamWorkbench" aria-live="polite"></div>
+            <section class="team-manager" id="teamManager" aria-label="Teams opslaan en laden"></section>
           </section>
           <section class="team-analysis" id="teamAnalysis" aria-live="polite"></section>
         </div>
@@ -180,6 +173,6 @@
     </template>
 
     <script src="data/local-data.js"></script>
-    <script type="module" src="app.js?v=105"></script>
+    <script type="module" src="app.js?v=114"></script>
   </body>
 </html>
