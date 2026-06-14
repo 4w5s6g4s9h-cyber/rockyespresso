@@ -31,6 +31,8 @@ export function bindEvents(ctx) {
     ctx.state.battleFormat = ctx.battleFormatSelect.value;
     ctx.state.startSuggestionPage = 0;
     ctx.syncBattleSelection();
+    ctx.state.opponentSelection = [];
+    ctx.state.simulationResult = null;
     ctx.state.teamNotice = "";
     ctx.optimizeTeamSets?.();
     ctx.invalidateCache();
@@ -38,6 +40,7 @@ export function bindEvents(ctx) {
   });
   ctx.builderTab.addEventListener("click", () => ctx.switchView("builder"));
   ctx.teamTab.addEventListener("click", () => ctx.switchView("team"));
+  ctx.battleTab.addEventListener("click", () => ctx.switchView("battle"));
   ctx.backToBuilder.addEventListener("click", () => ctx.switchView("builder"));
   ctx.floatingTeamLab.addEventListener("click", () => {
     ctx.switchView("team");
@@ -71,6 +74,8 @@ export function bindEvents(ctx) {
   ctx.clearTeam.addEventListener("click", () => {
     ctx.state.team = [];
     ctx.state.teamNotice = "";
+    ctx.state.battleSelection = [];
+    ctx.state.simulationResult = null;
     ctx.invalidateCache();
     ctx.render();
   });

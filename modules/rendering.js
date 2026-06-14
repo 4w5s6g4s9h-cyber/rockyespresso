@@ -21,6 +21,7 @@ export function renderApp(ctx) {
 
   ctx.renderDetail(ctx.state.selected);
   ctx.renderTeam();
+  ctx.renderBattleSim?.();
   ctx.renderFloatingCompare();
 }
 

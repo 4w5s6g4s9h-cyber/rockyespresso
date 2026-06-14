@@ -1,6 +1,1382 @@
-import { loadChampionsMeta as fetchChampionsMeta, loadPokemonData, officialPokemon } from './modules/data.js?v=2';
-import { isMoveBlockedForPokemon as pureIsMoveBlockedForPokemon, loadMovesets as fetchMovesets, validateMoveSlots as pureValidateMoveSlots } from './modules/movesets.js?v=2';
-import {
+// modules/team-analysis.js
+const __teamAnalysis = (() => {
+const TYPE_CHART = {
+  Normal: { Rock: 0.5, Ghost: 0, Steel: 0.5 },
+  Fire: { Fire: 0.5, Water: 0.5, Grass: 2, Ice: 2, Bug: 2, Rock: 0.5, Dragon: 0.5, Steel: 2 },
+  Water: { Fire: 2, Water: 0.5, Grass: 0.5, Ground: 2, Rock: 2, Dragon: 0.5 },
+  Electric: { Water: 2, Electric: 0.5, Grass: 0.5, Ground: 0, Flying: 2, Dragon: 0.5 },
+  Grass: { Fire: 0.5, Water: 2, Grass: 0.5, Poison: 0.5, Ground: 2, Flying: 0.5, Bug: 0.5, Rock: 2, Dragon: 0.5, Steel: 0.5 },
+  Ice: { Fire: 0.5, Water: 0.5, Grass: 2, Ice: 0.5, Ground: 2, Flying: 2, Dragon: 2, Steel: 0.5 },
+  Fighting: { Normal: 2, Ice: 2, Poison: 0.5, Flying: 0.5, Psychic: 0.5, Bug: 0.5, Rock: 2, Ghost: 0, Dark: 2, Steel: 2, Fairy: 0.5 },
+  Poison: { Grass: 2, Poison: 0.5, Ground: 0.5, Rock: 0.5, Ghost: 0.5, Steel: 0, Fairy: 2 },
+  Ground: { Fire: 2, Electric: 2, Grass: 0.5, Poison: 2, Flying: 0, Bug: 0.5, Rock: 2, Steel: 2 },
+  Flying: { Electric: 0.5, Grass: 2, Fighting: 2, Bug: 2, Rock: 0.5, Steel: 0.5 },
+  Psychic: { Fighting: 2, Poison: 2, Psychic: 0.5, Dark: 0, Steel: 0.5 },
+  Bug: { Fire: 0.5, Grass: 2, Fighting: 0.5, Poison: 0.5, Flying: 0.5, Psychic: 2, Ghost: 0.5, Dark: 2, Steel: 0.5, Fairy: 0.5 },
+  Rock: { Fire: 2, Ice: 2, Fighting: 0.5, Ground: 0.5, Flying: 2, Bug: 2, Steel: 0.5 },
+  Ghost: { Normal: 0, Psychic: 2, Ghost: 2, Dark: 0.5 },
+  Dragon: { Dragon: 2, Steel: 0.5, Fairy: 0 },
+  Dark: { Fighting: 0.5, Psychic: 2, Ghost: 2, Dark: 0.5, Fairy: 0.5 },
+  Steel: { Fire: 0.5, Water: 0.5, Electric: 0.5, Ice: 2, Rock: 2, Steel: 0.5, Fairy: 2 },
+  Fairy: { Fire: 0.5, Fighting: 2, Poison: 0.5, Dragon: 2, Dark: 2, Steel: 0.5 }
+};
+
+const TYPES = [
+  "Normal", "Fire", "Water", "Electric", "Grass", "Ice", "Fighting", "Poison", "Ground",
+  "Flying", "Psychic", "Bug", "Rock", "Ghost", "Dragon", "Dark", "Steel", "Fairy"
+];
+
+const STAT_LABELS = ["HP", "Atk", "Def", "SpA", "SpD", "Spe"];
+const SP_TOTAL_LIMIT = 66;
+const SP_STAT_LIMIT = 32;
+const BATTLE_STAT_LEVEL = 50;
+const PERFECT_IV = 31;
+
+const NATURE_MODIFIERS = {
+  Lonely: { up: "Atk", down: "Def" },
+  Brave: { up: "Atk", down: "Spe" },
+  Adamant: { up: "Atk", down: "SpA" },
+  Naughty: { up: "Atk", down: "SpD" },
+  Bold: { up: "Def", down: "Atk" },
+  Relaxed: { up: "Def", down: "Spe" },
+  Impish: { up: "Def", down: "SpA" },
+  Lax: { up: "Def", down: "SpD" },
+  Timid: { up: "Spe", down: "Atk" },
+  Hasty: { up: "Spe", down: "Def" },
+  Jolly: { up: "Spe", down: "SpA" },
+  Naive: { up: "Spe", down: "SpD" },
+  Modest: { up: "SpA", down: "Atk" },
+  Mild: { up: "SpA", down: "Def" },
+  Quiet: { up: "SpA", down: "Spe" },
+  Rash: { up: "SpA", down: "SpD" },
+  Calm: { up: "SpD", down: "Atk" },
+  Gentle: { up: "SpD", down: "Def" },
+  Sassy: { up: "SpD", down: "Spe" },
+  Careful: { up: "SpD", down: "SpA" }
+};
+
+const MEGA_STONE_BASES = {
+  Absolite: "Absol",
+  Aerodactylite: "Aerodactyl",
+  Aggronite: "Aggron",
+  Altarianite: "Altaria",
+  Audinite: "Audino",
+  Beedrillite: "Beedrill",
+  Cameruptite: "Camerupt",
+  "Charizardite X": "Charizard",
+  "Charizardite Y": "Charizard",
+  Delphoxite: "Delphox",
+  Galladite: "Gallade",
+  Garchompite: "Garchomp",
+  Gardevoirite: "Gardevoir",
+  Gyaradosite: "Gyarados",
+  Heracronite: "Heracross",
+  Houndoominite: "Houndoom",
+  Kangaskhanite: "Kangaskhan",
+  Latiasite: "Latias",
+  Lopunnite: "Lopunny",
+  Manectite: "Manectric",
+  Meganiumite: "Meganium",
+  Pidgeotite: "Pidgeot",
+  Pinsirite: "Pinsir",
+  Sablenite: "Sableye",
+  Salamencite: "Salamence",
+  Scizorite: "Scizor",
+  Sharpedonite: "Sharpedo",
+  Slowbronite: "Slowbro",
+  Steelixite: "Steelix",
+  Tyranitarite: "Tyranitar",
+  Venusaurite: "Venusaur"
+};
+
+function defensiveMultiplier(defenderTypes, attackType, typeChart = TYPE_CHART) {
+  return defenderTypes.reduce((multiplier, defenderType) => {
+    return multiplier * (typeChart[attackType]?.[defenderType] ?? 1);
+  }, 1);
+}
+
+function teamTypeSummary(team = [], types = TYPES, typeChart = TYPE_CHART) {
+  return types.map((type) => {
+    const matchups = team.map((pokemon) => defensiveMultiplier(pokemon.types, type, typeChart));
+    return {
+      type,
+      weak: matchups.filter((value) => value > 1).length,
+      resist: matchups.filter((value) => value > 0 && value < 1).length,
+      immune: matchups.filter((value) => value === 0).length
+    };
+  }).sort((a, b) => {
+    const riskA = a.weak - a.resist - a.immune;
+    const riskB = b.weak - b.resist - b.immune;
+    return riskB - riskA || b.weak - a.weak || a.type.localeCompare(b.type);
+  });
+}
+
+function isMega(pokemonOrName) {
+  const name = typeof pokemonOrName === "string" ? pokemonOrName : pokemonOrName?.name;
+  return /-Mega(?:-|$)/.test(name ?? "");
+}
+
+function megaBaseFromItem(item = "") {
+  return MEGA_STONE_BASES[String(item).trim()] ?? "";
+}
+
+function pokemonUsesMegaSlot(pokemonOrName, build = {}) {
+  const name = typeof pokemonOrName === "string" ? pokemonOrName : pokemonOrName?.name;
+  if (isMega(name)) return true;
+  const itemBase = megaBaseFromItem(build.item);
+  return Boolean(itemBase && itemBase === baseSpecies(name));
+}
+
+function baseSpecies(name) {
+  return String(name).replace(/-Mega(?:-[XY])?$/, "");
+}
+
+function baseSpeciesLabel(name) {
+  return baseSpecies(name).replace(/-/g, " ");
+}
+
+function maxTeamSize(battleFormat, battleFormats) {
+  return battleFormats[battleFormat].maxTeamSize;
+}
+
+function teamLegality({ pokemon, team = [], battleFormat, battleFormats, selectedBuild = () => ({}) }) {
+  const limit = maxTeamSize(battleFormat, battleFormats);
+  if (team.some((member) => member.name === pokemon.name)) {
+    return { ok: false, reason: `${pokemon.name} zit al in je team.` };
+  }
+  if (team.length >= limit) {
+    return { ok: false, reason: `Je team is vol. ${battleFormats[battleFormat].label} gebruikt ${limit} Pokémon.` };
+  }
+  const candidateBuild = selectedBuild(pokemon);
+  const candidateUsesMega = pokemonUsesMegaSlot(pokemon, candidateBuild);
+  const teamMega = team.find((member) => pokemonUsesMegaSlot(member, selectedBuild(member)));
+  if (candidateUsesMega && teamMega) {
+    return { ok: false, reason: "Je mag maximaal 1 Mega Pokémon in je team hebben." };
+  }
+  if (team.some((member) => baseSpecies(member.name) === baseSpecies(pokemon.name))) {
+    return { ok: false, reason: `Je hebt al een vorm van ${baseSpeciesLabel(pokemon.name)} in je team.` };
+  }
+  return { ok: true, reason: "" };
+}
+
+function suggestedPokemon({ pokemon = [], team = [], battleFormat, battleFormats, teamStyle, teamStyles, roleFor, selectedBuild = () => ({}), limit = 3 }) {
+  const names = new Set(team.map((member) => member.name));
+  const targets = teamStyles[teamStyle].targets;
+  const balance = team.reduce((totals, member) => {
+    if (member.atk >= member.spa + 15) totals.physical += 1;
+    else if (member.spa >= member.atk + 15) totals.special += 1;
+    if (member.spe >= 100) totals.fast += 1;
+    if (member.hp + member.def + member.spd >= 280) totals.bulky += 1;
+    return totals;
+  }, { physical: 0, special: 0, fast: 0, bulky: 0 });
+  const topWeaknesses = teamTypeSummary(team)
+    .filter((item) => item.weak >= 2)
+    .map((item) => item.type);
+
+  return pokemon
+    .filter((candidate) => !names.has(candidate.name))
+    .filter((candidate) => teamLegality({ pokemon: candidate, team, battleFormat, battleFormats }).ok)
+    .map((candidate) => {
+      let score = 0;
+      const reasons = [];
+      topWeaknesses.forEach((type) => {
+        const multiplier = defensiveMultiplier(candidate.types, type);
+        if (multiplier === 0) {
+          score += 4;
+          reasons.push(`immuun voor ${type}`);
+        } else if (multiplier < 1) {
+          score += 3;
+          reasons.push(`resist ${type}`);
+        }
+      });
+      if (balance.special < targets.special && candidate.spa > candidate.atk) score += 2;
+      if (balance.physical < targets.physical && candidate.atk > candidate.spa) score += 2;
+      if (balance.fast < targets.fast && candidate.spe >= 100) score += 2;
+      if (balance.bulky < targets.bulky && candidate.hp + candidate.def + candidate.spd >= 280) score += 2;
+      if (selectedBuild(candidate).status === "generated") score -= 3;
+      return { pokemon: candidate, score, reason: reasons.join(" en ") || roleFor(candidate).description };
+    })
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score || b.pokemon.bst - a.pokemon.bst)
+    .slice(0, limit);
+}
+
+function parseSp(spread) {
+  const values = Object.fromEntries(STAT_LABELS.map((stat) => [stat, 0]));
+  String(spread).split("/").forEach((part) => {
+    const match = part.trim().match(/^(\d+)\s+(HP|Atk|Def|SpA|SpD|Spe)$/);
+    if (match) values[match[2]] = Math.max(0, Math.min(SP_STAT_LIMIT, Number(match[1])));
+  });
+  return values;
+}
+
+function spPartsFromValues(values) {
+  return STAT_LABELS
+    .map((stat) => [stat, values[stat] ?? 0])
+    .filter(([, value]) => value > 0)
+    .map(([stat, value]) => `${value} ${stat}`);
+}
+
+function normalizeSpValues(values) {
+  const capped = Object.fromEntries(STAT_LABELS.map((stat) => [stat, Math.max(0, Math.min(SP_STAT_LIMIT, values[stat] ?? 0))]));
+  const total = STAT_LABELS.reduce((sum, stat) => sum + capped[stat], 0);
+  if (total === 0 || total === SP_TOTAL_LIMIT) return capped;
+
+  const scaled = STAT_LABELS.map((stat) => {
+    const exact = capped[stat] * SP_TOTAL_LIMIT / total;
+    const value = Math.min(SP_STAT_LIMIT, Math.floor(exact));
+    return { stat, exact, value, remainder: exact - value };
+  });
+  let used = scaled.reduce((sum, item) => sum + item.value, 0);
+  scaled
+    .sort((a, b) => b.remainder - a.remainder || STAT_LABELS.indexOf(a.stat) - STAT_LABELS.indexOf(b.stat))
+    .forEach((item) => {
+      if (item.exact > 0 && used + 1 <= SP_TOTAL_LIMIT && item.value + 1 <= SP_STAT_LIMIT) {
+        item.value += 1;
+        used += 1;
+      }
+    });
+
+  if (used < SP_TOTAL_LIMIT) {
+    scaled
+      .sort((a, b) => STAT_LABELS.indexOf(a.stat) - STAT_LABELS.indexOf(b.stat))
+      .forEach((item) => {
+        const available = SP_STAT_LIMIT - item.value;
+        const add = Math.min(available, SP_TOTAL_LIMIT - used);
+        item.value += add;
+        used += add;
+      });
+  }
+
+  return Object.fromEntries(scaled.map(({ stat, value }) => [stat, value]));
+}
+
+function convertEvSpreadToSpSpread(spread) {
+  const parts = String(spread).split("/").map((part) => part.trim()).filter(Boolean);
+  const parsed = parts.map((part) => {
+    const match = part.match(/^(\d+)\s+(HP|Atk|Def|SpA|SpD|Spe)$/);
+    return match ? { value: Number(match[1]), stat: match[2] } : null;
+  }).filter(Boolean);
+  if (!parsed.some(({ value }) => value > SP_STAT_LIMIT) && parsed.reduce((sum, { value }) => sum + value, 0) <= SP_TOTAL_LIMIT) {
+    return spread;
+  }
+  return parsed
+    .map(({ value, stat }) => `${Math.max(0, Math.min(SP_STAT_LIMIT, Math.round(value * SP_STAT_LIMIT / 252)))} ${stat}`)
+    .join(" / ");
+}
+
+function normalizeSpSpread(spread) {
+  const values = normalizeSpValues(parseSp(convertEvSpreadToSpSpread(spread)));
+  return spPartsFromValues(values).join(" / ");
+}
+
+function trainedStatValue(base, sp, stat = "HP", nature = "", level = BATTLE_STAT_LEVEL) {
+  const clampedBase = Math.max(1, Number(base) || 1);
+  const clampedSp = Math.max(0, Math.min(SP_STAT_LIMIT, Number(sp) || 0));
+  const ev = Math.round(clampedSp * 252 / SP_STAT_LIMIT);
+  const evContribution = Math.floor(ev / 4);
+  const baseValue = Math.floor(((2 * clampedBase + PERFECT_IV + evContribution) * level) / 100);
+  if (stat === "HP") return baseValue + level + 10;
+  return Math.floor((baseValue + 5) * natureMultiplier(stat, nature));
+}
+
+function natureMultiplier(stat, nature = "") {
+  const selectedNature = String(nature)
+    .split("/")
+    .map((part) => part.trim())
+    .find((part) => NATURE_MODIFIERS[part]);
+  const modifier = NATURE_MODIFIERS[selectedNature];
+  if (!modifier || modifier.up === modifier.down || stat === "HP") return 1;
+  if (modifier.up === stat) return 1.1;
+  if (modifier.down === stat) return 0.9;
+  return 1;
+}
+return { TYPE_CHART, TYPES, STAT_LABELS, SP_TOTAL_LIMIT, SP_STAT_LIMIT, BATTLE_STAT_LEVEL, PERFECT_IV, MEGA_STONE_BASES, defensiveMultiplier, teamTypeSummary, isMega, megaBaseFromItem, pokemonUsesMegaSlot, baseSpecies, baseSpeciesLabel, maxTeamSize, teamLegality, suggestedPokemon, parseSp, spPartsFromValues, normalizeSpValues, convertEvSpreadToSpSpread, normalizeSpSpread, trainedStatValue, natureMultiplier };
+})();
+
+// modules/constants.js
+const __constants = (() => {
+const SP_STAT_LIMIT = __teamAnalysis.SP_STAT_LIMIT;
+const SP_TOTAL_LIMIT = __teamAnalysis.SP_TOTAL_LIMIT;
+const STAT_LABELS = __teamAnalysis.STAT_LABELS;
+const TYPES = __teamAnalysis.TYPES;
+const TYPE_COLORS = {
+  Normal: "#7d8390",
+  Fire: "#e45b36",
+  Water: "#2677c9",
+  Electric: "#d49a19",
+  Grass: "#3b9a54",
+  Ice: "#2f9bb0",
+  Fighting: "#b8483b",
+  Poison: "#8e55b4",
+  Ground: "#b67835",
+  Flying: "#6c85c6",
+  Psychic: "#d94f83",
+  Bug: "#7b9b2d",
+  Rock: "#9a8143",
+  Ghost: "#5f5aa3",
+  Dragon: "#5863cc",
+  Dark: "#55505e",
+  Steel: "#638392",
+  Fairy: "#d466a7"
+};
+
+const TEAM_STYLES = {
+  balanced: {
+    label: "Balanced",
+    description: "Mix van aanval, snelheid en verdedigende wissels. Dit is de beste start voor beginners.",
+    targets: { physical: 2, special: 2, fast: 1, bulky: 2 }
+  },
+  offense: {
+    label: "Offense",
+    description: "Veel druk en snelheid. Je accepteert minder defensieve veiligheid voor meer tempo.",
+    targets: { physical: 2, special: 2, fast: 3, bulky: 1 }
+  },
+  bulky: {
+    label: "Bulky",
+    description: "Steviger team dat vaker veilig kan wisselen. Minder explosief, maar vergevingsgezinder.",
+    targets: { physical: 1, special: 1, fast: 1, bulky: 4 }
+  },
+  rain: {
+    label: "Rain",
+    description: "Waterdruk met Drizzle en snelle rain-abusers. Sterk tempo, maar let op Electric en Grass.",
+    targets: { physical: 2, special: 2, fast: 2, bulky: 1 }
+  },
+  sun: {
+    label: "Sun",
+    description: "Drought, Fire-druk en Chlorophyll-opties. Goed voor offensieve teams met duidelijke weather-kern.",
+    targets: { physical: 2, special: 2, fast: 2, bulky: 1 }
+  },
+  trickroom: {
+    label: "Trick Room",
+    description: "Langzame, sterke Pokémon die onder Trick Room eerst bewegen. Vooral interessant voor Double 4v4.",
+    targets: { physical: 2, special: 2, fast: 0, bulky: 3 }
+  },
+  doublesupport: {
+    label: "Double support",
+    description: "Support, Intimidate en speed-control voor Double 4v4. Minder solo, meer team-synergie.",
+    targets: { physical: 1, special: 1, fast: 2, bulky: 3 }
+  },
+  hyperoffense: {
+    label: "Hyper Offense",
+    description: "Zes slots met tempo, setup en directe druk. Minder veilig, maar ideaal om momentum te houden.",
+    targets: { physical: 3, special: 2, fast: 4, bulky: 0 }
+  },
+  voltturn: {
+    label: "VoltTurn",
+    description: "Pivot-team dat met U-turn/Volt Switch en snelle druk steeds goede matchups zoekt.",
+    targets: { physical: 2, special: 2, fast: 2, bulky: 2 }
+  },
+  sand: {
+    label: "Sand",
+    description: "Sand Stream, Rock/Ground/Steel-druk en solide switch-ins rond chip damage.",
+    targets: { physical: 3, special: 1, fast: 1, bulky: 3 }
+  },
+  snow: {
+    label: "Snow",
+    description: "Ice-druk met defensieve rugdekking. Let extra op Fire, Steel en Rock.",
+    targets: { physical: 2, special: 2, fast: 2, bulky: 2 }
+  },
+  stall: {
+    label: "Stall",
+    description: "Zoveel mogelijk veilige antwoorden, status en recovery. Winnen via controle en chip.",
+    targets: { physical: 1, special: 1, fast: 0, bulky: 5 }
+  },
+  antiMeta: {
+    label: "Anti-meta",
+    description: "Team dat vooral populaire threats checkt en minder op een vast archetype leunt.",
+    targets: { physical: 2, special: 2, fast: 2, bulky: 3 }
+  }
+};
+
+const BATTLE_FORMATS = {
+  single3: {
+    label: "Single 3v3",
+    maxTeamSize: 6,
+    selectionSize: 3,
+    description: "Bouw zes Pokémon en kies bij Team Preview drie Pokémon voor het 3v3-gevecht."
+  },
+  double4: {
+    label: "Double 4v4",
+    maxTeamSize: 6,
+    selectionSize: 4,
+    description: "Bouw zes Pokémon en kies bij Team Preview vier Pokémon voor het 4v4-gevecht."
+  }
+};
+
+const ITEM_OPTIONS = [
+  "Aerodactylite", "Black Glasses", "Charizardite Y", "Choice Band", "Choice Scarf", "Choice Specs",
+  "Covert Cloak", "Damp Rock", "Expert Belt", "Focus Sash", "Heavy-Duty Boots", "Leftovers",
+  "Life Orb", "Lum Berry", "Mega Stone", "Mystic Water", "Rocky Helmet", "Safety Goggles",
+  "Sitrus Berry", "Spell Tag", "Tyranitarite", "Venusaurite", "White Herb", "Yache Berry"
+];
+
+const NATURE_OPTIONS = [
+  "Adamant", "Jolly", "Modest", "Timid", "Bold", "Impish", "Calm", "Careful",
+  "Quiet", "Naive", "Hasty", "Rash", "Mild"
+];
+
+const SP_PRESETS = [
+  "2 HP / 32 Atk / 32 Spe",
+  "2 HP / 32 SpA / 32 Spe",
+  "32 HP / 32 Atk / 2 SpD",
+  "32 HP / 32 Def / 2 SpD",
+  "32 HP / 2 Def / 32 SpD",
+  "32 Atk / 2 SpD / 32 Spe",
+  "32 HP / 20 Def / 14 Spe",
+  "32 HP / 18 Def / 16 SpD",
+  "2 HP / 32 Atk / 32 SpA",
+  "32 HP / 32 SpA / 2 SpD",
+  "32 HP / 32 Spe / 2 Def"
+];
+
+const RESTRICTED_MOVE_LEARNERS = {
+  "Armor Cannon": ["Armarouge"],
+  "Bolt Strike": ["Victini", "Zekrom"],
+  "Electro Drift": ["Miraidon"],
+  "Fleur Cannon": ["Magearna"],
+  "Glaive Rush": ["Baxcalibur"],
+  "Moongeist Beam": ["Lunala", "Necrozma-Dawn-Wings"],
+  "Precipice Blades": ["Groudon"],
+  "Psycho Boost": ["Deoxys", "Deoxys-Attack", "Deoxys-Defense", "Deoxys-Speed"],
+  "Sunsteel Strike": ["Solgaleo", "Necrozma-Dusk-Mane"],
+  "V-create": ["Victini"]
+};
+
+const MOVE_LEARNSET_BLOCKLIST = {
+  Toxic: ["Steelix"]
+};
+
+const MOVE_REPLACEMENTS = {
+  Toxic: {
+    Steelix: ["Protect", "Dragon Tail", "Heavy Slam"]
+  }
+};
+return { TYPE_COLORS, TEAM_STYLES, BATTLE_FORMATS, ITEM_OPTIONS, NATURE_OPTIONS, SP_PRESETS, RESTRICTED_MOVE_LEARNERS, MOVE_LEARNSET_BLOCKLIST, MOVE_REPLACEMENTS, SP_STAT_LIMIT, SP_TOTAL_LIMIT, STAT_LABELS, TYPES };
+})();
+
+// modules/data.js
+const __data = (() => {
+function localData() {
+  return window.CHAMPIONS_LOCAL_DATA ?? null;
+}
+
+let localDataScriptPromise = null;
+
+async function ensureLocalData() {
+  if (localData()) return localData();
+  localDataScriptPromise ??= new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "data/local-data.js";
+    script.onload = () => localData() ? resolve(localData()) : reject(new Error("Lokale fallback-data is leeg."));
+    script.onerror = () => reject(new Error("Lokale fallback-data kon niet worden geladen."));
+    document.head.append(script);
+  });
+  return localDataScriptPromise;
+}
+
+async function fetchJson(path, errorLabel) {
+  try {
+    const response = await fetch(path);
+    if (!response.ok) throw new Error(`${errorLabel} (${response.status})`);
+    return response.json();
+  } catch (error) {
+    const fallback = await ensureLocalData().catch(() => null);
+    if (fallback) return fallbackDataForPath(fallback, path);
+    throw error;
+  }
+}
+
+async function loadPokemonData() {
+  if (localData()?.pokemon) return normalizePokemonDataset(localData().pokemon);
+  try {
+    return normalizePokemonDataset(await fetchJson("data/champions-pokemon.json", "Dataset kon niet worden geladen"));
+  } catch (error) {
+    return normalizePokemonDataset((await ensureLocalData()).pokemon);
+  }
+}
+
+async function loadChampionsMeta() {
+  const data = localData()?.meta
+    ?? await fetchJson("data/champions-meta.json", "Champions-meta kon niet worden geladen");
+  return {
+    formats: data.formats ?? {},
+    archetypes: data.archetypes ?? [],
+    threats: data.threats ?? []
+  };
+}
+
+function officialPokemon(pokemon = []) {
+  return normalizePokemonList(pokemon).filter((item) => item.isNonstandard !== "CAP");
+}
+
+function fallbackDataForPath(fallback, path) {
+  if (path.includes("champions-pokemon")) return fallback.pokemon;
+  if (path.includes("champions-movesets")) return fallback.movesets;
+  if (path.includes("champions-learnsets")) return fallback.learnsets;
+  if (path.includes("champions-moves")) return fallback.moves;
+  if (path.includes("champions-meta")) return fallback.meta;
+  throw new Error(`Geen fallback-data voor ${path}.`);
+}
+
+function normalizePokemonDataset(data) {
+  if (Array.isArray(data)) return { pokemon: data };
+  if (Array.isArray(data?.pokemon)) return data;
+  return { pokemon: [] };
+}
+
+function normalizePokemonList(pokemon) {
+  if (Array.isArray(pokemon)) return pokemon;
+  if (Array.isArray(pokemon?.pokemon)) return pokemon.pokemon;
+  return [];
+}
+return { localData, ensureLocalData, fetchJson, loadPokemonData, loadChampionsMeta, officialPokemon };
+})();
+
+// modules/movesets.js
+const __movesets = (() => {
+const fetchJson = __data.fetchJson;
+const localData = __data.localData;
+const MOVE_LEARNSET_BLOCKLIST = __constants.MOVE_LEARNSET_BLOCKLIST;
+const MOVE_REPLACEMENTS = __constants.MOVE_REPLACEMENTS;
+const baseSpeciesLabel = __teamAnalysis.baseSpeciesLabel;
+async function loadMovesets({ pokemon, generatedMovePlan }) {
+  try {
+    const [movesetData, moveData, learnsetData] = localData()
+      ? [localData().movesets, localData().moves, localData().learnsets]
+      : await Promise.all([
+        fetchJson("data/champions-movesets.json", "Movesets konden niet worden geladen"),
+        fetchJson("data/champions-moves.json", "Move-details konden niet worden geladen"),
+        fetchJson("data/champions-learnsets.json", "Learnsets konden niet worden geladen")
+      ]);
+
+    const movesets = movesetData.sets ?? {};
+    const movesetSources = Object.fromEntries((movesetData.sources ?? []).map((source) => [source.id, source]));
+    const moveDetails = moveData.moves ?? {};
+    const learnsets = learnsetData?.learnsets ?? {};
+
+    enrichGeneratedMovesets({ movesets, pokemon, generatedMovePlan });
+    enrichChampionsCompatibility({ movesets, pokemon, moveDetails, learnsets, generatedMovePlan });
+    return { movesets, movesetSources, moveDetails, learnsets };
+  } catch (error) {
+    console.warn("Moveset database niet geladen; de app gebruikt fallback-richtlijnen.", error);
+    return { movesets: {}, movesetSources: {}, moveDetails: {}, learnsets: {} };
+  }
+}
+
+function enrichChampionsCompatibility({ movesets, pokemon, moveDetails, learnsets, generatedMovePlan }) {
+  for (const [name, sets] of Object.entries(movesets)) {
+    const matchingPokemon = pokemon.find((item) => item.name === name);
+    sets.forEach((set) => {
+      const fallbackMoves = matchingPokemon ? generatedMovePlan(matchingPokemon, generatedModeFromSet(set, matchingPokemon)) : [];
+      set.championsCompatibility = validateMoveSlots(name, set.moves, moveDetails, { fallbackMoves, learnsets });
+    });
+  }
+}
+
+function validateMoveSlots(pokemonName, moves = [], moveDetails = {}, { fallbackMoves = [], learnsets = {} } = {}) {
+  const issues = [];
+  const suggestedMoves = [];
+  const replacementMoves = [];
+  moves.forEach((slot) => {
+    const options = splitMoveOptions(slot);
+    const allowedOptions = options.filter((move) => !isMoveBlockedForPokemon(pokemonName, move, learnsets));
+    const blockedOptions = options.filter((move) => isMoveBlockedForPokemon(pokemonName, move, learnsets));
+
+    blockedOptions.forEach((move) => {
+      issues.push({
+        move,
+        reason: `${displayPokemonName(pokemonName)} kan ${move} niet leren in Champions.`
+      });
+    });
+
+    if (allowedOptions.length) {
+      suggestedMoves.push(allowedOptions.join(" / "));
+      return;
+    }
+
+    const replacements = replacementMovesForSlot(pokemonName, slot, moveDetails, suggestedMoves, fallbackMoves, moves, learnsets);
+    const replacement = replacements[0] ?? "";
+    if (replacement) replacementMoves.push(replacement);
+    replacements.slice(1).forEach((move) => {
+      if (!replacementMoves.includes(move)) replacementMoves.push(move);
+    });
+    suggestedMoves.push(replacement);
+  });
+  return {
+    ok: issues.length === 0,
+    issues,
+    suggestedMoves: suggestedMoves.filter(Boolean).slice(0, 4),
+    replacementMoves
+  };
+}
+
+function isMoveBlockedForPokemon(pokemonName, move, learnsets = {}) {
+  const learnset = learnsetForPokemon(pokemonName, learnsets);
+  if (learnset && !learnset.has(move)) return true;
+
+  const blocked = MOVE_LEARNSET_BLOCKLIST[move];
+  if (!blocked) return false;
+  const baseName = baseSpeciesLabel(pokemonName);
+  return blocked.includes(pokemonName) || blocked.includes(baseName);
+}
+
+function learnsetForPokemon(pokemonName, learnsets = {}) {
+  const exact = learnsets[pokemonName];
+  const baseName = baseSpeciesLabel(pokemonName);
+  const base = learnsets[baseName];
+  const moves = exact?.length ? exact : base;
+  return moves?.length ? new Set(moves) : null;
+}
+
+function replacementMovesForSlot(pokemonName, slot, moveDetails, currentMoves, fallbackMoves = [], originalMoves = [], learnsets = {}) {
+  const curated = splitMoveOptions(slot)
+    .flatMap((move) => {
+      const baseName = baseSpeciesLabel(pokemonName);
+      return [
+        ...(MOVE_REPLACEMENTS[move]?.[pokemonName] ?? []),
+        ...(MOVE_REPLACEMENTS[move]?.[baseName] ?? [])
+      ];
+    });
+  const blockedMoves = splitMoveOptions(slot);
+  const scored = [...curated, ...fallbackMoves]
+    .filter((move) => moveDetails[move])
+    .filter((move) => !isMoveBlockedForPokemon(pokemonName, move, learnsets))
+    .filter((move) => !currentMoves.some((slot) => splitMoveOptions(slot).includes(move)))
+    .map((move) => ({
+      move,
+      score: replacementMoveScore(move, blockedMoves, moveDetails, currentMoves, originalMoves)
+    }))
+    .sort((a, b) => b.score - a.score);
+  const good = scored.filter(({ score }) => score >= -10).slice(0, 3).map(({ move }) => move);
+  return good.length ? good : scored.slice(0, 1).map(({ move }) => move);
+}
+
+function splitMoveOptions(value) {
+  return String(value).split("/").map((part) => part.trim()).filter(Boolean);
+}
+
+function replacementMoveScore(candidate, blockedMoves, moveDetails, currentMoves, originalMoves) {
+  const details = moveDetails[candidate] ?? {};
+  const candidateTags = moveFunctionTags(candidate, details);
+  const blockedTags = new Set(blockedMoves.flatMap((move) => moveFunctionTags(move, moveDetails[move] ?? {})));
+  const existingMoves = [...new Set([...currentMoves, ...originalMoves]
+    .flatMap(splitMoveOptions)
+    .filter((move) => !blockedMoves.includes(move)))];
+  const existingTagSets = existingMoves.map((move) => new Set(moveFunctionTags(move, moveDetails[move] ?? {})));
+  let score = 0;
+
+  candidateTags.forEach((tag) => {
+    if (blockedTags.has(tag)) score += 12;
+  });
+  if (details.category === "Status" && blockedMoves.some((move) => moveDetails[move]?.category === "Status")) score += 8;
+  if (details.category !== "Status" && blockedMoves.every((move) => moveDetails[move]?.category !== "Status")) score += 4;
+  if (details.accuracy === "-") score += 2;
+  score += (Number(details.pp) || 0) / 20;
+
+  existingTagSets.forEach((tags) => {
+    candidateTags.forEach((tag) => {
+      if (tags.has(tag)) score -= duplicatePenalty(tag);
+    });
+  });
+
+  return score;
+}
+
+function moveFunctionTags(move, details = {}) {
+  const text = `${move} ${details.effect ?? ""}`.toLowerCase();
+  const tags = [];
+  if (details.category === "Status") tags.push("status");
+  if (/toxic|poison|burn|paraly/.test(text)) tags.push("status-condition");
+  if (/protects|protect/.test(text)) tags.push("protect");
+  if (/forces? .* out|switch to a random ally|whirlwind|roar|dragon tail/.test(text)) tags.push("phazing");
+  if (/stealth rock|spikes|sticky web|entry hazard|sets .*hazard/.test(text)) tags.push("hazard");
+  if (/recover|restores|heals|roost|slack off|synthesis|wish/.test(text)) tags.push("recovery");
+  if (/raises|boost|swords dance|calm mind|curse|nasty plot|dragon dance/.test(text)) tags.push("setup");
+  if (details.category && details.category !== "Status") tags.push("damage");
+  if (details.category && details.type) tags.push(`${details.category}:${details.type}`);
+  if (details.type) tags.push(`type:${details.type}`);
+  return tags;
+}
+
+function duplicatePenalty(tag) {
+  if (tag.startsWith("type:")) return 8;
+  if (tag.includes(":")) return 10;
+  if (tag === "damage") return 3;
+  return 5;
+}
+
+function displayPokemonName(name) {
+  return String(name).replace(/-Mega(?:-[XY])?$/, "").replace(/-/g, " ");
+}
+
+function enrichGeneratedMovesets({ movesets, pokemon, generatedMovePlan }) {
+  for (const [name, sets] of Object.entries(movesets)) {
+    const matchingPokemon = pokemon.find((item) => item.name === name);
+    if (!matchingPokemon) continue;
+
+    sets.forEach((set) => {
+      if (set.status !== "generated") return;
+      if (!hasPlaceholderMoves(set.moves)) return;
+
+      const mode = generatedModeFromSet(set, matchingPokemon);
+      set.label = generatedLabelForMode(mode);
+      set.moves = generatedMovePlan(matchingPokemon, mode);
+      set.generatedNote = "Moves automatisch voorgesteld uit de lokale move-database; nog valideren voor Champions.";
+    });
+  }
+}
+
+function hasPlaceholderMoves(moves = []) {
+  return moves.some((move) => /STAB|coverage|utility|setup|priority|recovery|pivot|team gaps|walls|checks|betrouwbare/i.test(move));
+}
+
+function generatedModeFromSet(set, pokemon) {
+  const haystack = `${set.id ?? ""} ${set.label ?? ""} ${set.role ?? ""}`.toLowerCase();
+  if (haystack.includes("bulky") || haystack.includes("wall")) return "bulky";
+  if (haystack.includes("special")) return "special";
+  if (haystack.includes("physical")) return "physical";
+  if (pokemon.spa >= pokemon.atk + 15) return "special";
+  if (pokemon.atk >= pokemon.spa + 15) return "physical";
+  return "mixed";
+}
+
+function generatedLabelForMode(mode) {
+  if (mode === "physical") return "Physical";
+  if (mode === "special") return "Special";
+  if (mode === "bulky") return "Bulky";
+  return "Mixed";
+}
+return { loadMovesets, validateMoveSlots, isMoveBlockedForPokemon };
+})();
+
+// modules/storage.js
+const __storage = (() => {
+const STORAGE_KEYS = {
+  customSets: "championsCustomSets",
+  savedTeams: "championsSavedTeams",
+  favorites: "championsFavorites",
+  battleSim: "championsBattleSim"
+};
+
+function readJsonStorage(key, fallback, storage = globalThis.localStorage) {
+  try {
+    const raw = storage?.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeJsonStorage(key, value, storage = globalThis.localStorage) {
+  try {
+    storage?.setItem(key, JSON.stringify(value));
+    return true;
+  } catch {
+    return false;
+  }
+}
+return { STORAGE_KEYS, readJsonStorage, writeJsonStorage };
+})();
+
+// modules/rendering.js
+const __rendering = (() => {
+function renderApp(ctx) {
+  ctx.renderViewTabs();
+  ctx.renderGuideModeToggle();
+  const list = ctx.getFilteredPokemon();
+  const isStart = ctx.state.guideMode && !ctx.state.hasExplored && !ctx.normalize(ctx.searchInput.value);
+  ctx.metaRow?.classList.toggle("hidden", true);
+  if (ctx.resultCount) ctx.resultCount.textContent = isStart ? "Start" : list.length.toLocaleString("nl-NL");
+  if (ctx.resultLabel) ctx.resultLabel.textContent = isStart ? "team-builder" : "resultaten";
+  if (ctx.resultInline) ctx.resultInline.textContent = isStart ? "(start)" : `(${list.length.toLocaleString("nl-NL")})`;
+  ctx.grid.replaceChildren();
+
+  if (isStart) {
+    ctx.grid.append(ctx.createStartPanel());
+  } else if (!list.length) {
+    ctx.grid.append(ctx.createNoResultsPanel());
+  } else {
+    const fragment = document.createDocumentFragment();
+    list.forEach((pokemon) => fragment.append(ctx.createCard(pokemon)));
+    ctx.grid.append(fragment);
+  }
+
+  ctx.renderDetail(ctx.state.selected);
+  ctx.renderTeam();
+  ctx.renderBattleSim?.();
+  ctx.renderFloatingCompare();
+}
+
+function renderWithoutScrollJump(update) {
+  const scrollX = window.scrollX;
+  const scrollY = window.scrollY;
+  update();
+
+  const restore = () => window.scrollTo(scrollX, scrollY);
+  restore();
+  window.requestAnimationFrame(restore);
+  window.requestAnimationFrame(() => window.requestAnimationFrame(restore));
+  window.setTimeout(restore, 0);
+}
+return { renderApp, renderWithoutScrollJump };
+})();
+
+// modules/ui-events.js
+const __uiEvents = (() => {
+function bindEvents(ctx) {
+  ctx.searchInput.addEventListener("input", () => {
+    if (ctx.searchInput.value.trim()) {
+      ctx.state.hasExplored = true;
+      ctx.state.guideMode = false;
+    }
+    ctx.render();
+  });
+  ctx.sortSelect.addEventListener("change", () => {
+    ctx.state.hasExplored = !ctx.state.guideMode;
+    ctx.render();
+  });
+  ctx.sourceSelect.addEventListener("change", () => {
+    ctx.state.hasExplored = !ctx.state.guideMode;
+    ctx.state.startSuggestionPage = 0;
+    ctx.render();
+  });
+  ctx.teamStyleSelect.addEventListener("change", () => {
+    ctx.state.teamStyle = ctx.teamStyleSelect.value;
+    ctx.state.startSuggestionPage = 0;
+    ctx.optimizeTeamSets?.();
+    ctx.invalidateCache();
+    ctx.render();
+  });
+  ctx.roleFilterSelect.addEventListener("change", () => {
+    ctx.state.roleFilter = ctx.roleFilterSelect.value;
+    ctx.state.hasExplored = true;
+    ctx.render();
+  });
+  ctx.battleFormatSelect.addEventListener("change", () => {
+    ctx.state.battleFormat = ctx.battleFormatSelect.value;
+    ctx.state.startSuggestionPage = 0;
+    ctx.syncBattleSelection();
+    ctx.state.opponentSelection = [];
+    ctx.state.simulationResult = null;
+    ctx.state.teamNotice = "";
+    ctx.optimizeTeamSets?.();
+    ctx.invalidateCache();
+    ctx.render();
+  });
+  ctx.builderTab.addEventListener("click", () => ctx.switchView("builder"));
+  ctx.teamTab.addEventListener("click", () => ctx.switchView("team"));
+  ctx.battleTab.addEventListener("click", () => ctx.switchView("battle"));
+  ctx.backToBuilder.addEventListener("click", () => ctx.switchView("builder"));
+  ctx.floatingTeamLab.addEventListener("click", () => {
+    ctx.switchView("team");
+    ctx.teamView.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  ctx.typeToggle.addEventListener("click", () => {
+    ctx.state.typeFiltersOpen = !ctx.state.typeFiltersOpen;
+    ctx.renderTypeFilters();
+  });
+  ctx.resetApp.addEventListener("click", ctx.resetToStart);
+  ctx.guideModeToggle.addEventListener("click", ctx.toggleGuideMode);
+  ctx.favoritesToggle.addEventListener("click", ctx.toggleFavoritesFilter);
+  ctx.showAllPokemon.addEventListener("click", ctx.showAllPokemonList);
+  ctx.randomUltraTeam.addEventListener("click", ctx.generateRandomUltraTeam);
+  ctx.goTopButton.addEventListener("click", () => {
+    ctx.builderView.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  let scrollFrame = 0;
+  window.addEventListener("scroll", () => {
+    if (scrollFrame) return;
+    scrollFrame = window.requestAnimationFrame(() => {
+      scrollFrame = 0;
+      const show = ctx.state.activeView === "builder" && window.scrollY > 720;
+      const compact = window.scrollY > 260;
+      ctx.goTopButton.hidden = !show;
+      if (document.body.classList.contains("compact-toolbar") !== compact) {
+        document.body.classList.toggle("compact-toolbar", compact);
+      }
+    });
+  }, { passive: true });
+  ctx.clearTeam.addEventListener("click", () => {
+    ctx.state.team = [];
+    ctx.state.teamNotice = "";
+    ctx.state.battleSelection = [];
+    ctx.state.simulationResult = null;
+    ctx.invalidateCache();
+    ctx.render();
+  });
+}
+return { bindEvents };
+})();
+
+// modules/battle-simulation.js
+const __battleSimulation = (() => {
+const baseSpecies = __teamAnalysis.baseSpecies;
+const defensiveMultiplier = __teamAnalysis.defensiveMultiplier;
+const pokemonUsesMegaSlot = __teamAnalysis.pokemonUsesMegaSlot;
+const DEFAULT_FORMAT = { maxTeamSize: 6, selectionSize: 3, label: "Single 3v3" };
+
+function selectedBattleMembers(team = [], selection = [], format = DEFAULT_FORMAT) {
+  const limit = format.selectionSize ?? DEFAULT_FORMAT.selectionSize;
+  const byName = new Map(team.map((pokemon) => [pokemon.name, pokemon]));
+  const picked = selection.map((name) => byName.get(name)).filter(Boolean);
+  const seen = new Set(picked.map((pokemon) => pokemon.name));
+  team.forEach((pokemon) => {
+    if (picked.length < limit && !seen.has(pokemon.name)) {
+      picked.push(pokemon);
+      seen.add(pokemon.name);
+    }
+  });
+  return picked.slice(0, limit);
+}
+
+function generateOpponentTeam({
+  pokemon = [],
+  playerTeam = [],
+  playerRoster = [],
+  format = DEFAULT_FORMAT,
+  mode = "counter",
+  selectedBuild = () => ({}),
+  moveDetails = () => ({}),
+  roleFor = () => ({ label: "Allrounder" })
+} = {}) {
+  const maxTeamSize = format.maxTeamSize ?? DEFAULT_FORMAT.maxTeamSize;
+  const playerBases = new Set(playerTeam.map((member) => baseSpecies(member.name)));
+  const team = [];
+
+  const referenceTeam = playerTeam.length ? playerTeam : playerRoster;
+  const referenceProfile = teamProfile(referenceTeam, selectedBuild, roleFor);
+  const candidates = [...pokemon]
+    .filter((candidate) => !playerBases.has(baseSpecies(candidate.name)))
+    .map((candidate) => ({
+      pokemon: candidate,
+      score: opponentCandidateScore(candidate, {
+        mode,
+        playerTeam,
+        referenceProfile,
+        selectedBuild,
+        moveDetails,
+        roleFor
+      })
+    }))
+    .sort((a, b) => b.score - a.score || b.pokemon.bst - a.pokemon.bst || a.pokemon.name.localeCompare(b.pokemon.name));
+
+  for (const { pokemon: candidate } of candidates) {
+    if (team.length >= maxTeamSize) break;
+    if (!isLegalOpponentMember(candidate, team, selectedBuild)) continue;
+    team.push(candidate);
+  }
+
+  return team;
+}
+
+function simulateBattle({
+  playerTeam = [],
+  opponentTeam = [],
+  playerSelection = [],
+  opponentSelection = [],
+  format = DEFAULT_FORMAT,
+  selectedBuild = () => ({}),
+  moveDetails = () => ({}),
+  roleFor = () => ({ label: "Allrounder" })
+} = {}) {
+  const playerMembers = selectedBattleMembers(playerTeam, playerSelection, format);
+  const opponentMembers = selectedBattleMembers(opponentTeam, opponentSelection, format);
+  const pairings = playerMembers.flatMap((player) => opponentMembers.map((opponent) => {
+    const result = matchupScore(player, opponent, { selectedBuild, moveDetails, roleFor });
+    return { player, opponent, ...result };
+  }));
+  const matchupMatrix = createMatchupMatrix(playerMembers, opponentMembers, pairings);
+
+  const playerScore = aggregateTeamScore(playerMembers, opponentMembers, { selectedBuild, moveDetails, roleFor });
+  const opponentScore = aggregateTeamScore(opponentMembers, playerMembers, { selectedBuild, moveDetails, roleFor });
+  const winChance = clamp(Math.round(50 + (playerScore - opponentScore) / 6), 5, 95);
+  const advantage = winChance >= 62 ? "Voordeel" : winChance <= 38 ? "Lastig" : "Evenwichtig";
+  const teamMetrics = scoreTeamPreview(playerMembers, opponentMembers, { selectedBuild, moveDetails, roleFor, winChance, playerScore, opponentScore });
+  const selectionAdvice = recommendBattleSelection(playerTeam, opponentMembers, format, { selectedBuild, moveDetails, roleFor });
+  const confidence = confidenceScore([...playerMembers, ...opponentMembers], { selectedBuild, moveDetails });
+
+  return {
+    formatLabel: format.label ?? DEFAULT_FORMAT.label,
+    playerMembers,
+    opponentMembers,
+    winChance,
+    advantage,
+    playerScore: Math.round(playerScore),
+    opponentScore: Math.round(opponentScore),
+    bestMatchups: pairings
+      .filter((pairing) => pairing.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3),
+    threats: pairings
+      .filter((pairing) => pairing.score < 0)
+      .sort((a, b) => a.score - b.score)
+      .slice(0, 3),
+    leads: selectionAdvice.leads,
+    notes: battleNotes(playerMembers, opponentMembers, winChance),
+    matchupMatrix,
+    selectionAdvice,
+    teamMetrics,
+    confidence,
+    pairings
+  };
+}
+
+function matchupScore(attacker, defender, {
+  selectedBuild = () => ({}),
+  moveDetails = () => ({}),
+  roleFor = () => ({ label: "Allrounder" })
+} = {}) {
+  const attackBuild = selectedBuild(attacker) ?? {};
+  const defendBuild = selectedBuild(defender) ?? {};
+  const attackingTypes = offensiveTypes(attacker, attackBuild, moveDetails);
+  const defendingTypes = offensiveTypes(defender, defendBuild, moveDetails);
+  const bestAttack = bestTypePressure(attackingTypes, defender.types);
+  const bestDefense = bestTypePressure(defendingTypes, attacker.types);
+  const offense = Math.max(attacker.atk, attacker.spa);
+  const opposingOffense = Math.max(defender.atk, defender.spa);
+  const bulk = attacker.hp + attacker.def + attacker.spd;
+  const opposingBulk = defender.hp + defender.def + defender.spd;
+  const role = roleFor(attacker).label ?? "";
+  const opposingRole = roleFor(defender).label ?? "";
+
+  let score = 0;
+  score += (bestAttack.multiplier - bestDefense.multiplier) * 36;
+  score += (offense - opposingBulk / 2) * 0.18;
+  score += (bulk / 2 - opposingOffense) * 0.12;
+  score += (attacker.spe - defender.spe) * speedWeight(attacker, defender, role, opposingRole);
+  score += setQualityBonus(attackBuild) - setQualityBonus(defendBuild);
+
+  if (bestAttack.multiplier === 0) score -= 28;
+  if (bestDefense.multiplier === 0) score += 22;
+  if (/wall|pivot|support/i.test(role) && bestDefense.multiplier <= 0.5) score += 12;
+  if (/sweeper|wallbreaker|speed/i.test(role) && bestAttack.multiplier >= 2) score += 14;
+
+  const roundedScore = Math.round(score);
+  const metrics = {
+    offensePressure: clamp(Math.round(50 + (bestAttack.multiplier - 1) * 28 + (offense - opposingBulk / 2) * 0.22), 0, 100),
+    defensiveAnswer: clamp(Math.round(50 + (1 - bestDefense.multiplier) * 30 + (bulk / 2 - opposingOffense) * 0.16), 0, 100),
+    speedAdvantage: clamp(Math.round(50 + (attacker.spe - defender.spe) * 0.45), 0, 100),
+    moveCoverage: clamp(Math.round(bestAttack.multiplier * 42), 0, 100),
+    setReliability: clamp(Math.round(50 + setQualityBonus(attackBuild) * 5), 0, 100)
+  };
+
+  return {
+    score: roundedScore,
+    label: matchupLabel({ score: roundedScore, attackMultiplier: bestAttack.multiplier, defenseMultiplier: bestDefense.multiplier, speedDelta: attacker.spe - defender.spe, role }),
+    attackMultiplier: bestAttack.multiplier,
+    defenseMultiplier: bestDefense.multiplier,
+    attackType: bestAttack.type,
+    defenseType: bestDefense.type,
+    speedDelta: attacker.spe - defender.spe,
+    metrics,
+    reasons: matchupReasons({
+      attacker,
+      defender,
+      bestAttack,
+      bestDefense,
+      speedDelta: attacker.spe - defender.spe,
+      role,
+      build: attackBuild
+    })
+  };
+}
+
+function scoreTeamPreview(team = [], opponents = [], {
+  selectedBuild = () => ({}),
+  moveDetails = () => ({}),
+  roleFor = () => ({ label: "Allrounder" }),
+  winChance = 50,
+  playerScore = null,
+  opponentScore = null
+} = {}) {
+  const helpers = { selectedBuild, moveDetails, roleFor };
+  const matrix = team.flatMap((pokemon) => opponents.map((opponent) => matchupScore(pokemon, opponent, helpers)));
+  const positive = matrix.filter((item) => item.score > 0);
+  const negative = matrix.filter((item) => item.score < 0);
+  const speedWins = matrix.filter((item) => item.speedDelta > 0).length;
+  const defensiveAnswers = matrix.filter((item) => item.metrics.defensiveAnswer >= 62).length;
+  const coverageHits = matrix.filter((item) => item.attackMultiplier >= 2).length;
+  const total = Math.max(1, matrix.length);
+  return {
+    winChance,
+    previewScore: clamp(Math.round(50 + ((playerScore ?? aggregateTeamScore(team, opponents, helpers)) - (opponentScore ?? aggregateTeamScore(opponents, team, helpers))) / 8), 0, 100),
+    speedControl: clamp(Math.round(speedWins / total * 100), 0, 100),
+    defensiveSafety: clamp(Math.round(defensiveAnswers / total * 100), 0, 100),
+    coverage: clamp(Math.round(coverageHits / total * 100), 0, 100),
+    positiveCount: positive.length,
+    negativeCount: negative.length
+  };
+}
+
+function recommendBattleSelection(team = [], opponents = [], format = DEFAULT_FORMAT, helpers = {}) {
+  const limit = format.selectionSize ?? DEFAULT_FORMAT.selectionSize;
+  const ranked = team
+    .map((pokemon) => {
+      const pairScores = opponents.map((opponent) => matchupScore(pokemon, opponent, helpers));
+      const best = Math.max(...pairScores.map((item) => item.score), 0);
+      const average = pairScores.reduce((sum, item) => sum + item.score, 0) / Math.max(1, pairScores.length);
+      const defensive = pairScores.reduce((sum, item) => sum + item.metrics.defensiveAnswer, 0) / Math.max(1, pairScores.length);
+      const score = Math.round(best * 0.52 + average * 0.38 + defensive * 0.18 + pokemon.spe * 0.12);
+      return {
+        pokemon,
+        score,
+        reason: selectionReason(pokemon, pairScores)
+      };
+    })
+    .sort((a, b) => b.score - a.score || b.pokemon.bst - a.pokemon.bst)
+    .slice(0, limit);
+
+  return {
+    picks: ranked,
+    leads: ranked.slice(0, Math.min(2, ranked.length)),
+    actions: battleActions(ranked, opponents, helpers)
+  };
+}
+
+function matchupLabel({ score = 0, attackMultiplier = 1, defenseMultiplier = 1, speedDelta = 0, role = "" } = {}) {
+  if (attackMultiplier === 0) return "Coverage nodig";
+  if (defenseMultiplier === 0 && score >= 8) return "Wallt";
+  if (attackMultiplier >= 2 && speedDelta >= 0) return "Sterk";
+  if (speedDelta >= 25 && score > -5) return "Outspeeds";
+  if (/wall|pivot|support/i.test(role) && defenseMultiplier <= 0.5) return "Wallt";
+  if (score <= -18) return "Risky";
+  if (score >= 18) return "Sterk";
+  return "Neutraal";
+}
+
+function confidenceScore(members = [], { selectedBuild = () => ({}), moveDetails = () => ({}) } = {}) {
+  if (!members.length) return { value: 0, label: "Geen data", issues: ["Geen preview gekozen"] };
+  const issues = [];
+  const raw = members.reduce((sum, pokemon) => {
+    const build = selectedBuild(pokemon) ?? {};
+    let value = 58 + setQualityBonus(build) * 4;
+    if (build.status === "generated") {
+      value -= 18;
+      issues.push(`${pokemon.name}: generated set`);
+    }
+    const moves = build.moves ?? [];
+    if (moves.length < 4) {
+      value -= 8;
+      issues.push(`${pokemon.name}: incomplete moveset`);
+    }
+    const unknownMoves = moves
+      .flatMap((move) => String(move).split("/").map((part) => part.trim()))
+      .filter((move) => {
+        const details = moveDetails(move);
+        return !details?.type || details.type === "Unknown";
+      });
+    if (unknownMoves.length) {
+      value -= 10;
+      issues.push(`${pokemon.name}: onbekende move-data`);
+    }
+    return sum + clamp(value, 15, 96);
+  }, 0);
+  const value = Math.round(raw / members.length);
+  return {
+    value,
+    label: value >= 76 ? "Hoog" : value >= 52 ? "Middel" : "Laag",
+    issues: [...new Set(issues)].slice(0, 4)
+  };
+}
+
+function aggregateTeamScore(team, opponents, helpers) {
+  if (!team.length || !opponents.length) return 0;
+  return team.reduce((sum, member) => {
+    const scores = opponents
+      .map((opponent) => matchupScore(member, opponent, helpers).score)
+      .sort((a, b) => b - a);
+    const best = scores[0] ?? 0;
+    const average = scores.reduce((total, score) => total + score, 0) / Math.max(1, scores.length);
+    return sum + best * 0.58 + average * 0.42 + member.bst / 18;
+  }, 0);
+}
+
+function opponentCandidateScore(candidate, { mode, playerTeam, referenceProfile, selectedBuild, moveDetails, roleFor }) {
+  const build = selectedBuild(candidate);
+  const role = roleFor(candidate).label ?? "";
+  const bulk = candidate.hp + candidate.def + candidate.spd;
+  const offense = Math.max(candidate.atk, candidate.spa);
+  if (mode === "random") return randomTeamScore(candidate, build);
+  if (mode === "bulky") return bulk * 1.35 + candidate.bst * 0.45 + /wall|pivot|support/i.test(role) * 90 + setQualityBonus(build) * 8;
+  if (mode === "offense") return offense * 1.45 + candidate.spe * 1.15 + candidate.bst * 0.35 + /sweeper|wallbreaker|speed/i.test(role) * 90 + setQualityBonus(build) * 8;
+  if (mode === "mirror") {
+    const physicalFit = referenceProfile.physical >= referenceProfile.special ? candidate.atk : candidate.spa;
+    const speedFit = Math.max(0, 120 - Math.abs(candidate.spe - referenceProfile.averageSpeed));
+    const bulkFit = Math.max(0, 330 - Math.abs(bulk - referenceProfile.averageBulk));
+    return candidate.bst * 0.45 + physicalFit + speedFit + bulkFit * 0.5 + setQualityBonus(build) * 8;
+  }
+  return counterCandidateScore(candidate, playerTeam, { selectedBuild, moveDetails, roleFor });
+}
+
+function counterCandidateScore(candidate, playerTeam, helpers) {
+  if (!playerTeam.length) return randomTeamScore(candidate, helpers.selectedBuild(candidate));
+  const scores = playerTeam.map((player) => matchupScore(candidate, player, helpers).score);
+  const best = Math.max(...scores);
+  const average = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+  return best * 1.5 + average + candidate.bst / 7 + candidate.spe * 0.2;
+}
+
+function randomTeamScore(pokemon, build = {}) {
+  return Math.random() * 320 + pokemon.bst * 0.35 + Math.max(pokemon.atk, pokemon.spa) * 0.35 + pokemon.spe * 0.2 + setQualityBonus(build) * 5;
+}
+
+function isLegalOpponentMember(candidate, team, selectedBuild) {
+  if (team.some((member) => member.name === candidate.name)) return false;
+  if (team.some((member) => baseSpecies(member.name) === baseSpecies(candidate.name))) return false;
+  const candidateUsesMega = pokemonUsesMegaSlot(candidate, selectedBuild(candidate));
+  if (candidateUsesMega && team.some((member) => pokemonUsesMegaSlot(member, selectedBuild(member)))) return false;
+  return true;
+}
+
+function recommendLeads(team, opponents, helpers) {
+  return team
+    .map((pokemon) => {
+      const scores = opponents.map((opponent) => matchupScore(pokemon, opponent, helpers).score);
+      const pressure = scores.reduce((sum, score) => sum + score, 0) / Math.max(1, scores.length);
+      return { pokemon, score: Math.round(pressure + pokemon.spe * 0.22 + Math.max(pokemon.atk, pokemon.spa) * 0.08) };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 2);
+}
+
+function createMatchupMatrix(playerMembers, opponentMembers, pairings) {
+  return playerMembers.map((player) => ({
+    player,
+    cells: opponentMembers.map((opponent) => {
+      const pairing = pairings.find((item) => item.player.name === player.name && item.opponent.name === opponent.name);
+      return {
+        opponent,
+        score: pairing?.score ?? 0,
+        label: pairing?.label ?? "Neutraal",
+        tone: matrixTone(pairing?.score ?? 0),
+        attackMultiplier: pairing?.attackMultiplier ?? 1,
+        defenseMultiplier: pairing?.defenseMultiplier ?? 1,
+        speedDelta: pairing?.speedDelta ?? 0,
+        reasons: pairing?.reasons ?? []
+      };
+    })
+  }));
+}
+
+function matrixTone(score) {
+  if (score >= 18) return "good";
+  if (score <= -18) return "bad";
+  return "neutral";
+}
+
+function selectionReason(pokemon, pairScores) {
+  const best = [...pairScores].sort((a, b) => b.score - a.score)[0];
+  if (!best) return `${pokemon.name} is een flex pick.`;
+  if (best.attackMultiplier >= 2) return `Beste druk via ${best.attackType}-coverage.`;
+  if (best.speedDelta >= 20) return "Geeft je preview speed control.";
+  if (best.metrics.defensiveAnswer >= 70) return "Veilige defensieve pivot in deze preview.";
+  return best.reasons[0] ?? "Solide algemene matchup.";
+}
+
+function battleActions(ranked, opponents, helpers) {
+  const actions = [];
+  if (ranked[0]) actions.push({ label: "Beste lead", text: `Open met ${ranked[0].pokemon.name}: ${ranked[0].reason}` });
+  const allPairings = ranked.flatMap(({ pokemon }) => opponents.map((opponent) => ({ pokemon, opponent, ...matchupScore(pokemon, opponent, helpers) })));
+  const worst = [...allPairings].sort((a, b) => a.score - b.score)[0];
+  if (worst) actions.push({ label: "Vermijd", text: `Laat ${worst.pokemon.name} niet gratis tegenover ${worst.opponent.name} staan (${worst.label}).` });
+  const wincon = [...allPairings].sort((a, b) => b.score - a.score)[0];
+  if (wincon) actions.push({ label: "Wincon", text: `Speel rond ${wincon.pokemon.name}; beste druk is tegen ${wincon.opponent.name}.` });
+  return actions.slice(0, 3);
+}
+
+function teamProfile(team, selectedBuild, roleFor) {
+  if (!team.length) return { physical: 0, special: 0, averageSpeed: 80, averageBulk: 280 };
+  const totals = team.reduce((profile, pokemon) => {
+    if (pokemon.atk >= pokemon.spa) profile.physical += 1;
+    else profile.special += 1;
+    profile.speed += pokemon.spe;
+    profile.bulk += pokemon.hp + pokemon.def + pokemon.spd;
+    const build = selectedBuild(pokemon);
+    const role = roleFor(pokemon).label ?? build.role ?? "";
+    if (/wall|pivot|support/i.test(role)) profile.support += 1;
+    return profile;
+  }, { physical: 0, special: 0, speed: 0, bulk: 0, support: 0 });
+  return {
+    ...totals,
+    averageSpeed: totals.speed / team.length,
+    averageBulk: totals.bulk / team.length
+  };
+}
+
+function battleNotes(playerMembers, opponentMembers, winChance) {
+  const notes = [];
+  if (winChance >= 62) notes.push("Je selectie heeft duidelijk momentum; speel rond je positieve pairings.");
+  else if (winChance <= 38) notes.push("Deze matchup vraagt strakke preview-keuzes; vermijd je slechtste pairing als lead.");
+  else notes.push("De matchup is close; lead-keuze en setkeuze maken hier veel verschil.");
+  if (playerMembers.some((pokemon) => pokemon.spe >= 110) && !opponentMembers.some((pokemon) => pokemon.spe >= 110)) {
+    notes.push("Je hebt de hoogste speed-tier in deze preview.");
+  }
+  if (opponentMembers.some((pokemon) => pokemon.hp + pokemon.def + pokemon.spd >= 320)) {
+    notes.push("De tegenstander heeft stevige switch-ins; let op welke breaker daar het beste doorheen komt.");
+  }
+  return notes;
+}
+
+function offensiveTypes(pokemon, build = {}, moveDetails) {
+  const moveTypes = (build.moves ?? [])
+    .flatMap((move) => String(move).split("/").map((part) => part.trim()))
+    .map((move) => moveDetails(move).type)
+    .filter((type) => type && type !== "Unknown");
+  return [...new Set([...pokemon.types, ...moveTypes])];
+}
+
+function bestTypePressure(types, defenderTypes = []) {
+  return types
+    .map((type) => ({ type, multiplier: defensiveMultiplier(defenderTypes, type) }))
+    .sort((a, b) => b.multiplier - a.multiplier)[0] ?? { type: "Unknown", multiplier: 1 };
+}
+
+function speedWeight(attacker, defender, role, opposingRole) {
+  const frailTarget = defender.hp + defender.def + defender.spd < 250;
+  if (/sweeper|wallbreaker|speed/i.test(role) || frailTarget) return 0.18;
+  if (/wall|pivot|support/i.test(opposingRole)) return 0.08;
+  return 0.12;
+}
+
+function setQualityBonus(build = {}) {
+  if (build.status === "smogon-champions") return 10;
+  if (build.status === "smogon-sv") return 7;
+  if (build.status === "custom") return 5;
+  if (build.status === "generated") return -4;
+  return 2;
+}
+
+function matchupReasons({ attacker, defender, bestAttack, bestDefense, speedDelta, role, build }) {
+  const reasons = [];
+  if (bestAttack.multiplier >= 2) reasons.push(`${bestAttack.type}-druk raakt ${defender.name} super effective`);
+  else if (bestAttack.multiplier === 0) reasons.push(`${defender.name} is immuun voor je beste ${bestAttack.type}-druk`);
+  else if (bestAttack.multiplier < 1) reasons.push(`${defender.name} resist je beste ${bestAttack.type}-druk`);
+  else reasons.push(`${attacker.name} heeft neutrale druk`);
+
+  if (bestDefense.multiplier === 0) reasons.push(`${attacker.name} heeft een immunity terug`);
+  else if (bestDefense.multiplier <= 0.5) reasons.push(`${attacker.name} kan belangrijke coverage opvangen`);
+  if (speedDelta >= 20) reasons.push(`${attacker.name} is sneller`);
+  if (speedDelta <= -20) reasons.push(`${defender.name} is sneller`);
+  if (/wall|pivot|support/i.test(role)) reasons.push("defensieve rol geeft extra marge");
+  if (build.status && build.status !== "generated") reasons.push("betrouwbare setdata");
+  return reasons.slice(0, 4);
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+return { selectedBattleMembers, generateOpponentTeam, simulateBattle, matchupScore, scoreTeamPreview, recommendBattleSelection, matchupLabel, confidenceScore };
+})();
+
+// app.js
+
+const { loadPokemonData, officialPokemon } = __data;
+const fetchChampionsMeta = __data.loadChampionsMeta;
+const fetchMovesets = __movesets.loadMovesets;
+const pureIsMoveBlockedForPokemon = __movesets.isMoveBlockedForPokemon;
+const pureValidateMoveSlots = __movesets.validateMoveSlots;
+const {
   BATTLE_FORMATS,
   ITEM_OPTIONS,
   NATURE_OPTIONS,
@@ -12,12 +1388,25 @@ import {
   TEAM_STYLES,
   TYPE_COLORS,
   TYPES
-} from './modules/constants.js';
-import { renderApp, renderWithoutScrollJump } from './modules/rendering.js?v=2';
-import { readJsonStorage, STORAGE_KEYS, writeJsonStorage } from './modules/storage.js';
-import { bindEvents as bindUiEvents } from './modules/ui-events.js?v=4';
-import { generateOpponentTeam as pureGenerateOpponentTeam, simulateBattle, selectedBattleMembers } from './modules/battle-simulation.js';
-import { baseSpecies as pureBaseSpecies, baseSpeciesLabel as pureBaseSpeciesLabel, defensiveMultiplier as pureDefensiveMultiplier, isMega as pureIsMega, megaBaseFromItem as pureMegaBaseFromItem, normalizeSpSpread as pureNormalizeSpSpread, normalizeSpValues as pureNormalizeSpValues, parseSp as pureParseSp, pokemonUsesMegaSlot as purePokemonUsesMegaSlot, spPartsFromValues as pureSpPartsFromValues, teamLegality as pureTeamLegality, teamTypeSummary as pureTeamTypeSummary, trainedStatValue as pureTrainedStatValue } from './modules/team-analysis.js';
+} = __constants;
+const { renderApp, renderWithoutScrollJump } = __rendering;
+const { readJsonStorage, STORAGE_KEYS, writeJsonStorage } = __storage;
+const bindUiEvents = __uiEvents.bindEvents;
+const pureGenerateOpponentTeam = __battleSimulation.generateOpponentTeam;
+const { simulateBattle, selectedBattleMembers } = __battleSimulation;
+const pureBaseSpecies = __teamAnalysis.baseSpecies;
+const pureBaseSpeciesLabel = __teamAnalysis.baseSpeciesLabel;
+const pureDefensiveMultiplier = __teamAnalysis.defensiveMultiplier;
+const pureIsMega = __teamAnalysis.isMega;
+const pureMegaBaseFromItem = __teamAnalysis.megaBaseFromItem;
+const pureNormalizeSpSpread = __teamAnalysis.normalizeSpSpread;
+const pureNormalizeSpValues = __teamAnalysis.normalizeSpValues;
+const pureParseSp = __teamAnalysis.parseSp;
+const purePokemonUsesMegaSlot = __teamAnalysis.pokemonUsesMegaSlot;
+const pureSpPartsFromValues = __teamAnalysis.spPartsFromValues;
+const pureTeamLegality = __teamAnalysis.teamLegality;
+const pureTeamTypeSummary = __teamAnalysis.teamTypeSummary;
+const pureTrainedStatValue = __teamAnalysis.trainedStatValue;
 
 const state = {
   pokemon: [],
@@ -5734,3 +7123,4 @@ function escapeHtml(value) {
     "'": "&#039;"
   }[char]));
 }
+

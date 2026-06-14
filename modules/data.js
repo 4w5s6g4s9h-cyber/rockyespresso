@@ -54,6 +54,7 @@ export function officialPokemon(pokemon = []) {
 function fallbackDataForPath(fallback, path) {
   if (path.includes("champions-pokemon")) return fallback.pokemon;
   if (path.includes("champions-movesets")) return fallback.movesets;
+  if (path.includes("champions-learnsets")) return fallback.learnsets;
   if (path.includes("champions-moves")) return fallback.moves;
   if (path.includes("champions-meta")) return fallback.meta;
   throw new Error(`Geen fallback-data voor ${path}.`);

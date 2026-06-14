@@ -6,7 +6,8 @@ import {
   pokemonUsesMegaSlot,
   suggestedPokemon,
   teamLegality,
-  teamTypeSummary
+  teamTypeSummary,
+  trainedStatValue
 } from "../modules/team-analysis.js";
 
 const battleFormats = {
@@ -31,8 +32,17 @@ assert.equal(megaBaseFromItem("Charizardite Y"), "Charizard");
 assert.equal(pokemonUsesMegaSlot(charizard, { item: "Charizardite Y" }), true);
 assert.equal(pokemonUsesMegaSlot(garchomp, { item: "Venusaurite" }), false);
 
-assert.equal(normalizeSpSpread("252 Atk / 252 Spe / 4 HP"), "1 HP / 32 Atk / 32 Spe");
-assert.equal(normalizeSpSpread("40 HP / 40 Atk / 40 Def"), "5 HP / 5 Atk / 5 Def");
+assert.equal(normalizeSpSpread("252 Atk / 252 Spe / 4 HP"), "2 HP / 32 Atk / 32 Spe");
+assert.equal(normalizeSpSpread("40 HP / 40 Atk / 40 Def"), "22 HP / 22 Atk / 22 Def");
+assert.equal(normalizeSpSpread("32 Atk / 32 Spe"), "2 HP / 32 Atk / 32 Spe");
+assert.equal(normalizeSpSpread("16 HP / 16 Def / 16 SpD"), "22 HP / 22 Def / 22 SpD");
+
+assert.equal(trainedStatValue(75, 32, "HP", "Sassy"), 182);
+assert.equal(trainedStatValue(85, 5, "Atk", "Sassy"), 110);
+assert.equal(trainedStatValue(200, 1, "Def", "Sassy"), 221);
+assert.equal(trainedStatValue(55, 0, "SpA", "Sassy"), 75);
+assert.equal(trainedStatValue(65, 28, "SpD", "Sassy"), 124);
+assert.equal(trainedStatValue(30, 0, "Spe", "Sassy"), 45);
 
 assert.deepEqual(teamLegality({ pokemon: garchomp, team: [], battleFormat: "single3", battleFormats }), { ok: true, reason: "" });
 assert.equal(teamLegality({ pokemon: garchomp, team: [garchomp], battleFormat: "single3", battleFormats }).ok, false);

@@ -27,6 +27,31 @@ export const TYPES = [
 export const STAT_LABELS = ["HP", "Atk", "Def", "SpA", "SpD", "Spe"];
 export const SP_TOTAL_LIMIT = 66;
 export const SP_STAT_LIMIT = 32;
+export const BATTLE_STAT_LEVEL = 50;
+export const PERFECT_IV = 31;
+
+const NATURE_MODIFIERS = {
+  Lonely: { up: "Atk", down: "Def" },
+  Brave: { up: "Atk", down: "Spe" },
+  Adamant: { up: "Atk", down: "SpA" },
+  Naughty: { up: "Atk", down: "SpD" },
+  Bold: { up: "Def", down: "Atk" },
+  Relaxed: { up: "Def", down: "Spe" },
+  Impish: { up: "Def", down: "SpA" },
+  Lax: { up: "Def", down: "SpD" },
+  Timid: { up: "Spe", down: "Atk" },
+  Hasty: { up: "Spe", down: "Def" },
+  Jolly: { up: "Spe", down: "SpA" },
+  Naive: { up: "Spe", down: "SpD" },
+  Modest: { up: "SpA", down: "Atk" },
+  Mild: { up: "SpA", down: "Def" },
+  Quiet: { up: "SpA", down: "Spe" },
+  Rash: { up: "SpA", down: "SpD" },
+  Calm: { up: "SpD", down: "Atk" },
+  Gentle: { up: "SpD", down: "Def" },
+  Sassy: { up: "SpD", down: "Spe" },
+  Careful: { up: "SpD", down: "SpA" }
+};
 
 export const MEGA_STONE_BASES = {
   Absolite: "Absol",
@@ -193,7 +218,7 @@ export function spPartsFromValues(values) {
 export function normalizeSpValues(values) {
   const capped = Object.fromEntries(STAT_LABELS.map((stat) => [stat, Math.max(0, Math.min(SP_STAT_LIMIT, values[stat] ?? 0))]));
   const total = STAT_LABELS.reduce((sum, stat) => sum + capped[stat], 0);
-  if (total <= SP_TOTAL_LIMIT) return capped;
+  if (total === 0 || total === SP_TOTAL_LIMIT) return capped;
 
   const scaled = STAT_LABELS.map((stat) => {
     const exact = capped[stat] * SP_TOTAL_LIMIT / total;
@@ -202,13 +227,24 @@ export function normalizeSpValues(values) {
   });
   let used = scaled.reduce((sum, item) => sum + item.value, 0);
   scaled
-    .sort((a, b) => b.remainder - a.remainder)
+    .sort((a, b) => b.remainder - a.remainder || STAT_LABELS.indexOf(a.stat) - STAT_LABELS.indexOf(b.stat))
     .forEach((item) => {
-      if (used + 1 <= SP_TOTAL_LIMIT && item.value + 1 <= SP_STAT_LIMIT) {
+      if (item.exact > 0 && used + 1 <= SP_TOTAL_LIMIT && item.value + 1 <= SP_STAT_LIMIT) {
         item.value += 1;
         used += 1;
       }
     });
+
+  if (used < SP_TOTAL_LIMIT) {
+    scaled
+      .sort((a, b) => STAT_LABELS.indexOf(a.stat) - STAT_LABELS.indexOf(b.stat))
+      .forEach((item) => {
+        const available = SP_STAT_LIMIT - item.value;
+        const add = Math.min(available, SP_TOTAL_LIMIT - used);
+        item.value += add;
+        used += add;
+      });
+  }
 
   return Object.fromEntries(scaled.map(({ stat, value }) => [stat, value]));
 }
@@ -230,4 +266,26 @@ export function convertEvSpreadToSpSpread(spread) {
 export function normalizeSpSpread(spread) {
   const values = normalizeSpValues(parseSp(convertEvSpreadToSpSpread(spread)));
   return spPartsFromValues(values).join(" / ");
+}
+
+export function trainedStatValue(base, sp, stat = "HP", nature = "", level = BATTLE_STAT_LEVEL) {
+  const clampedBase = Math.max(1, Number(base) || 1);
+  const clampedSp = Math.max(0, Math.min(SP_STAT_LIMIT, Number(sp) || 0));
+  const ev = Math.round(clampedSp * 252 / SP_STAT_LIMIT);
+  const evContribution = Math.floor(ev / 4);
+  const baseValue = Math.floor(((2 * clampedBase + PERFECT_IV + evContribution) * level) / 100);
+  if (stat === "HP") return baseValue + level + 10;
+  return Math.floor((baseValue + 5) * natureMultiplier(stat, nature));
+}
+
+export function natureMultiplier(stat, nature = "") {
+  const selectedNature = String(nature)
+    .split("/")
+    .map((part) => part.trim())
+    .find((part) => NATURE_MODIFIERS[part]);
+  const modifier = NATURE_MODIFIERS[selectedNature];
+  if (!modifier || modifier.up === modifier.down || stat === "HP") return 1;
+  if (modifier.up === stat) return 1.1;
+  if (modifier.down === stat) return 0.9;
+  return 1;
 }

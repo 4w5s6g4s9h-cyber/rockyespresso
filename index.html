@@ -97,13 +97,13 @@
               </div>
             </div>
           </details>
-          <button id="showAllPokemon" class="show-all-button" type="button">Lijst alle Mons</button>
+          <button id="showAllPokemon" class="show-all-button" type="button">Alle Mons</button>
           <button id="guideModeToggle" class="guide-mode-button" type="button" aria-pressed="false">
             <span class="guide-mode-icon" aria-hidden="true"></span>
-            <span>Help mij kiezen</span>
+            <span>Kieshulp</span>
           </button>
           <button id="favoritesToggle" class="favorites-toggle-button" type="button" aria-pressed="false">Favorieten</button>
-          <button id="randomUltraTeam" class="ultra-team-button" type="button">Random Team</button>
+          <button id="randomUltraTeam" class="ultra-team-button" type="button">Random</button>
           <button id="resetApp" class="reset-button" type="button">Reset</button>
         </div>
       </section>
@@ -111,6 +111,7 @@
       <nav class="view-tabs" aria-label="Weergave">
         <button id="builderTab" class="view-tab active" type="button">Builder</button>
         <button id="teamTab" class="view-tab" type="button">Team lab</button>
+        <button id="battleTab" class="view-tab" type="button">Battle sim</button>
       </nav>
 
       <section id="builderView" class="tab-view active" aria-label="Builder">
@@ -147,6 +148,10 @@
         </div>
       </section>
 
+      <section id="battleView" class="tab-view" aria-label="Battle sim">
+        <div class="battle-sim" id="battleSim" aria-live="polite"></div>
+      </section>
+
       <button id="floatingTeamLab" class="floating-team-lab" type="button" hidden>
         <span>Team lab</span>
         <strong id="floatingTeamCount">0/3</strong>
@@ -173,6 +178,6 @@
     </template>
 
     <script src="data/local-data.js"></script>
-    <script type="module" src="app.js?v=114"></script>
+    <script src="dist/app.bundle.js?v=8"></script>
   </body>
 </html>
