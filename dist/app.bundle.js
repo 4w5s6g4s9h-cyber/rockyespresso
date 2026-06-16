@@ -2390,7 +2390,7 @@ function renderViewTabs() {
 }
 
 function renderFloatingTeamAction() {
-  floatingTeamLab.hidden = true;
+  floatingTeamLab.hidden = !state.team.length || state.activeView === "team";
   goTopButton.hidden = state.activeView !== "builder" || window.scrollY <= 720;
   floatingTeamCount.textContent = `${state.team.length}/6`;
   floatingTeamLab.setAttribute(
@@ -2581,7 +2581,8 @@ function createSuggestionRefreshButton() {
   refresh.type = "button";
   refresh.className = "start-refresh";
   refresh.textContent = "Nieuwe suggesties";
-  refresh.addEventListener("click", () => {
+  refresh.addEventListener("click", (event) => {
+    event.stopPropagation();
     state.startSuggestionPage += 1;
     render();
   });
@@ -3126,9 +3127,8 @@ function createCard(pokemon) {
   node.classList.toggle("expanded", state.expandedCards.includes(pokemon.name));
   node.querySelector(".name").textContent = displayPokemonName(pokemon);
   node.querySelector(".bst").textContent = `BST ${pokemon.bst}`;
-  node.querySelector(".types").replaceChildren(...pokemon.types.map(createTypeChip));
+  node.querySelector(".types").replaceChildren(...pokemon.types.map(createTypeChip), createRolePill(pokemon));
   node.querySelector(".abilities").textContent = pokemon.abilities.join(" / ");
-  node.querySelector(".card-main").append(createRolePill(pokemon));
   if (state.moveFilters.length) {
     node.querySelector(".card-main").append(createMoveMatchBadges(pokemon));
   }
@@ -3206,9 +3206,25 @@ function createCard(pokemon) {
 
   addButton.addEventListener("mousedown", (event) => event.preventDefault());
   addButton.addEventListener("click", () => {
+    addButton.textContent = "…";
+    addButton.setAttribute("aria-busy", "true");
+    addButton.disabled = true;
     renderWithoutScrollJump(() => {
       state.selected = pokemon;
-      addToTeam(pokemon, { deferRender: true });
+      const added = addToTeam(pokemon, { deferRender: true });
+      if (!added) {
+        addButton.textContent = "+";
+        addButton.removeAttribute("aria-busy");
+        addButton.disabled = false;
+        return;
+      }
+      window.setTimeout(() => {
+        const currentLegality = teamLegality(pokemon);
+        addButton.textContent = "+";
+        addButton.removeAttribute("aria-busy");
+        addButton.disabled = !currentLegality.ok;
+        addButton.title = currentLegality.ok ? "Toevoegen aan team" : currentLegality.reason;
+      }, 700);
     });
   });
   return node;
@@ -3584,6 +3600,7 @@ function renderTeam() {
 
 function renderTeamSlots() {
   teamSlots.replaceChildren();
+  renderFloatingTeamAction();
   renderBuilderQuickNav();
   document.querySelector(".team .panel-head h2").textContent = `Team`;
   document.querySelector(".team .team-inline-summary")?.remove();
@@ -3737,7 +3754,10 @@ function renderTeamManager() {
   teamManager.replaceChildren();
   teamManager.classList.toggle("is-empty", !state.savedTeams.length);
 
-  const head = document.createElement("div");
+  const details = document.createElement("details");
+  details.className = "team-manager-details";
+  details.open = false;
+  const head = document.createElement("summary");
   head.className = "team-manager-head";
   const title = document.createElement("strong");
   title.textContent = "Teams opslaan";
@@ -3770,7 +3790,8 @@ function renderTeamManager() {
     state.savedTeams.forEach((team) => list.append(createSavedTeamRow(team)));
   }
 
-  teamManager.append(head, saveRow, list);
+  details.append(head, saveRow, list);
+  teamManager.append(details);
 }
 
 function defaultTeamName() {
@@ -4052,7 +4073,6 @@ function renderBattleSimContent() {
     syncOpponentSelection();
     updateSimulationResult();
     battleSim.replaceChildren();
-    battleSim.append(createBattleQuickActions());
 
     if (!state.team.length) {
       battleSim.append(createBattleEmptyState("Nog geen team", "Bouw eerst een team in de Builder. Daarna kan de simulator je preview en matchups scannen.", "Naar Builder", "builder"));
@@ -4173,9 +4193,13 @@ function createBattleTeamPanel(title, team, selection, onToggle, side) {
   team.forEach((pokemon) => {
     const item = document.createElement("button");
     item.type = "button";
-    item.className = `battle-roster-card${selectedNames.has(pokemon.name) ? " selected" : ""}`;
+    const isSelected = selectedNames.has(pokemon.name);
+    const isLiveActive = side === "player" ? state.livePlayerName === pokemon.name : state.liveOpponentName === pokemon.name;
+    item.className = `battle-roster-card${isSelected ? " selected" : ""}${isLiveActive ? " active-live" : ""}`;
     item.disabled = !selectedNames.has(pokemon.name) && selection.length >= battleSelectionSize();
-    item.title = selectedNames.has(pokemon.name) ? "Verwijder uit preview" : "Kies voor preview";
+    item.title = state.activeView === "battle"
+      ? `Selecteer ${displayPokemonName(pokemon)} als actieve Pokémon`
+      : selectedNames.has(pokemon.name) ? "Verwijder uit preview" : "Kies voor preview";
     item.innerHTML = `
       <img src="${spriteUrl(pokemon.name)}" alt="">
       <span>
@@ -4185,7 +4209,15 @@ function createBattleTeamPanel(title, team, selection, onToggle, side) {
         ${battleRosterMovesHtml(pokemon)}
       </span>
     `;
-    item.addEventListener("click", () => onToggle(pokemon));
+    item.addEventListener("click", () => {
+      if (state.activeView === "battle") {
+        if (side === "player") state.livePlayerName = pokemon.name;
+        else state.liveOpponentName = pokemon.name;
+        renderBattleSim();
+        return;
+      }
+      onToggle(pokemon);
+    });
     item.querySelector("img").addEventListener("error", (event) => event.currentTarget.remove(), { once: true });
     roster.append(item);
   });
@@ -6377,9 +6409,12 @@ function createFormatFocusPanel() {
 function createSuggestionPanel() {
   const replacementMode = state.team.length >= maxTeamSize();
   const suggestions = replacementMode ? replacementSuggestions().slice(0, 3) : suggestedPokemon(3);
-  const panel = document.createElement("div");
-  panel.className = "analysis-block";
-  panel.append(createSuggestionHeader(replacementMode ? "Vervang-suggesties" : "Suggesties"));
+  const panel = document.createElement("details");
+  panel.className = "analysis-block suggestion-panel";
+  panel.open = !replacementMode;
+  const summary = document.createElement("summary");
+  summary.append(createSuggestionHeader(replacementMode ? "Vervang-suggesties" : "Suggesties"));
+  panel.append(summary);
 
   if (!suggestions.length) {
     const done = document.createElement("p");
