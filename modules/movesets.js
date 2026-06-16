@@ -83,6 +83,25 @@ export function isMoveBlockedForPokemon(pokemonName, move, learnsets = {}) {
   return blocked.includes(pokemonName) || blocked.includes(baseName);
 }
 
+export function pokemonCanLearnMoves(pokemonName, moves = [], learnsets = {}, moveDetails = {}) {
+  const wantedMoves = [...new Set(moves.map((move) => String(move).trim()).filter(Boolean))];
+  if (!wantedMoves.length) {
+    return { ok: true, known: [], unknown: [], blocked: [] };
+  }
+
+  const unknown = wantedMoves.filter((move) => moveDetails && Object.keys(moveDetails).length && !moveDetails[move]);
+  const blocked = wantedMoves
+    .filter((move) => !unknown.includes(move))
+    .filter((move) => isMoveBlockedForPokemon(pokemonName, move, learnsets));
+
+  return {
+    ok: unknown.length === 0 && blocked.length === 0,
+    known: wantedMoves.filter((move) => !unknown.includes(move) && !blocked.includes(move)),
+    unknown,
+    blocked
+  };
+}
+
 function learnsetForPokemon(pokemonName, learnsets = {}) {
   const exact = learnsets[pokemonName];
   const baseName = baseSpeciesLabel(pokemonName);

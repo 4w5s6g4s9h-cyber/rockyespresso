@@ -4,6 +4,7 @@ import {
   megaBaseFromItem,
   normalizeSpSpread,
   pokemonUsesMegaSlot,
+  reorderTeam,
   suggestedPokemon,
   teamLegality,
   teamTypeSummary,
@@ -56,6 +57,13 @@ assert.equal(teamLegality({
 }).ok, false);
 assert.equal(teamLegality({ pokemon: dragonite, team: [garchomp, starmie, corviknight], battleFormat: "single3", battleFormats }).ok, true);
 assert.equal(teamLegality({ pokemon: dragonite, team: [garchomp, starmie, corviknight, starmie, corviknight, starmie], battleFormat: "single3", battleFormats }).ok, false);
+
+const reordered = reorderTeam([garchomp, dragonite, corviknight], 2, 1);
+assert.equal(reordered.ok, true);
+assert.deepEqual(reordered.team.map((pokemon) => pokemon.name), ["Garchomp", "Corviknight", "Dragonite"]);
+const lockedReorder = reorderTeam([garchomp, dragonite, corviknight], 0, 1, { lockedNames: ["Garchomp"] });
+assert.equal(lockedReorder.ok, false);
+assert.deepEqual(lockedReorder.team.map((pokemon) => pokemon.name), ["Garchomp", "Dragonite", "Corviknight"]);
 
 const summary = teamTypeSummary([garchomp, dragonite]);
 assert.equal(summary.find((item) => item.type === "Ice").weak, 2);

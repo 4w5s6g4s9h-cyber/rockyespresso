@@ -157,6 +157,25 @@ export function teamLegality({ pokemon, team = [], battleFormat, battleFormats, 
   return { ok: true, reason: "" };
 }
 
+export function reorderTeam(team = [], fromIndex, toIndex, { lockedNames = [], keepLockedSlotOne = true } = {}) {
+  const lastIndex = team.length - 1;
+  const from = Math.max(0, Math.min(lastIndex, Number(fromIndex)));
+  const to = Math.max(0, Math.min(lastIndex, Number(toIndex)));
+  if (!team.length || from === to || !Number.isFinite(from) || !Number.isFinite(to)) {
+    return { ok: false, team: [...team], reason: "" };
+  }
+
+  const locked = new Set(lockedNames);
+  if (keepLockedSlotOne && locked.has(team[0]?.name) && (from === 0 || to === 0)) {
+    return { ok: false, team: [...team], reason: `${baseSpeciesLabel(team[0].name)} staat vast in slot 1.` };
+  }
+
+  const next = [...team];
+  const [member] = next.splice(from, 1);
+  next.splice(to, 0, member);
+  return { ok: true, team: next, reason: "" };
+}
+
 export function suggestedPokemon({ pokemon = [], team = [], battleFormat, battleFormats, teamStyle, teamStyles, roleFor, selectedBuild = () => ({}), limit = 3 }) {
   const names = new Set(team.map((member) => member.name));
   const targets = teamStyles[teamStyle].targets;

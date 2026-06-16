@@ -1,19 +1,27 @@
 export function bindEvents(ctx) {
+  let searchFrame = 0;
   ctx.searchInput.addEventListener("input", () => {
     if (ctx.searchInput.value.trim()) {
       ctx.state.hasExplored = true;
       ctx.state.guideMode = false;
     }
-    ctx.render();
+    if (searchFrame) window.cancelAnimationFrame(searchFrame);
+    searchFrame = window.requestAnimationFrame(() => {
+      searchFrame = 0;
+      ctx.renderBuilderSearch?.();
+    });
   });
+  const addSelectedMove = () => ctx.addMoveFilterValue?.(ctx.moveSearchSelect?.value);
+  ctx.moveSearchSelect?.addEventListener("change", addSelectedMove);
+  ctx.addMoveFilter?.addEventListener("click", addSelectedMove);
   ctx.sortSelect.addEventListener("change", () => {
     ctx.state.hasExplored = !ctx.state.guideMode;
-    ctx.render();
+    ctx.renderBuilderSearch?.();
   });
   ctx.sourceSelect.addEventListener("change", () => {
     ctx.state.hasExplored = !ctx.state.guideMode;
     ctx.state.startSuggestionPage = 0;
-    ctx.render();
+    ctx.renderBuilderSearch?.();
   });
   ctx.teamStyleSelect.addEventListener("change", () => {
     ctx.state.teamStyle = ctx.teamStyleSelect.value;
@@ -25,7 +33,7 @@ export function bindEvents(ctx) {
   ctx.roleFilterSelect.addEventListener("change", () => {
     ctx.state.roleFilter = ctx.roleFilterSelect.value;
     ctx.state.hasExplored = true;
-    ctx.render();
+    ctx.renderBuilderSearch?.();
   });
   ctx.battleFormatSelect.addEventListener("change", () => {
     ctx.state.battleFormat = ctx.battleFormatSelect.value;
@@ -75,6 +83,7 @@ export function bindEvents(ctx) {
     ctx.state.team = [];
     ctx.state.teamNotice = "";
     ctx.state.battleSelection = [];
+    ctx.state.counterTargetName = "";
     ctx.state.simulationResult = null;
     ctx.invalidateCache();
     ctx.render();

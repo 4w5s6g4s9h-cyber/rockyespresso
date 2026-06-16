@@ -4,14 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Champions Builder</title>
-    <link rel="stylesheet" href="styles.css?v=117">
+    <link rel="stylesheet" href="styles.css?v=118">
   </head>
   <body>
     <main class="shell">
       <section class="hero" aria-label="Champions Builder">
-        <div class="hero-copy">
-          <h1>Champions Builder</h1>
-        </div>
       </section>
 
       <section class="toolbar" aria-label="Filters">
@@ -20,6 +17,7 @@
             <span>Zoeken <small id="resultInline">(0)</small></span>
             <input id="searchInput" type="search" placeholder="Naam, type of ability">
           </label>
+          <button id="showAllPokemon" class="show-all-button" type="button">Alle Mons</button>
           <label class="sort-quick">
             <span>Sorteren</span>
             <select id="sortSelect">
@@ -36,7 +34,7 @@
             </select>
           </label>
           <details class="toolbar-drawer">
-            <summary>Filters & teamregels</summary>
+            <summary>Filters</summary>
             <div class="toolbar-controls">
               <label>
                 <span>Focus</span>
@@ -77,9 +75,20 @@
                   <option value="Wallbreaker">Wallbreaker</option>
                   <option value="Support">Support</option>
                   <option value="Wall">Wall</option>
+                  <option value="Setup">Setup</option>
                   <option value="Speed control">Speed control</option>
                   <option value="Bulky pivot">Bulky pivot</option>
                 </select>
+              </label>
+              <label class="move-search">
+                <span>Moves <small>kies meerdere</small></span>
+                <span class="move-picker-row">
+                  <select id="moveSearchSelect">
+                    <option value="">Kies move</option>
+                  </select>
+                  <button id="addMoveFilter" type="button" aria-label="Voeg movefilter toe">+</button>
+                </span>
+                <span id="moveFilterChips" class="move-filter-chips" aria-live="polite"></span>
               </label>
               <label class="format-filter">
                 <span>Format</span>
@@ -97,15 +106,20 @@
               </div>
             </div>
           </details>
-          <button id="showAllPokemon" class="show-all-button" type="button">Alle Mons</button>
           <button id="guideModeToggle" class="guide-mode-button" type="button" aria-pressed="false">
             <span class="guide-mode-icon" aria-hidden="true"></span>
             <span>Kieshulp</span>
           </button>
-          <button id="favoritesToggle" class="favorites-toggle-button" type="button" aria-pressed="false">Favorieten</button>
+          <button id="favoritesToggle" class="favorites-toggle-button" type="button" aria-pressed="false" title="Toon favorieten">♡</button>
           <button id="randomUltraTeam" class="ultra-team-button" type="button">Random</button>
           <button id="resetApp" class="reset-button" type="button">Reset</button>
         </div>
+      </section>
+
+      <section id="appStatus" class="app-status" role="status" aria-live="polite">
+        <span class="status-spinner" aria-hidden="true"></span>
+        <strong>Data laden</strong>
+        <small>Pokémon, movesets en teamregels worden klaargezet.</small>
       </section>
 
       <nav class="view-tabs" aria-label="Weergave">
@@ -178,6 +192,6 @@
     </template>
 
     <script src="data/local-data.js"></script>
-    <script src="dist/app.bundle.js?v=8"></script>
+    <script src="dist/app.bundle.js?v=9"></script>
   </body>
 </html>

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   confidenceScore,
+  counterRecommendations,
   generateOpponentTeam,
   matchupLabel,
   matchupScore,
@@ -109,6 +110,16 @@ assert.equal(advice4.picks.length, 4);
 const metrics = scoreTeamPreview([charizard, dragapult, toxapex], [ferrothorn, alakazam, blastoise], { ...helpers, winChance: 61 });
 assert.equal(metrics.winChance, 61);
 assert.ok(metrics.previewScore >= 0 && metrics.previewScore <= 100);
+
+const counters = counterRecommendations(ferrothorn, pool, helpers, { limit: 3 });
+assert.equal(counters[0].pokemon.name, "Charizard");
+assert.ok(counters[0].score > counters.at(-1).score);
+const countersWithMegaUsed = counterRecommendations(blastoise, [tyranitarMega, garchomp, starmie], helpers, {
+  existingTeam: [charizard],
+  selectedBuild: (pokemon) => pokemon.name === "Charizard" ? { item: "Charizardite Y", moves: ["Flamethrower"] } : helpers.selectedBuild(pokemon),
+  limit: 3
+});
+assert.equal(countersWithMegaUsed.some((item) => item.pokemon.name === "Tyranitar-Mega"), false);
 
 const bulkyTeam = generateOpponentTeam({ pokemon: pool, playerTeam: [charizard, garchomp, starmie], format: single3, mode: "bulky", ...helpers });
 const offenseTeam = generateOpponentTeam({ pokemon: pool, playerTeam: [charizard, garchomp, starmie], format: single3, mode: "offense", ...helpers });

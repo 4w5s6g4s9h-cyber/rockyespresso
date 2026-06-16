@@ -220,6 +220,34 @@ export function recommendBattleSelection(team = [], opponents = [], format = DEF
   };
 }
 
+export function counterRecommendations(target, candidates = [], helpers = {}, {
+  limit = 6,
+  existingTeam = [],
+  selectedBuild = helpers.selectedBuild ?? (() => ({}))
+} = {}) {
+  if (!target) return [];
+  const existingBases = new Set(existingTeam.map((pokemon) => baseSpecies(pokemon.name)));
+  const existingMega = existingTeam.some((pokemon) => pokemonUsesMegaSlot(pokemon, selectedBuild(pokemon)));
+
+  return candidates
+    .filter((candidate) => candidate?.name && candidate.name !== target.name)
+    .filter((candidate) => !existingBases.has(baseSpecies(candidate.name)))
+    .filter((candidate) => !existingMega || !pokemonUsesMegaSlot(candidate, selectedBuild(candidate)))
+    .map((candidate) => {
+      const matchup = matchupScore(candidate, target, helpers);
+      const reverse = matchupScore(target, candidate, helpers);
+      const score = Math.round(matchup.score - reverse.score * 0.35 + setQualityBonus(selectedBuild(candidate)) * 5);
+      return {
+        pokemon: candidate,
+        score,
+        matchup,
+        reason: counterReason(candidate, target, matchup, reverse)
+      };
+    })
+    .sort((a, b) => b.score - a.score || b.pokemon.bst - a.pokemon.bst || a.pokemon.name.localeCompare(b.pokemon.name))
+    .slice(0, limit);
+}
+
 export function matchupLabel({ score = 0, attackMultiplier = 1, defenseMultiplier = 1, speedDelta = 0, role = "" } = {}) {
   if (attackMultiplier === 0) return "Coverage nodig";
   if (defenseMultiplier === 0 && score >= 8) return "Wallt";
@@ -229,6 +257,16 @@ export function matchupLabel({ score = 0, attackMultiplier = 1, defenseMultiplie
   if (score <= -18) return "Risky";
   if (score >= 18) return "Sterk";
   return "Neutraal";
+}
+
+function counterReason(candidate, target, matchup, reverse) {
+  const parts = [];
+  if (matchup.attackMultiplier >= 2) parts.push(`${matchup.attackType} raakt ${target.name} super effectief`);
+  if (reverse.attackMultiplier === 0) parts.push(`immuun voor ${reverse.attackType}`);
+  else if (reverse.attackMultiplier <= 0.5) parts.push(`vangt ${reverse.attackType} goed op`);
+  if (matchup.speedDelta > 0) parts.push(`sneller met +${matchup.speedDelta} Spe`);
+  if (matchup.metrics.defensiveAnswer >= 68) parts.push("sterke defensieve marge");
+  return parts.slice(0, 2).join(" · ") || `${matchup.label} matchup met score ${matchup.score > 0 ? "+" : ""}${matchup.score}`;
 }
 
 export function confidenceScore(members = [], { selectedBuild = () => ({}), moveDetails = () => ({}) } = {}) {

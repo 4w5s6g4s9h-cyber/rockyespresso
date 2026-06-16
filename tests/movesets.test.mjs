@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { isMoveBlockedForPokemon, validateMoveSlots } from "../modules/movesets.js";
+import { isMoveBlockedForPokemon, pokemonCanLearnMoves, validateMoveSlots } from "../modules/movesets.js";
 
 const moveDetails = {
   "Stealth Rock": {
@@ -81,6 +81,25 @@ assert.equal(isMoveBlockedForPokemon("Steelix", "Roar", learnsets), true);
 assert.equal(isMoveBlockedForPokemon("Steelix", "Protect", learnsets), false);
 assert.equal(isMoveBlockedForPokemon("Toxapex", "Toxic", learnsets), false);
 
+assert.deepEqual(pokemonCanLearnMoves("Steelix-Mega", ["Protect"], learnsets, moveDetails), {
+  ok: true,
+  known: ["Protect"],
+  unknown: [],
+  blocked: []
+});
+assert.deepEqual(pokemonCanLearnMoves("Steelix", ["Protect", "Toxic"], learnsets, moveDetails), {
+  ok: false,
+  known: ["Protect"],
+  unknown: [],
+  blocked: ["Toxic"]
+});
+assert.deepEqual(pokemonCanLearnMoves("Steelix", ["Made Up Move"], learnsets, moveDetails), {
+  ok: false,
+  known: [],
+  unknown: ["Made Up Move"],
+  blocked: []
+});
+
 const steelixMoves = ["Stealth Rock", "Earthquake", "Gyro Ball", "Toxic"];
 const steelixCompatibility = validateMoveSlots("Steelix", steelixMoves, moveDetails, { learnsets });
 assert.deepEqual(steelixMoves, ["Stealth Rock", "Earthquake", "Gyro Ball", "Toxic"]);
@@ -104,7 +123,8 @@ assert.deepEqual(toxapexCompatibility.replacementMoves, []);
 
 const movesetData = JSON.parse(fs.readFileSync(new URL("../data/champions-movesets.json", import.meta.url), "utf8"));
 const steelixTank = movesetData.sets.Steelix.find((set) => set.id === "sv-steelix-nationaldexru-tank");
-assert.deepEqual(steelixTank.moves, ["Stealth Rock", "Earthquake", "Gyro Ball", "Toxic"]);
+assert.deepEqual(steelixTank.moves, ["Stealth Rock", "Earthquake", "Gyro Ball", "Iron Defense"]);
+assert.equal(steelixTank.championsAdjusted, true);
 
 const learnsetData = JSON.parse(fs.readFileSync(new URL("../data/champions-learnsets.json", import.meta.url), "utf8"));
 assert.equal(learnsetData.learnsets.Steelix.includes("Toxic"), false);

@@ -5,6 +5,7 @@ const ROOT = process.cwd();
 const POKEMON_PATH = path.join(ROOT, 'data/champions-pokemon.json');
 const MOVESETS_PATH = path.join(ROOT, 'data/champions-movesets.json');
 const MOVES_PATH = path.join(ROOT, 'data/champions-moves.json');
+const LEARNSETS_PATH = path.join(ROOT, 'data/champions-learnsets.json');
 
 const SOURCE_IDS = {
   champions: 'smogon-champions',
@@ -45,7 +46,13 @@ const SP_STATS = [
   ['spd', 'SpD'],
   ['spe', 'Spe'],
 ];
-const EXCLUDED_FORMAT_PATTERN = /\bBH\b|\bCAP\b|Hackmons|STABmons|Almost Any Ability|Godly Gift|Partners in Crime/i;
+const EXCLUDED_FORMAT_PATTERN = /\bBH\b|\bCAP\b|\bINH\b|Hackmons|Inheritance|STABmons|Almost Any Ability|Godly Gift|Partners in Crime/i;
+const BANNED_FALLBACK_MOVES = new Set([
+  'Hidden Power',
+  'Pursuit',
+  'Return',
+  'Tera Blast',
+]);
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -108,6 +115,33 @@ function baseNameForMega(pokemonName) {
   if (pokemonName.endsWith('-Mega-Y')) return pokemonName.replace('-Mega-Y', '');
   if (pokemonName.endsWith('-Mega')) return pokemonName.replace('-Mega', '');
   return pokemonName;
+}
+
+function sourcePageName(pokemonName) {
+  return baseNameForMega(pokemonName)
+    .replace(/-Alola$/, '')
+    .replace(/-Galar$/, '')
+    .replace(/-Hisui$/, '')
+    .replace(/-Paldea-(Aqua|Blaze|Combat)$/, '')
+    .replace(/-(Wash|Heat|Frost|Fan|Mow)$/, '')
+    .replace(/-(Blade|Sunny|Rainy|Snowy|Antique|Masterpiece|Four|Busted|Hangry|Hero|Large|Small|Super|Dusk|Midnight|Fancy|Pokeball|Eternal|M|F)$/, '');
+}
+
+function splitMoveOptions(value) {
+  return String(value).split('/').map((part) => part.trim()).filter(Boolean);
+}
+
+function learnsetForPokemon(pokemonName, learnsets = {}) {
+  return learnsets[pokemonName]
+    ?? learnsets[baseNameForMega(pokemonName)]
+    ?? learnsets[sourcePageName(pokemonName)]
+    ?? [];
+}
+
+function moveAllowed(pokemonName, move, moveDetails, learnsets) {
+  const learnset = learnsetForPokemon(pokemonName, learnsets);
+  if (!moveDetails[move] || BANNED_FALLBACK_MOVES.has(move)) return false;
+  return !learnset.length || learnset.includes(move);
 }
 
 function megaItemCandidates(pokemonName, basicsByGen) {
@@ -207,7 +241,7 @@ function toLocalSet(set, source) {
   };
 }
 
-function generatedSet(pokemon, oldSets) {
+function generatedSet(pokemon, moveDetails, learnsets) {
   const special = pokemon.spa >= pokemon.atk + 15;
   const physical = pokemon.atk >= pokemon.spa + 15;
   const bulky = pokemon.hp + pokemon.def + pokemon.spd >= 280;
@@ -222,7 +256,7 @@ function generatedSet(pokemon, oldSets) {
     ability: pokemon.abilities?.[0] || '[ability]',
     nature: mode === 'special' ? 'Modest / Timid' : mode === 'physical' ? 'Adamant / Jolly' : 'Rash / Mild',
     evs: generatedSpSpread(mode),
-    moves: ['Primary STAB', 'Second STAB or coverage', 'Coverage for team gaps', 'Utility or setup'],
+    moves: legalMovePlan(pokemon, mode, moveDetails, learnsets),
     sourceIds: [SOURCE_IDS.generated],
   };
 }
@@ -242,6 +276,79 @@ function ensureUniqueSetIds(sets) {
     if (count === 0) return set;
     return { ...set, id: `${set.id}-${count + 1}` };
   });
+}
+
+function legalMovePlan(pokemon, mode, moveDetails, learnsets, used = []) {
+  const existing = new Set(used.flatMap(splitMoveOptions));
+  const candidates = learnsetForPokemon(pokemon.name, learnsets)
+    .filter((move) => moveAllowed(pokemon.name, move, moveDetails, learnsets))
+    .filter((move) => !existing.has(move))
+    .map((move) => ({
+      move,
+      score: generatedMoveScore(pokemon, mode, move, moveDetails[move]),
+    }))
+    .sort((a, b) => b.score - a.score || a.move.localeCompare(b.move));
+  return candidates.slice(0, 4).map(({ move }) => move);
+}
+
+function generatedMoveScore(pokemon, mode, move, details = {}) {
+  const text = `${move} ${details.effect ?? ''}`.toLowerCase();
+  let score = 0;
+  if (pokemon.types?.includes(details.type)) score += 35;
+  if (mode === 'special' && details.category === 'Special') score += 26;
+  if (mode === 'physical' && details.category === 'Physical') score += 26;
+  if (mode === 'mixed' && details.category !== 'Status') score += 18;
+  if (mode === 'bulky' && details.category === 'Status') score += 22;
+  if (/recover|restores|roost|slack off|synthesis|wish|protect|burn|paraly|poison|reflect|light screen|aurora veil|hazard|stealth rock|spikes|sticky web|will-o-wisp|thunder wave|toxic|leech seed/i.test(text)) score += 18;
+  if (/boost|raises|swords dance|calm mind|nasty plot|dragon dance|bulk up|shell smash/i.test(text)) score += 14;
+  score += Math.min(Number(details.power) || 0, 120) / 10;
+  score += Math.min(Number(details.accuracy) || 100, 100) / 50;
+  if (details.category === 'Status' && mode !== 'bulky') score -= 4;
+  if (BANNED_FALLBACK_MOVES.has(move)) score -= 100;
+  return score;
+}
+
+function generatedModeFromSet(set = {}, pokemon = {}) {
+  const haystack = `${set.id ?? ''} ${set.label ?? ''} ${set.role ?? ''}`.toLowerCase();
+  if (haystack.includes('bulky') || haystack.includes('wall') || haystack.includes('tank') || haystack.includes('support')) return 'bulky';
+  if (haystack.includes('special')) return 'special';
+  if (haystack.includes('physical') || haystack.includes('choice band')) return 'physical';
+  if ((pokemon.spa ?? 0) >= (pokemon.atk ?? 0) + 15) return 'special';
+  if ((pokemon.atk ?? 0) >= (pokemon.spa ?? 0) + 15) return 'physical';
+  return 'mixed';
+}
+
+function sanitizeSetMoves(set, pokemon, moveDetails, learnsets, source) {
+  const nextMoves = [];
+  const replacements = legalMovePlan(pokemon, generatedModeFromSet(set, pokemon), moveDetails, learnsets);
+
+  for (const slot of set.moves || []) {
+    const allowed = splitMoveOptions(slot)
+      .filter((move) => moveAllowed(pokemon.name, move, moveDetails, learnsets))
+      .filter((move) => !nextMoves.some((current) => splitMoveOptions(current).includes(move)));
+    if (allowed.length) {
+      nextMoves.push(allowed.join(' / '));
+      continue;
+    }
+
+    const replacement = replacements.find((move) => !nextMoves.some((current) => splitMoveOptions(current).includes(move)));
+    if (replacement) nextMoves.push(replacement);
+  }
+
+  for (const move of replacements) {
+    if (nextMoves.length >= 4) break;
+    if (!nextMoves.some((current) => splitMoveOptions(current).includes(move))) nextMoves.push(move);
+  }
+
+  const changed = JSON.stringify(nextMoves) !== JSON.stringify(set.moves);
+  return {
+    ...set,
+    moves: nextMoves.slice(0, 4),
+    ...(changed ? { championsAdjusted: true } : {}),
+    sourceIds: changed && source === 'sv'
+      ? [...new Set([...(set.sourceIds ?? []), SOURCE_IDS.champions])]
+      : set.sourceIds,
+  };
 }
 
 function collectMoveNames(sets) {
@@ -273,10 +380,11 @@ function toMoveDetails(move) {
 }
 
 async function main() {
-  const [pokemonData, oldMovesetsData, oldMovesData] = await Promise.all([
+  const [pokemonData, oldMovesetsData, oldMovesData, learnsetData] = await Promise.all([
     fs.readFile(POKEMON_PATH, 'utf8').then(JSON.parse),
     fs.readFile(MOVESETS_PATH, 'utf8').then(JSON.parse),
     fs.readFile(MOVES_PATH, 'utf8').then(JSON.parse),
+    fs.readFile(LEARNSETS_PATH, 'utf8').then(JSON.parse),
   ]);
 
   const basicsByGen = {
@@ -284,6 +392,14 @@ async function main() {
     sv: await rpc('dump-basics', { gen: 'sv' }),
   };
 
+  const moveDetails = { ...(oldMovesData.moves || {}) };
+  for (const gen of ['champions', 'sv']) {
+    for (const move of basicsByGen[gen].moves || []) {
+      moveDetails[move.name] = toMoveDetails(move);
+    }
+  }
+
+  const learnsets = learnsetData.learnsets ?? {};
   const nextSets = {};
   const stats = { champions: 0, sv: 0, generated: 0, errors: [] };
 
@@ -300,7 +416,9 @@ async function main() {
       const championsBaseSets = baseName === pokemon.name ? [] : matchingSets(flattenStrategies(championsBasePayload), pokemon.name, megaItems);
       const allChampionsSets = [...championsSets, ...championsBaseSets];
       if (allChampionsSets.length) {
-        nextSets[pokemon.name] = ensureUniqueSetIds(allChampionsSets.map((set) => toLocalSet(set, 'champions')));
+        nextSets[pokemon.name] = ensureUniqueSetIds(allChampionsSets
+          .map((set) => sanitizeSetMoves(toLocalSet(set, 'champions'), pokemon, moveDetails, learnsets, 'champions'))
+          .filter((set) => set.moves.length > 0));
         stats.champions += nextSets[pokemon.name].length;
       } else {
         const svPayload = await rpc('dump-pokemon', { gen: 'sv', alias: alias(pokemon.name), language: 'en' });
@@ -311,16 +429,20 @@ async function main() {
         const svBaseSets = baseName === pokemon.name ? [] : matchingSets(flattenStrategies(svBasePayload), pokemon.name, megaItems);
         const allSvSets = [...svSets, ...svBaseSets];
         if (allSvSets.length) {
-          nextSets[pokemon.name] = ensureUniqueSetIds(allSvSets.map((set) => toLocalSet(set, 'sv')));
-          stats.sv += nextSets[pokemon.name].length;
+          const sanitized = allSvSets
+            .map((set) => sanitizeSetMoves(toLocalSet(set, 'sv'), pokemon, moveDetails, learnsets, 'sv'))
+            .filter((set) => set.moves.length > 0);
+          nextSets[pokemon.name] = ensureUniqueSetIds(sanitized.length ? sanitized : [generatedSet(pokemon, moveDetails, learnsets)]);
+          if (sanitized.length) stats.sv += nextSets[pokemon.name].length;
+          else stats.generated += 1;
         } else {
-          nextSets[pokemon.name] = [generatedSet(pokemon, oldMovesetsData.sets?.[pokemon.name])];
+          nextSets[pokemon.name] = [generatedSet(pokemon, moveDetails, learnsets)];
           stats.generated += 1;
         }
       }
     } catch (error) {
       stats.errors.push({ name: pokemon.name, error: error.message });
-      nextSets[pokemon.name] = [generatedSet(pokemon, oldMovesetsData.sets?.[pokemon.name])];
+      nextSets[pokemon.name] = [generatedSet(pokemon, moveDetails, learnsets)];
       stats.generated += 1;
     }
 
@@ -331,20 +453,16 @@ async function main() {
   }
 
   const moveNames = collectMoveNames(nextSets);
-  const moveDetails = { ...(oldMovesData.moves || {}) };
-  for (const gen of ['champions', 'sv']) {
-    for (const move of basicsByGen[gen].moves || []) {
-      if (moveNames.has(move.name) && !moveDetails[move.name]) {
-        moveDetails[move.name] = toMoveDetails(move);
-      }
-    }
-  }
+  const usedMoveDetails = Object.fromEntries([...moveNames]
+    .filter((move) => moveDetails[move])
+    .sort((a, b) => a.localeCompare(b))
+    .map((move) => [move, moveDetails[move]]));
 
   const generatedAt = new Date().toISOString().slice(0, 10);
   const movesetsOut = {
     generatedAt,
     sources: SOURCE_LIST,
-    note: 'Moveset database met bronprioriteit: Smogon Champions, daarna Smogon Scarlet/Violet, daarna lokale heuristiek.',
+    note: 'Moveset database met bronprioriteit: Smogon Champions, daarna Smogon Scarlet/Violet als skelet met Champions-legale moves, daarna lokale heuristiek uit Champions-learnsets.',
     stats,
     sets: Object.fromEntries(Object.entries(nextSets).sort(([a], [b]) => a.localeCompare(b))),
   };
@@ -352,7 +470,7 @@ async function main() {
     generatedAt,
     sources: SOURCE_LIST.filter((source) => source.id !== SOURCE_IDS.generated),
     note: 'Offline move reference for displayed sets. Champions move data is preferred; SV fills fallback-only moves.',
-    moves: Object.fromEntries(Object.entries(moveDetails).sort(([a], [b]) => a.localeCompare(b))),
+    moves: usedMoveDetails,
   };
 
   await fs.writeFile(MOVESETS_PATH, `${JSON.stringify(movesetsOut, null, 2)}\n`);

@@ -36,6 +36,7 @@ const { loadPokemonData, officialPokemon } = __data;
 const fetchChampionsMeta = __data.loadChampionsMeta;
 const fetchMovesets = __movesets.loadMovesets;
 const pureIsMoveBlockedForPokemon = __movesets.isMoveBlockedForPokemon;
+const purePokemonCanLearnMoves = __movesets.pokemonCanLearnMoves;
 const pureValidateMoveSlots = __movesets.validateMoveSlots;
 const {
   BATTLE_FORMATS,
@@ -53,6 +54,7 @@ const {
 const { renderApp, renderWithoutScrollJump } = __rendering;
 const { readJsonStorage, STORAGE_KEYS, writeJsonStorage } = __storage;
 const bindUiEvents = __uiEvents.bindEvents;
+const pureCounterRecommendations = __battleSimulation.counterRecommendations;
 const pureGenerateOpponentTeam = __battleSimulation.generateOpponentTeam;
 const { simulateBattle, selectedBattleMembers } = __battleSimulation;
 const pureBaseSpecies = __teamAnalysis.baseSpecies;
@@ -64,6 +66,7 @@ const pureNormalizeSpSpread = __teamAnalysis.normalizeSpSpread;
 const pureNormalizeSpValues = __teamAnalysis.normalizeSpValues;
 const pureParseSp = __teamAnalysis.parseSp;
 const purePokemonUsesMegaSlot = __teamAnalysis.pokemonUsesMegaSlot;
+const pureReorderTeam = __teamAnalysis.reorderTeam;
 const pureSpPartsFromValues = __teamAnalysis.spPartsFromValues;
 const pureTeamLegality = __teamAnalysis.teamLegality;
 const pureTeamTypeSummary = __teamAnalysis.teamTypeSummary;

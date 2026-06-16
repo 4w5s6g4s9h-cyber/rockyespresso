@@ -1,8 +1,8 @@
 {
   "source": "https://www.smogon.com/dex/champions/pokemon/",
-  "generatedAt": "2026-05-31T09:51:07.121Z",
+  "generatedAt": "2026-06-15T07:10:25.287Z",
   "counts": {
-    "pokemon": 281,
+    "pokemon": 285,
     "moves": 495,
     "abilities": 314,
     "items": 121
@@ -1606,7 +1606,11 @@
       "isNonstandard": "Standard",
       "dexNumber": 351,
       "evos": [],
-      "alts": []
+      "alts": [
+        "Castform-Sunny",
+        "Castform-Snowy",
+        "Castform-Rainy"
+      ]
     },
     {
       "name": "Banette",
@@ -3884,7 +3888,9 @@
       "isNonstandard": "Standard",
       "dexNumber": 681,
       "evos": [],
-      "alts": []
+      "alts": [
+        "Aegislash-Blade"
+      ]
     },
     {
       "name": "Aromatisse",
@@ -5474,7 +5480,7 @@
         "Mold Breaker"
       ],
       "formats": [
-        "UU"
+        "OU"
       ],
       "isNonstandard": "Standard",
       "dexNumber": 902,
@@ -6937,6 +6943,31 @@
       "alts": []
     },
     {
+      "name": "Castform-Rainy",
+      "hp": 70,
+      "atk": 70,
+      "def": 70,
+      "spa": 70,
+      "spd": 70,
+      "spe": 70,
+      "bst": 420,
+      "weight": 0.8,
+      "height": 0.3,
+      "types": [
+        "Water"
+      ],
+      "abilities": [
+        "Forecast"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": -1,
+      "evos": [],
+      "alts": []
+    },
+    {
       "name": "Charizard-Mega-Y",
       "hp": 78,
       "atk": 104,
@@ -7170,6 +7201,31 @@
       "alts": []
     },
     {
+      "name": "Castform-Sunny",
+      "hp": 70,
+      "atk": 70,
+      "def": 70,
+      "spa": 70,
+      "spd": 70,
+      "spe": 70,
+      "bst": 420,
+      "weight": 0.8,
+      "height": 0.3,
+      "types": [
+        "Fire"
+      ],
+      "abilities": [
+        "Forecast"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": -1,
+      "evos": [],
+      "alts": []
+    },
+    {
       "name": "Sableye-Mega",
       "hp": 50,
       "atk": 85,
@@ -7267,6 +7323,57 @@
       ],
       "formats": [
         "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": -1,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Aegislash-Blade",
+      "hp": 60,
+      "atk": 140,
+      "def": 50,
+      "spa": 140,
+      "spd": 50,
+      "spe": 60,
+      "bst": 500,
+      "weight": 53,
+      "height": 1.7,
+      "types": [
+        "Steel",
+        "Ghost"
+      ],
+      "abilities": [
+        "Stance Change"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": -1,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Castform-Snowy",
+      "hp": 70,
+      "atk": 70,
+      "def": 70,
+      "spa": 70,
+      "spd": 70,
+      "spe": 70,
+      "bst": 420,
+      "weight": 0.8,
+      "height": 0.3,
+      "types": [
+        "Ice"
+      ],
+      "abilities": [
+        "Forecast"
+      ],
+      "formats": [
+        "UU"
       ],
       "isNonstandard": "Standard",
       "dexNumber": -1,
