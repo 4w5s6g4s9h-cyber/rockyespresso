@@ -222,6 +222,49 @@ h1 {
   animation: status-spin 760ms linear infinite;
 }
 
+.global-busy {
+  position: fixed;
+  inset: 50% auto auto 50%;
+  z-index: 120;
+  display: inline-grid;
+  grid-template-columns: 28px auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--champions-purple-dark);
+  box-shadow: 0 18px 44px rgba(57, 47, 148, 0.18), 0 0 0 5px rgba(184, 255, 0, 0.2);
+  padding: 0 18px 0 14px;
+  font-size: 0.86rem;
+  font-weight: 950;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.96);
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.global-busy.active {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.global-busy[hidden] {
+  display: none;
+}
+
+.global-busy-spinner {
+  display: block;
+  width: 24px;
+  aspect-ratio: 1;
+  border: 4px solid rgba(103, 87, 219, 0.16);
+  border-top-color: var(--ui-action);
+  border-right-color: var(--ui-info);
+  border-radius: 50%;
+  animation: status-spin 640ms linear infinite;
+}
+
 @keyframes status-spin {
   to {
     transform: rotate(1turn);
@@ -230,6 +273,7 @@ h1 {
 
 @media (prefers-reduced-motion: reduce) {
   .status-spinner,
+  .global-busy-spinner,
   .team-analysis.is-busy::after,
   .battle-sim.is-busy::after {
     animation: none;
@@ -1519,9 +1563,9 @@ a {
 
 .quick-facts {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
-  margin: 12px 0;
+  margin: 10px 0;
 }
 
 .fact {
@@ -1544,11 +1588,42 @@ a {
   font-size: 0.92rem;
 }
 
+.detail-facts {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.detail-facts .fact {
+  display: grid;
+  align-content: center;
+  min-height: 48px;
+  padding: 6px 8px;
+}
+
+.detail-facts .fact.compact {
+  grid-column: span 2;
+}
+
+.detail-facts .fact.wide {
+  grid-column: span 4;
+}
+
+.detail-facts .fact span {
+  font-size: 0.58rem;
+  line-height: 1.05;
+}
+
+.detail-facts .fact strong {
+  margin-top: 1px;
+  font-size: 0.82rem;
+  line-height: 1.12;
+}
+
 .role-note {
-  margin: 8px 0 10px;
+  margin: 4px 0 8px;
   color: var(--muted);
-  font-size: 0.84rem;
-  line-height: 1.45;
+  font-size: 0.76rem;
+  line-height: 1.35;
 }
 
 .team-around-builder {
@@ -3392,22 +3467,6 @@ a,
   box-shadow: none;
 }
 
-.add-button[aria-busy="true"] {
-  border-color: rgba(184, 255, 0, 0.78);
-  background: linear-gradient(135deg, var(--ui-action), var(--ui-action-2));
-  color: var(--ui-action-ink);
-  animation: busyPulse 700ms ease-in-out infinite alternate;
-}
-
-@keyframes busyPulse {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.08);
-  }
-}
-
 .role-pill {
   border-color: rgba(240, 160, 24, 0.34);
   background: rgba(255, 209, 102, 0.2);
@@ -3732,11 +3791,18 @@ a,
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
-  justify-content: end;
+  justify-content: stretch;
 }
 
 .counter-target-controls select {
-  min-width: 180px;
+  width: 100%;
+  min-width: 0;
+}
+
+.battle-counter-panel .counter-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
 }
 
 .counter-list {
@@ -5581,6 +5647,79 @@ body:has(#teamView.active) .builder-team-quick-nav {
   padding: 7px;
 }
 
+.compare-overview {
+  display: grid;
+  grid-template-columns: repeat(var(--compare-count, 2), minmax(118px, 1fr));
+  gap: 7px;
+}
+
+.compare-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 6px 8px;
+  align-items: center;
+  min-width: 0;
+  border: 2px solid rgba(103, 87, 219, 0.14);
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(240, 248, 255, 0.82));
+  padding: 8px;
+}
+
+.compare-card.best {
+  border-color: rgba(26, 145, 98, 0.4);
+  background: linear-gradient(135deg, rgba(236, 255, 244, 0.95), rgba(255, 255, 255, 0.86));
+  box-shadow: inset 0 0 0 1px rgba(26, 145, 98, 0.13);
+}
+
+.compare-card-score {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: #25305f;
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 950;
+}
+
+.compare-card.best .compare-card-score {
+  background: #168356;
+}
+
+.compare-card span,
+.compare-card em {
+  min-width: 0;
+}
+
+.compare-card strong {
+  display: block;
+  overflow: hidden;
+  color: #25305f;
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compare-card small,
+.compare-card em {
+  color: var(--muted);
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 850;
+}
+
+.compare-card em {
+  grid-column: 1 / -1;
+}
+
+.compare-score-bar {
+  grid-column: 1 / -1;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #18a66a var(--score), rgba(103, 87, 219, 0.12) var(--score));
+}
+
 .compare-row {
   border-radius: var(--radius);
   background: rgba(103, 87, 219, 0.08);
@@ -5603,6 +5742,86 @@ body:has(#teamView.active) .builder-team-quick-nav {
   text-overflow: ellipsis;
   font-size: 0.66rem;
   line-height: 1.15;
+}
+
+.compare-row strong {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  min-height: 28px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 4px 5px;
+}
+
+.compare-row strong.best {
+  border-color: rgba(26, 145, 98, 0.34);
+  background: rgba(230, 255, 241, 0.82);
+  color: #126844;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72);
+}
+
+.compare-metric-row strong.best::after {
+  content: "beste";
+  border-radius: 999px;
+  background: rgba(26, 145, 98, 0.12);
+  color: #126844;
+  padding: 2px 5px;
+  font-size: 0.52rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.compare-metric-row strong small {
+  color: var(--muted);
+  font-size: 0.54rem;
+  font-weight: 850;
+}
+
+.compare-cell-compact {
+  align-content: start;
+}
+
+.compare-chip {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid rgba(103, 87, 219, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.76);
+  color: #25305f;
+  padding: 3px 6px;
+  font-size: 0.58rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.compare-chip.move {
+  border-color: color-mix(in srgb, var(--type-color, #7d8390) 42%, white);
+  background: color-mix(in srgb, var(--type-color, #7d8390) 13%, white);
+}
+
+.compare-chip span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compare-chip small {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.74);
+  color: var(--muted);
+  padding: 1px 4px;
+  font-size: 0.5rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.compare-chip.muted {
+  color: var(--muted);
 }
 
 .compare-name-row strong {
@@ -5713,6 +5932,41 @@ body:has(#teamView.active) .builder-team-quick-nav {
 
 .floating-compare.minimized .floating-compare-shell {
   width: min(460px, 100%);
+}
+
+@media (max-width: 760px) {
+  .compare-panel {
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .compare-head,
+  .compare-name-row,
+  .compare-row {
+    grid-template-columns: 66px repeat(var(--compare-count, 2), 128px);
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .compare-overview {
+    grid-template-columns: repeat(var(--compare-count, 2), 136px);
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .floating-compare-shell {
+    width: calc(100vw - 16px);
+    padding: 6px;
+  }
+
+  .floating-compare-bar {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
+
+  .floating-compare-bar span {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
 }
 
 .go-top-button {

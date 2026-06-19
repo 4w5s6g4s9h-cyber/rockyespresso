@@ -1566,6 +1566,7 @@ const teamView = document.querySelector("#teamView");
 const battleView = document.querySelector("#battleView");
 const battleSim = document.querySelector("#battleSim");
 const appStatus = document.querySelector("#appStatus");
+const globalBusy = document.querySelector("#globalBusy");
 const detailPanel = document.querySelector("#detailPanel");
 const teamSlots = document.querySelector("#teamSlots");
 const teamOverview = document.querySelector("#teamOverview");
@@ -1734,12 +1735,36 @@ function setAppStatus(title, note = "", visible = true) {
   if (noteEl) noteEl.textContent = note;
 }
 
+function showGlobalBusy(label = "Even rekenen") {
+  if (!globalBusy) return;
+  state.cache.globalBusyCount = (state.cache.globalBusyCount ?? 0) + 1;
+  globalBusy.hidden = false;
+  globalBusy.classList.add("active");
+  globalBusy.setAttribute("aria-busy", "true");
+  const labelEl = globalBusy.querySelector("strong");
+  if (labelEl) labelEl.textContent = label;
+}
+
+function hideGlobalBusy() {
+  if (!globalBusy) return;
+  state.cache.globalBusyCount = Math.max(0, (state.cache.globalBusyCount ?? 0) - 1);
+  if (state.cache.globalBusyCount > 0) return;
+  globalBusy.classList.remove("active");
+  globalBusy.setAttribute("aria-busy", "false");
+  window.setTimeout(() => {
+    if ((state.cache.globalBusyCount ?? 0) === 0) globalBusy.hidden = true;
+  }, 140);
+}
+
 function setBusy(element, busy = true, label = "") {
   if (!element) return;
+  const wasBusy = element.getAttribute("aria-busy") === "true";
   element.classList.toggle("is-busy", busy);
   element.setAttribute("aria-busy", String(busy));
   if (label) element.dataset.busyLabel = label;
   if (!busy) delete element.dataset.busyLabel;
+  if (busy && !wasBusy) showGlobalBusy(label || "Even rekenen");
+  if (!busy && wasBusy) hideGlobalBusy();
 }
 
 function clearBusySoon(element) {
@@ -2096,7 +2121,7 @@ function requiredPlanCandidate(anchor) {
   const missing = stylePlanChecks().filter((check) => !check.ok);
   if (!missing.length) return null;
   const priority = missing.find((check) => /drought|setter|weather/i.test(check.label))
-    ?? missing.find((check) => /speed|trick|rain|sun/i.test(check.label))
+    ?? missing.find((check) => /drizzle|sand stream|snow warning|trick room|chlorophyll|swift swim|slush rush|sand abuser|speed|pivot|status|recovery/i.test(check.label))
     ?? missing[0];
   const candidate = bestPlanCheckCandidate(priority);
   return candidate && candidate.name !== anchor.name ? candidate : null;
@@ -2109,7 +2134,10 @@ function teamAroundCandidateScore(pokemon, anchor) {
   let score = ultraTeamBaseScore(pokemon) + reasons.score * 45;
 
   if (teamStyleMatch(pokemon)) score += 90;
+  else if (stylePlanChecks().length) score -= 150;
   if (weatherConflictsWithStyle(pokemon)) score -= 180;
+  if (sunAntiSynergy(pokemon)) score -= 140;
+  if (weatherPlanAntiSynergy(pokemon)) score -= 160;
   if (build.status === "generated") score -= 70;
   if (needsValidationAsCore(pokemon, build) && !usesMegaSlot(pokemon, build)) score -= 120;
   if (["Support", "Bulky pivot", "Wall"].includes(role)) score += state.team.length < 3 ? 35 : 10;
@@ -2137,7 +2165,10 @@ function autoTeamCandidateScore(pokemon, anchor) {
   if (["Wall", "Bulky pivot"].includes(role)) score += 50;
   if (hasCuratedBuildData(pokemon)) score += 80;
   if (autoTeamStyleMatch(pokemon)) score += 90;
+  else if (stylePlanChecks().length) score -= 150;
   if (weatherConflictsWithStyle(pokemon)) score -= 180;
+  if (sunAntiSynergy(pokemon)) score -= 140;
+  if (weatherPlanAntiSynergy(pokemon)) score -= 160;
   if (needsValidationAsCore(pokemon) && !isMega(pokemon)) score -= 120;
   if (isMega(pokemon)) score += 35;
   if (["Support", "Bulky pivot", "Wall"].includes(role)) score += 28;
@@ -2172,14 +2203,14 @@ function autoTeamStyleMatch(pokemon, style = state.teamStyle) {
 
   if (style === "offense") return bestAttack >= 120 || pokemon.spe >= 100 || ["Sweeper", "Wallbreaker", "Speed control"].includes(role);
   if (style === "bulky") return bulk >= 290 || ["Wall", "Bulky pivot"].includes(role);
-  if (style === "rain") return hasAbility(pokemon, "Drizzle") || hasAbility(pokemon, "Swift Swim") || pokemon.types.some((type) => ["Water", "Electric", "Grass", "Steel"].includes(type));
-  if (style === "sun") return hasAbility(pokemon, "Drought") || hasAbility(pokemon, "Chlorophyll") || pokemon.types.some((type) => ["Fire", "Grass", "Ground", "Dragon"].includes(type));
+  if (style === "rain") return hasAbility(pokemon, "Drizzle") || isRainAbuser(pokemon) || isRainWaterPressure(pokemon) || coversRainPressureType(pokemon);
+  if (style === "sun") return hasAbility(pokemon, "Drought") || isChlorophyllAbuser(pokemon) || isSunFirePressure(pokemon) || pokemon.name === "Venusaur-Mega" || coversSunPressureType(pokemon);
   if (style === "trickroom") return pokemon.spe <= 65 && (bestAttack >= 105 || bulk >= 280);
   if (style === "doublesupport") return hasAbility(pokemon, "Intimidate") || hasAbility(pokemon, "Prankster") || hasAbility(pokemon, "Friend Guard") || ["Bulky pivot", "Wall"].includes(role);
   if (style === "hyperoffense") return bestAttack >= 125 || pokemon.spe >= 105;
-  if (style === "voltturn") return hasAbility(pokemon, "Regenerator") || hasAbility(pokemon, "Intimidate") || (pokemon.spe >= 100 && bulk >= 260);
-  if (style === "sand") return hasAbility(pokemon, "Sand Stream") || hasAbility(pokemon, "Sand Rush") || hasAbility(pokemon, "Sand Force") || pokemon.types.some((type) => ["Rock", "Ground", "Steel"].includes(type));
-  if (style === "snow") return hasAbility(pokemon, "Snow Warning") || hasAbility(pokemon, "Slush Rush") || pokemon.types.includes("Ice") || (bulk >= 285 && pokemon.types.some((type) => ["Water", "Steel"].includes(type)));
+  if (style === "voltturn") return hasPivotMove(pokemon) || hasAbility(pokemon, "Regenerator") || hasAbility(pokemon, "Intimidate");
+  if (style === "sand") return hasAbility(pokemon, "Sand Stream") || isSandAbuser(pokemon) || isSandBreaker(pokemon) || coversSandPressureType(pokemon);
+  if (style === "snow") return hasAbility(pokemon, "Snow Warning") || isSnowAbuser(pokemon) || isSnowIcePressure(pokemon) || coversSnowPressureType(pokemon);
   if (style === "stall") return bulk >= 305 || hasAbility(pokemon, "Regenerator") || hasAbility(pokemon, "Unaware") || hasAbility(pokemon, "Poison Heal") || hasAbility(pokemon, "Magic Guard");
   if (style === "antiMeta") return pokemon.spe >= 100 || bulk >= 285 || pokemon.types.some((type) => ["Steel", "Fairy", "Ground", "Dark", "Ghost"].includes(type));
   return true;
@@ -3206,22 +3237,19 @@ function createCard(pokemon) {
 
   addButton.addEventListener("mousedown", (event) => event.preventDefault());
   addButton.addEventListener("click", () => {
-    addButton.textContent = "…";
-    addButton.setAttribute("aria-busy", "true");
     addButton.disabled = true;
+    showGlobalBusy(`Voeg ${displayPokemonName(pokemon)} toe`);
     renderWithoutScrollJump(() => {
       state.selected = pokemon;
       const added = addToTeam(pokemon, { deferRender: true });
       if (!added) {
-        addButton.textContent = "+";
-        addButton.removeAttribute("aria-busy");
+        hideGlobalBusy();
         addButton.disabled = false;
         return;
       }
       window.setTimeout(() => {
         const currentLegality = teamLegality(pokemon);
-        addButton.textContent = "+";
-        addButton.removeAttribute("aria-busy");
+        hideGlobalBusy();
         addButton.disabled = !currentLegality.ok;
         addButton.title = currentLegality.ok ? "Toevoegen aan team" : currentLegality.reason;
       }, 700);
@@ -3336,13 +3364,13 @@ function renderDetail(pokemon) {
     </div>
     ${detailTypeMatchupsHtml(pokemon)}
     ${teamAroundBuilderHtml(pokemon)}
-    <div class="quick-facts">
-      <div class="fact"><span>BST</span><strong>${pokemon.bst}</strong></div>
-      <div class="fact"><span>Hoogte</span><strong>${formatNumber(pokemon.height)} m</strong></div>
-      <div class="fact"><span>Gewicht</span><strong>${formatNumber(pokemon.weight)} kg</strong></div>
+    <div class="quick-facts detail-facts">
+      <div class="fact compact"><span>BST</span><strong>${pokemon.bst}</strong></div>
+      <div class="fact compact"><span>Hoogte</span><strong>${formatNumber(pokemon.height)} m</strong></div>
+      <div class="fact compact"><span>Gewicht</span><strong>${formatNumber(pokemon.weight)} kg</strong></div>
+      <div class="fact wide"><span>Abilities</span><strong>${escapeHtml(pokemon.abilities.join(" / "))}</strong></div>
+      <div class="fact compact"><span>Rol</span><strong>${escapeHtml(roleFor(pokemon).label)}</strong></div>
     </div>
-    <div class="fact"><span>Abilities</span><strong>${escapeHtml(pokemon.abilities.join(" / "))}</strong></div>
-    <div class="fact"><span>Rol</span><strong>${escapeHtml(roleFor(pokemon).label)}</strong></div>
     <p class="role-note">${escapeHtml(roleFor(pokemon).description)}</p>
     ${buildAdviceHtml(pokemon)}
     ${trainingOverviewHtml(pokemon)}
@@ -5549,6 +5577,9 @@ function createComparePanel() {
   }
 
   panel.style.setProperty("--compare-count", selected.length);
+  const profiles = selected.map(compareProfile);
+  const best = compareBestValues(profiles);
+  const styleLabel = TEAM_STYLES[state.teamStyle]?.label ?? "Teamplan";
 
   const names = document.createElement("div");
   names.className = "compare-name-row";
@@ -5573,29 +5604,189 @@ function createComparePanel() {
   });
   panel.append(names);
 
+  const overview = document.createElement("div");
+  overview.className = "compare-overview";
+  overview.innerHTML = profiles.map((profile) => `
+    <article class="compare-card${profile.fitScore === best.fitScore ? " best" : ""}">
+      <span class="compare-card-score">${escapeHtml(profile.fitScore)}</span>
+      <span>
+        <strong>${escapeHtml(displayPokemonName(profile.pokemon))}</strong>
+        <small>${escapeHtml(styleLabel)} fit</small>
+      </span>
+      <span class="compare-score-bar" style="--score:${Math.max(8, Math.min(100, profile.fitScore))}%"></span>
+      <em>${escapeHtml(profile.decision)}</em>
+    </article>
+  `).join("");
+  panel.append(overview);
+
   const rows = [
-    ["Rol", selected.map((pokemon) => displayRoleForBuild(pokemon))],
-    ["Typing", selected.map((pokemon) => pokemon.types.join(" / "))],
-    ["Ability", selected.map((pokemon) => preferredAbility(pokemon))],
-    ["BST", selected.map((pokemon) => pokemon.bst)],
-    ["Aanval", selected.map((pokemon) => Math.max(pokemon.atk, pokemon.spa))],
-    ["Bulk", selected.map((pokemon) => pokemon.hp + pokemon.def + pokemon.spd)],
-    ["Speed", selected.map((pokemon) => pokemon.spe)],
-    ["Stats", selected.map((pokemon) => `${pokemon.hp}/${pokemon.atk}/${pokemon.def}/${pokemon.spa}/${pokemon.spd}/${pokemon.spe}`)],
-    ["Set", selected.map((pokemon) => setQualityLabel(selectedBuild(pokemon)))],
-    ["Item", selected.map((pokemon) => selectedBuild(pokemon).item || "n.v.t.")],
-    ["Teamfit", selected.map((pokemon) => suggestionReasons(pokemon).reasons[0] ?? formatFitLabel(pokemon))]
+    compareRow("Rol", profiles, (profile) => displayRoleForBuild(profile.pokemon, profile.build)),
+    compareRow("Typing", profiles, (profile) => profile.pokemon.types.map(typeChipHtml).join(" "), { html: true }),
+    compareRow("Ability", profiles, (profile) => profile.build.ability || preferredAbility(profile.pokemon)),
+    compareRow("Teamfit", profiles, (profile) => profile.fitSummary, { bestKey: "fitScore" }),
+    compareRow("Matchup", profiles, (profile) => profile.matchupSummary, { className: "compare-cell-compact" }),
+    compareRow("Moves", profiles, (profile) => profile.moveSummary, { html: true, className: "compare-cell-compact" }),
+    compareRow("Set", profiles, (profile) => `${setQualityLabel(profile.build)} · ${profile.build.item || "n.v.t."}`),
+    compareRow("Aanval", profiles, (profile) => profile.offense, { bestKey: "offense", metric: true }),
+    compareRow("Bulk", profiles, (profile) => profile.bulk, { bestKey: "bulk", metric: true }),
+    compareRow("Speed", profiles, (profile) => profile.speed, { bestKey: "speed", metric: true, reverseBest: state.teamStyle === "trickroom" }),
+    compareRow("Stats", profiles, (profile) => `${profile.pokemon.hp}/${profile.pokemon.atk}/${profile.pokemon.def}/${profile.pokemon.spa}/${profile.pokemon.spd}/${profile.pokemon.spe}`),
+    compareRow("Let op", profiles, (profile) => profile.watchout)
   ];
-  rows.forEach(([label, values]) => {
+  rows.forEach((rowConfig) => {
     const row = document.createElement("div");
-    row.className = "compare-row";
-    row.innerHTML = `
-      <span>${escapeHtml(label)}</span>
-      ${values.map((value) => `<strong>${escapeHtml(value)}</strong>`).join("")}
-    `;
+    row.className = `compare-row${rowConfig.metric ? " compare-metric-row" : ""}`;
+    row.innerHTML = compareRowHtml(rowConfig, best);
     panel.append(row);
   });
   return panel;
+}
+
+function compareProfile(pokemon) {
+  const build = selectedBuild(pokemon);
+  const offense = Math.max(pokemon.atk, pokemon.spa);
+  const bulk = pokemon.hp + pokemon.def + pokemon.spd;
+  const speed = pokemon.spe;
+  const fit = suggestionReasons(pokemon);
+  const fitScore = compareFitScore(pokemon, build, fit);
+  const fitSummary = compareFitSummary(pokemon, fit);
+  const matchupSummary = compareMatchupSummary(pokemon);
+  const moveSummary = compareMoveSummary(pokemon, build);
+  const watchout = compareWatchout(pokemon, build);
+  const decision = compareDecision({ pokemon, build, offense, bulk, speed, fitScore, watchout });
+  return { pokemon, build, offense, bulk, speed, fitScore, fitSummary, matchupSummary, moveSummary, watchout, decision };
+}
+
+function compareFitScore(pokemon, build, fit) {
+  const offense = Math.max(pokemon.atk, pokemon.spa);
+  const bulk = pokemon.hp + pokemon.def + pokemon.spd;
+  let score = 35 + fit.score * 8;
+  if (teamStyleMatch(pokemon)) score += 18;
+  if (build.status === "smogon-champions") score += 12;
+  else if (build.status === "smogon-sv") score += 8;
+  else if (build.status === "generated") score -= 12;
+  if (state.teamStyle === "trickroom") score += Math.max(0, 90 - pokemon.spe) * 0.28;
+  else score += Math.max(0, pokemon.spe - 70) * 0.12;
+  score += Math.max(0, offense - 95) * 0.14;
+  score += Math.max(0, bulk - 250) * 0.08;
+  if (weatherConflictsWithStyle(pokemon)) score -= 22;
+  if (needsValidationAsCore(pokemon, build)) score -= 10;
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
+
+function compareFitSummary(pokemon, fit) {
+  const reasons = fit.reasons.length ? fit.reasons : [formatFitLabel(pokemon)];
+  return reasons.slice(0, 2).join(" · ");
+}
+
+function compareMatchupSummary(pokemon) {
+  if (state.team.length) {
+    const covered = teamTypeSummary()
+      .filter((item) => item.weak >= 2 && defensiveMultiplier(pokemon.types, item.type) < 1)
+      .map((item) => defensiveMultiplier(pokemon.types, item.type) === 0 ? `${item.type} immuun` : `${item.type} resist`);
+    if (covered.length) return covered.slice(0, 3).join(" · ");
+  }
+  const profile = compareTypeProfile(pokemon);
+  const positives = [...profile.immunities.map((type) => `${type} immuun`), ...profile.resists.map((type) => `${type} resist`)];
+  if (positives.length) return positives.slice(0, 3).join(" · ");
+  return "weinig defensieve dekking";
+}
+
+function compareTypeProfile(pokemon) {
+  const matchups = TYPES.map((type) => ({ type, multiplier: defensiveMultiplier(pokemon.types, type) }));
+  return {
+    weaknesses: matchups.filter((item) => item.multiplier > 1).sort((a, b) => b.multiplier - a.multiplier).map((item) => item.type),
+    resists: matchups.filter((item) => item.multiplier > 0 && item.multiplier < 1).sort((a, b) => a.multiplier - b.multiplier).map((item) => item.type),
+    immunities: matchups.filter((item) => item.multiplier === 0).map((item) => item.type)
+  };
+}
+
+function compareMoveSummary(pokemon, build) {
+  const moves = (build.moves ?? []).slice(0, 4);
+  if (!moves.length) return "<span class=\"compare-chip muted\">geen set</span>";
+  return moves.map((move) => {
+    const label = compareMoveLabel(pokemon, move);
+    const details = moveDetails(move);
+    const type = details.type && details.type !== "Unknown" ? details.type : "";
+    const typeStyle = type ? ` style="--type-color:${TYPE_COLORS[type] || "#7d8390"}"` : "";
+    return `<span class="compare-chip move"${typeStyle}><span>${escapeHtml(label)}</span><small>${escapeHtml(compareMoveTag(pokemon, move, details))}</small></span>`;
+  }).join("");
+}
+
+function compareMoveLabel(pokemon, move) {
+  const options = moveOptionsForDisplay(move);
+  if (options.length > 1) return options.slice(0, 2).join("/");
+  return options[0] ?? String(move);
+}
+
+function compareMoveTag(pokemon, move, details) {
+  const text = String(move).toLowerCase();
+  if (pokemon.types.includes(details.type)) return "STAB";
+  if (/swords dance|dragon dance|nasty plot|calm mind|quiver dance|shell smash|growth|bulk up|curse/i.test(move)) return "setup";
+  if (/recover|roost|slack off|synthesis|wish|rest/i.test(move)) return "recovery";
+  if (/u-turn|volt switch|flip turn|parting shot/i.test(move)) return "pivot";
+  if (/thunder wave|will-o-wisp|toxic|spore|sleep powder|stun spore/i.test(move)) return "status";
+  if (/protect|tailwind|icy wind|fake out|helping hand|stealth rock|spikes|taunt|defog|rapid spin/i.test(text)) return "utility";
+  if (details.category === "Status") return "utility";
+  return "coverage";
+}
+
+function compareWatchout(pokemon, build) {
+  const issues = teamMemberIssues(pokemon, build);
+  if (weatherConflictsWithStyle(pokemon)) return "weather-conflict";
+  if (issues.length) return issues.slice(0, 2).join(" · ");
+  const profile = compareTypeProfile(pokemon);
+  if (profile.weaknesses.length) return `zwak voor ${profile.weaknesses.slice(0, 2).join(" / ")}`;
+  return "geen grote rode vlag";
+}
+
+function compareDecision(profile) {
+  if (weatherConflictsWithStyle(profile.pokemon)) return "Niet kiezen voor dit weerplan";
+  if (profile.fitScore >= 78) return "Beste kandidaat voor dit plan";
+  if (state.teamStyle === "trickroom" && profile.speed <= 65) return "Sterk onder Trick Room";
+  if (profile.speed >= 105 && profile.offense >= 110) return "Snel drukmiddel";
+  if (profile.bulk >= 305) return "Veilige switch-in";
+  if (profile.offense >= 130) return "Breekt walls open";
+  if (profile.build.status === "generated") return "Eerst set controleren";
+  return "Flexibele keuze";
+}
+
+function compareBestValues(profiles) {
+  return {
+    offense: Math.max(...profiles.map((profile) => profile.offense)),
+    bulk: Math.max(...profiles.map((profile) => profile.bulk)),
+    speed: state.teamStyle === "trickroom"
+      ? Math.min(...profiles.map((profile) => profile.speed))
+      : Math.max(...profiles.map((profile) => profile.speed)),
+    fitScore: Math.max(...profiles.map((profile) => profile.fitScore))
+  };
+}
+
+function compareRow(label, profiles, valueForProfile, options = {}) {
+  return {
+    label,
+    values: profiles.map((profile) => ({
+      profile,
+      value: valueForProfile(profile)
+    })),
+    ...options
+  };
+}
+
+function compareRowHtml(rowConfig, best) {
+  return `
+    <span>${escapeHtml(rowConfig.label)}</span>
+    ${rowConfig.values.map(({ profile, value }) => {
+      const isBest = rowConfig.bestKey && profile[rowConfig.bestKey] === best[rowConfig.bestKey];
+      const classes = [
+        isBest ? "best" : "",
+        rowConfig.className ?? ""
+      ].filter(Boolean).join(" ");
+      const content = rowConfig.html ? value : escapeHtml(value);
+      const metric = rowConfig.metric ? `<small>${rowConfig.reverseBest ? "laag is beter" : "hoog is beter"}</small>` : "";
+      return `<strong class="${classes}">${content}${metric}</strong>`;
+    }).join("")}
+  `;
 }
 
 function renderFloatingCompare() {
@@ -5840,6 +6031,9 @@ function completionCandidateScore(pokemon, mode) {
   score += suggestionReasons(pokemon).score * 45;
   score += pokemon.bst / 8;
   if (teamStyleMatch(pokemon)) score += 70;
+  else if (stylePlanChecks().length) score -= 150;
+  if (sunAntiSynergy(pokemon)) score -= 140;
+  if (weatherPlanAntiSynergy(pokemon)) score -= 160;
   if (selectedBuild(pokemon).status === "generated") score -= 85;
   if (needsValidationAsCore(pokemon) && !usesMegaSlot(pokemon)) score -= 140;
   if (mode === "safe") {
@@ -5997,7 +6191,7 @@ function computeTeamScores(team) {
   const typeRisk = teamTypeSummary(team).filter((item) => item.weak >= 2 && item.resist + item.immune === 0).length;
   const threats = relevantThreats().slice(0, 6);
   const coveredThreats = threats.filter((threat) => threatAnswerStatusForTeam(threat, team).ok).length;
-  const core = sunCoreScore(team);
+  const core = styleCoreScore(team);
   const score = (value, label, note) => ({
     label,
     value: Math.max(0, Math.min(100, Math.round(value))),
@@ -6011,7 +6205,7 @@ function computeTeamScores(team) {
     score(targets.bulky ? balance.bulky / targets.bulky * 100 : 100, "Bulk", `${balance.bulky}/${targets.bulky} bulky`),
     score(100 - typeRisk * 25, "Type-risico", typeRisk ? `${typeRisk} onbeantwoorde gedeelde zwakte${typeRisk === 1 ? "" : "s"}` : "Geen grote gedeelde zwakte"),
     score(threats.length ? coveredThreats / threats.length * 100 : 100, "Threats", `${coveredThreats}/${threats.length || 0} checks afgedekt`)
-  ].concat(state.teamStyle === "sun" ? [score(core.value, "Sun-core", core.note)] : []);
+  ].concat(core.active ? [score(core.value, `${TEAM_STYLES[state.teamStyle].label}-kern`, core.note)] : []);
 }
 
 function teamScoreTotalFor(team) {
@@ -6126,24 +6320,120 @@ function bestPlanCheckCandidate(check) {
   if (/drought/i.test(check.label)) {
     return legalFirst(byNames(["Charizard-Mega-Y", "Torkoal", "Ninetales"]).concat(available.filter((pokemon) => hasAbility(pokemon, "Drought"))));
   }
-  if (/venusaur/i.test(check.label)) {
-    return legalFirst(byNames(["Venusaur"]).concat(available.filter((pokemon) => hasAbility(pokemon, "Chlorophyll"))));
+  if (/drizzle/i.test(check.label)) {
+    return legalFirst(byNames(["Pelipper", "Politoed"]).concat(available.filter((pokemon) => hasAbility(pokemon, "Drizzle"))));
+  }
+  if (/sand stream/i.test(check.label)) {
+    return legalFirst(byNames(["Tyranitar", "Hippowdon"]).concat(available.filter((pokemon) => hasAbility(pokemon, "Sand Stream"))));
+  }
+  if (/snow warning/i.test(check.label)) {
+    return legalFirst(byNames(["Abomasnow", "Abomasnow-Mega", "Aurorus"]).concat(available.filter((pokemon) => hasAbility(pokemon, "Snow Warning"))));
+  }
+  if (/chlorophyll/i.test(check.label)) {
+    return legalFirst(byNames(["Venusaur", "Victreebel", "Scovillain", "Malaconda"]).concat(available.filter(isChlorophyllAbuser)));
+  }
+  if (/swift swim/i.test(check.label)) {
+    return legalFirst(byNames(["Basculegion", "Basculegion-F", "Floatoy", "Gyarados"]).concat(available.filter(isRainAbuser)));
+  }
+  if (/rain water-druk|water-druk/i.test(check.label)) {
+    return legalFirst(available.filter(isRainWaterPressure));
+  }
+  if (/sand abuser/i.test(check.label)) {
+    return legalFirst(byNames(["Excadrill", "Excadrill-Mega", "Saharaja", "Lycanroc"]).concat(available.filter(isSandAbuser)));
+  }
+  if (/sand breaker/i.test(check.label)) {
+    return legalFirst(available.filter(isSandBreaker));
+  }
+  if (/slush rush|snow abuser/i.test(check.label)) {
+    return legalFirst(byNames(["Beartic", "Arctozolt", "Arctovish"]).concat(available.filter(isSnowAbuser)));
+  }
+  if (/ice-druk/i.test(check.label)) {
+    return legalFirst(available.filter(isSnowIcePressure));
+  }
+  if (/trick room setter/i.test(check.label)) {
+    return legalFirst(byNames(["Hatterene", "Reuniclus", "Slowking", "Slowbro", "Oranguru"]).concat(available.filter(isTrickRoomSetter)));
+  }
+  if (/trick room abuser/i.test(check.label)) {
+    return legalFirst(available.filter(isTrickRoomAbuser));
+  }
+  if (/speed-control support/i.test(check.label)) {
+    return legalFirst(available.filter(hasTeamSpeedControl));
+  }
+  if (/double utility/i.test(check.label)) {
+    return legalFirst(available.filter(isDoubleUtility));
+  }
+  if (/pivot-kern/i.test(check.label)) {
+    return legalFirst(available.filter(hasPivotMove));
+  }
+  if (/setupdruk/i.test(check.label)) {
+    return legalFirst(available.filter(isSetupPressure));
+  }
+  if (/recovery-kern/i.test(check.label)) {
+    return legalFirst(available.filter(hasReliableRecovery));
+  }
+  if (/status\/chip/i.test(check.label)) {
+    return legalFirst(available.filter(hasStatusOrChip));
   }
   if (/fire/i.test(check.label)) {
-    return legalFirst(available.filter((pokemon) => pokemon.types.includes("Fire") || selectedBuild(pokemon).moves?.some((move) =>
-      moveOptionsForDisplay(move).some((option) => moveDetails(option).type === "Fire")
-    )));
+    return legalFirst(available.filter(isSunFirePressure));
   }
-  const typeMatch = check.label.match(/^(Rock|Water|Dragon)-antwoord$/);
+  const typeMatch = check.label.match(/^(Rock|Water|Dragon|Electric|Grass|Fighting|Fire|Steel|Ground|Fairy)-antwoord$/);
   if (typeMatch) {
     const type = typeMatch[1];
-    return legalFirst(available.filter((pokemon) => defensiveMultiplier(pokemon.types, type) < 1));
+    return legalFirst(available.filter((pokemon) => isPlanTypeAnswer(pokemon, type)));
   }
   return null;
 }
 
 function planCandidateScore(pokemon) {
-  return teamAroundCandidateScore(pokemon, state.team[0] ?? state.selected ?? pokemon) + pokemon.bst / 10;
+  let score = teamAroundCandidateScore(pokemon, state.team[0] ?? state.selected ?? pokemon) + pokemon.bst / 10;
+  if (state.teamStyle === "sun") {
+    if (hasAbility(pokemon, "Drought")) score += 220;
+    if (isChlorophyllAbuser(pokemon)) score += 210;
+    if (isSunFirePressure(pokemon)) score += 150;
+    if (coversSunPressureType(pokemon)) score += 90;
+  }
+  if (state.teamStyle === "rain") {
+    if (hasAbility(pokemon, "Drizzle")) score += 220;
+    if (isRainAbuser(pokemon)) score += 210;
+    if (isRainWaterPressure(pokemon)) score += 150;
+    if (coversRainPressureType(pokemon)) score += 90;
+  }
+  if (state.teamStyle === "sand") {
+    if (hasAbility(pokemon, "Sand Stream")) score += 220;
+    if (isSandAbuser(pokemon)) score += 200;
+    if (isSandBreaker(pokemon)) score += 135;
+    if (coversSandPressureType(pokemon)) score += 90;
+  }
+  if (state.teamStyle === "snow") {
+    if (hasAbility(pokemon, "Snow Warning")) score += 220;
+    if (isSnowAbuser(pokemon)) score += 200;
+    if (isSnowIcePressure(pokemon)) score += 140;
+    if (coversSnowPressureType(pokemon)) score += 90;
+  }
+  if (state.teamStyle === "trickroom") {
+    if (isTrickRoomSetter(pokemon)) score += 220;
+    if (isTrickRoomAbuser(pokemon)) score += 190;
+    if (pokemon.spe >= 100) score -= 120;
+  }
+  if (state.teamStyle === "doublesupport") {
+    if (isDoubleUtility(pokemon)) score += 160;
+    if (hasTeamSpeedControl(pokemon)) score += 150;
+    if (hasMoveInBuild(pokemon, "Protect")) score += 70;
+  }
+  if (state.teamStyle === "voltturn") {
+    if (hasPivotMove(pokemon)) score += 180;
+    if (hasAbility(pokemon, "Regenerator") || hasAbility(pokemon, "Intimidate")) score += 80;
+  }
+  if (state.teamStyle === "hyperoffense") {
+    if (isSetupPressure(pokemon)) score += 180;
+    if (hasEntryPressure(pokemon)) score += 100;
+  }
+  if (state.teamStyle === "stall") {
+    if (hasReliableRecovery(pokemon)) score += 170;
+    if (hasStatusOrChip(pokemon)) score += 125;
+  }
+  return score;
 }
 
 function createNeedAction(pokemon, reason) {
@@ -6210,18 +6500,51 @@ function teamMemberKeepScore(pokemon) {
 }
 
 function stylePlanChecks() {
-  if (state.teamStyle !== "sun") return [];
-  return sunPlanChecks();
+  if (state.teamStyle === "rain") return rainPlanChecks();
+  if (state.teamStyle === "sun") return sunPlanChecks();
+  if (state.teamStyle === "sand") return sandPlanChecks();
+  if (state.teamStyle === "snow") return snowPlanChecks();
+  if (state.teamStyle === "trickroom") return trickRoomPlanChecks();
+  if (state.teamStyle === "doublesupport") return doubleSupportPlanChecks();
+  if (state.teamStyle === "hyperoffense") return hyperOffensePlanChecks();
+  if (state.teamStyle === "voltturn") return voltTurnPlanChecks();
+  if (state.teamStyle === "stall") return stallPlanChecks();
+  return [];
+}
+
+function rainPlanChecks(team = state.team) {
+  const members = team;
+  const drizzle = members.filter((pokemon) => hasAbility(pokemon, "Drizzle"));
+  const abusers = members.filter(isRainAbuser);
+  const waterPressure = members.filter(isRainWaterPressure);
+  const conflict = weatherConflictMembers(members, "rain");
+  return [
+    {
+      ok: drizzle.length > 0,
+      label: "Drizzle setter",
+      note: drizzle.length ? `${drizzle.map(displayPokemonName).join(", ")} zet rain.` : "Voeg Pelipper of Politoed toe voor betrouwbare rain."
+    },
+    {
+      ok: abusers.length > 0,
+      label: "Swift Swim-abuser",
+      note: abusers.length ? `${abusers.map(displayPokemonName).slice(0, 2).join(", ")} kan rain omzetten in tempo.` : "Rain wil minstens een echte Swift Swim- of rain-abuser."
+    },
+    {
+      ok: waterPressure.length > 0,
+      label: "Rain water-druk",
+      note: waterPressure.length ? `${waterPressure.map(displayPokemonName).slice(0, 2).join(", ")} profiteert offensief van rain.` : "Voeg een Water-breaker of sterke Water-STAB toe."
+    },
+    ...["Electric", "Grass"].map((type) => planTypeCheck(members, type)),
+    weatherConflictCheck(conflict, "Rain")
+  ];
 }
 
 function sunPlanChecks(team = state.team) {
   const members = team;
   const drought = members.filter((pokemon) => hasAbility(pokemon, "Drought"));
-  const chlorophyll = members.filter((pokemon) => hasAbility(pokemon, "Chlorophyll") && !usesMegaSlot(pokemon));
+  const chlorophyll = members.filter(isChlorophyllAbuser);
   const megaVenusaur = members.find((pokemon) => pokemon.name === "Venusaur-Mega");
-  const firePressure = members.filter((pokemon) =>
-    pokemon.types.includes("Fire") || selectedBuild(pokemon).moves?.some((move) => moveOptionsForDisplay(move).some((option) => moveDetails(option).type === "Fire"))
-  );
+  const firePressure = members.filter(isSunFirePressure);
   const conflict = weatherConflictMembers(members);
   const checkTypes = ["Rock", "Water", "Dragon"];
 
@@ -6233,11 +6556,11 @@ function sunPlanChecks(team = state.team) {
     },
     {
       ok: chlorophyll.length > 0 || Boolean(megaVenusaur),
-      label: "Venusaur-rol",
+      label: "Chlorophyll-abuser",
       note: chlorophyll.length
-        ? `${chlorophyll.map(displayPokemonName).join(", ")} kan als Chlorophyll sweeper spelen.`
+        ? `${chlorophyll.map(displayPokemonName).join(", ")} kan sun omzetten in aanvallend tempo.`
         : megaVenusaur
-          ? "Mega Venusaur is vooral een bulky Sun-anchor; gewone Venusaur is de echte Chlorophyll sweeper."
+          ? "Mega Venusaur is vooral een bulky Sun-anchor; voeg een echte Chlorophyll-abuser toe als je wilt sweepen."
           : "Voeg een Chlorophyll-abuser toe als je echt via sun wilt sweepen."
     },
     {
@@ -6246,7 +6569,7 @@ function sunPlanChecks(team = state.team) {
       note: firePressure.length ? `${firePressure.map(displayPokemonName).slice(0, 2).join(", ")} profiteert offensief van sun.` : "Sun wil minimaal een Fire-breaker of Fire-coverage."
     },
     ...checkTypes.map((type) => {
-      const answers = members.filter((pokemon) => defensiveMultiplier(pokemon.types, type) < 1);
+      const answers = members.filter((pokemon) => isSunTypeAnswer(pokemon, type));
       return {
         ok: answers.length > 0,
         label: `${type}-antwoord`,
@@ -6261,20 +6584,211 @@ function sunPlanChecks(team = state.team) {
   ];
 }
 
-function weatherConflictMembers(team = state.team) {
-  if (state.teamStyle !== "sun") return [];
-  return team.filter((pokemon) =>
-    hasAbility(pokemon, "Drizzle") || hasAbility(pokemon, "Sand Stream") || hasAbility(pokemon, "Snow Warning")
-  );
+function sandPlanChecks(team = state.team) {
+  const members = team;
+  const stream = members.filter((pokemon) => hasAbility(pokemon, "Sand Stream"));
+  const abusers = members.filter(isSandAbuser);
+  const breakers = members.filter(isSandBreaker);
+  const conflict = weatherConflictMembers(members, "sand");
+  return [
+    {
+      ok: stream.length > 0,
+      label: "Sand Stream setter",
+      note: stream.length ? `${stream.map(displayPokemonName).join(", ")} zet sand.` : "Voeg Tyranitar of Hippowdon toe voor betrouwbare sand."
+    },
+    {
+      ok: abusers.length > 0,
+      label: "Sand abuser",
+      note: abusers.length ? `${abusers.map(displayPokemonName).slice(0, 2).join(", ")} gebruikt Sand Rush/Force of sand-tempo.` : "Voeg een echte Sand Rush/Force-abuser toe."
+    },
+    {
+      ok: breakers.length > 0,
+      label: "Sand breaker",
+      note: breakers.length ? `${breakers.map(displayPokemonName).slice(0, 2).join(", ")} geeft Rock/Ground/Steel-druk.` : "Sand heeft een breaker nodig die chip damage omzet in KOs."
+    },
+    ...["Water", "Grass", "Fighting"].map((type) => planTypeCheck(members, type)),
+    weatherConflictCheck(conflict, "Sand")
+  ];
 }
 
-function sunCoreScore(team = state.team) {
-  if (state.teamStyle !== "sun") return { value: 100, note: "Geen Sun-plan actief" };
-  const checks = sunPlanChecks(team);
+function snowPlanChecks(team = state.team) {
+  const members = team;
+  const warning = members.filter((pokemon) => hasAbility(pokemon, "Snow Warning"));
+  const abusers = members.filter(isSnowAbuser);
+  const icePressure = members.filter(isSnowIcePressure);
+  const conflict = weatherConflictMembers(members, "snow");
+  return [
+    {
+      ok: warning.length > 0,
+      label: "Snow Warning setter",
+      note: warning.length ? `${warning.map(displayPokemonName).join(", ")} zet snow.` : "Voeg Abomasnow of Aurorus toe voor betrouwbare snow."
+    },
+    {
+      ok: abusers.length > 0,
+      label: "Snow abuser",
+      note: abusers.length ? `${abusers.map(displayPokemonName).slice(0, 2).join(", ")} gebruikt snow voor tempo of bulk.` : "Voeg een Slush Rush-abuser of stevige Ice-core toe."
+    },
+    {
+      ok: icePressure.length > 0,
+      label: "Ice-druk",
+      note: icePressure.length ? `${icePressure.map(displayPokemonName).slice(0, 2).join(", ")} zet Ice-druk.` : "Snow wil offensieve Ice-druk, niet alleen defensieve typing."
+    },
+    ...["Fire", "Steel", "Rock"].map((type) => planTypeCheck(members, type)),
+    weatherConflictCheck(conflict, "Snow")
+  ];
+}
+
+function trickRoomPlanChecks(team = state.team) {
+  const members = team;
+  const setters = members.filter(isTrickRoomSetter);
+  const abusers = members.filter(isTrickRoomAbuser);
+  const fast = members.filter((pokemon) => pokemon.spe >= 100);
+  return [
+    {
+      ok: setters.length > 0,
+      label: "Trick Room setter",
+      note: setters.length ? `${setters.map(displayPokemonName).slice(0, 2).join(", ")} kan Trick Room zetten.` : "Voeg een betrouwbare Trick Room setter toe."
+    },
+    {
+      ok: abusers.length >= 2,
+      label: "Trick Room abuser",
+      note: abusers.length ? `${abusers.map(displayPokemonName).slice(0, 3).join(", ")} is traag genoeg om Room te benutten.` : "Kies langzame sterke attackers; alleen setters zijn niet genoeg."
+    },
+    {
+      ok: fast.length <= 2,
+      label: "Speed-discipline",
+      note: fast.length <= 2 ? "Niet te veel snelle Pokemon in je Room-plan." : `${fast.map(displayPokemonName).slice(0, 3).join(", ")} maakt het Room-plan te dubbelzinnig.`
+    },
+    planTypeCheck(members, "Dark"),
+    planTypeCheck(members, "Ghost")
+  ];
+}
+
+function doubleSupportPlanChecks(team = state.team) {
+  const members = team;
+  const speed = members.filter(hasTeamSpeedControl);
+  const utility = members.filter(isDoubleUtility);
+  const protect = members.filter((pokemon) => hasMoveInBuild(pokemon, "Protect"));
+  return [
+    {
+      ok: speed.length > 0,
+      label: "Speed-control support",
+      note: speed.length ? `${speed.map(displayPokemonName).slice(0, 2).join(", ")} helpt tempo sturen.` : "Double support wil Tailwind, Icy Wind, Thunder Wave of vergelijkbare tempo-tools."
+    },
+    {
+      ok: utility.length >= 2,
+      label: "Double utility",
+      note: utility.length ? `${utility.map(displayPokemonName).slice(0, 3).join(", ")} brengt utility zoals Intimidate, Fake Out, redirection of Prankster.` : "Voeg echte utility toe; bulk alleen maakt nog geen doubles-core."
+    },
+    {
+      ok: protect.length >= 2,
+      label: "Protect-plan",
+      note: protect.length >= 2 ? `${protect.map(displayPokemonName).slice(0, 3).join(", ")} heeft Protect.` : "In doubles wil je meerdere Protect-gebruikers."
+    }
+  ];
+}
+
+function hyperOffensePlanChecks(team = state.team) {
+  const members = team;
+  const setup = members.filter(isSetupPressure);
+  const entry = members.filter(hasEntryPressure);
+  const passive = members.filter((pokemon) => ["Wall", "Bulky pivot"].includes(displayRoleForBuild(pokemon)) && !isSetupPressure(pokemon));
+  return [
+    {
+      ok: setup.length >= 2,
+      label: "Setupdruk",
+      note: setup.length ? `${setup.map(displayPokemonName).slice(0, 3).join(", ")} kan directe setupdruk geven.` : "Hyper Offense wil meerdere setup- of cleanup-dreigingen."
+    },
+    {
+      ok: entry.length > 0,
+      label: "Lead pressure",
+      note: entry.length ? `${entry.map(displayPokemonName).slice(0, 2).join(", ")} kan hazards/screens/tempo starten.` : "Voeg lead pressure toe: hazards, screens, Taunt of vergelijkbaar."
+    },
+    {
+      ok: passive.length <= 1,
+      label: "Weinig passiviteit",
+      note: passive.length <= 1 ? "Niet te veel puur defensieve slots." : `${passive.map(displayPokemonName).slice(0, 3).join(", ")} maakt Hyper Offense snel passief.`
+    }
+  ];
+}
+
+function voltTurnPlanChecks(team = state.team) {
+  const members = team;
+  const pivots = members.filter(hasPivotMove);
+  const speed = members.filter((pokemon) => pokemon.spe >= 100 || hasAbility(pokemon, "Regenerator") || hasAbility(pokemon, "Intimidate"));
+  return [
+    {
+      ok: pivots.length >= 2,
+      label: "Pivot-kern",
+      note: pivots.length ? `${pivots.map(displayPokemonName).slice(0, 3).join(", ")} houdt momentum met pivotmoves.` : "VoltTurn heeft meerdere U-turn/Volt Switch/Flip Turn/Parting Shot-gebruikers nodig."
+    },
+    {
+      ok: speed.length >= 2,
+      label: "Tempo na pivot",
+      note: speed.length >= 2 ? `${speed.map(displayPokemonName).slice(0, 3).join(", ")} houdt tempo na de pivot.` : "Voeg snelheid, Regenerator of Intimidate toe om pivots veilig te houden."
+    },
+    planTypeCheck(members, "Ground")
+  ];
+}
+
+function stallPlanChecks(team = state.team) {
+  const members = team;
+  const recovery = members.filter(hasReliableRecovery);
+  const chip = members.filter(hasStatusOrChip);
+  const answers = members.filter((pokemon) => pokemon.hp + pokemon.def + pokemon.spd >= 305 || hasAbility(pokemon, "Unaware") || hasAbility(pokemon, "Regenerator"));
+  return [
+    {
+      ok: recovery.length >= 2,
+      label: "Recovery-kern",
+      note: recovery.length ? `${recovery.map(displayPokemonName).slice(0, 3).join(", ")} heeft recovery of Wish.` : "Stall valt om zonder betrouwbare recovery."
+    },
+    {
+      ok: chip.length >= 2,
+      label: "Status/chip",
+      note: chip.length ? `${chip.map(displayPokemonName).slice(0, 3).join(", ")} kan status, hazards of chip forceren.` : "Stall heeft status, hazards of chip nodig om te winnen."
+    },
+    {
+      ok: answers.length >= 3,
+      label: "Defensieve antwoorden",
+      note: answers.length >= 3 ? `${answers.map(displayPokemonName).slice(0, 3).join(", ")} geeft verdedigende marge.` : "Voeg meer echte walls, Unaware of Regenerator toe."
+    }
+  ];
+}
+
+function planTypeCheck(members, type) {
+  const answers = members.filter((pokemon) => isPlanTypeAnswer(pokemon, type));
+  return {
+    ok: answers.length > 0,
+    label: `${type}-antwoord`,
+    note: answers.length ? `${answers.map(displayPokemonName).slice(0, 2).join(", ")} vangt ${type} op.` : `${TEAM_STYLES[state.teamStyle].label}-teams moeten ${type}-druk niet gratis laten binnenkomen.`
+  };
+}
+
+function weatherConflictCheck(conflict, label) {
+  return {
+    ok: conflict.length === 0,
+    label: "Geen weather-conflict",
+    note: conflict.length ? `${conflict.map(displayPokemonName).join(", ")} zet ander weer en verstoort ${label}.` : `Geen andere weather-setter in je ${label}-plan.`
+  };
+}
+
+function weatherConflictMembers(team = state.team, style = state.teamStyle) {
+  const conflictAbilities = {
+    rain: ["Drought", "Sand Stream", "Snow Warning"],
+    sun: ["Drizzle", "Sand Stream", "Snow Warning"],
+    sand: ["Drizzle", "Drought", "Snow Warning"],
+    snow: ["Drizzle", "Drought", "Sand Stream"]
+  }[style] ?? [];
+  return team.filter((pokemon) => conflictAbilities.some((ability) => hasAbility(pokemon, ability)));
+}
+
+function styleCoreScore(team = state.team) {
+  const checks = withTemporaryTeam(team, () => stylePlanChecks());
   const done = checks.filter((check) => check.ok).length;
   return {
+    active: checks.length > 0,
     value: checks.length ? done / checks.length * 100 : 100,
-    note: `${done}/${checks.length} Sun-checks afgedekt`
+    note: checks.length ? `${done}/${checks.length} planchecks afgedekt` : "Geen planchecks actief"
   };
 }
 
@@ -7227,6 +7741,10 @@ function suggestionReasons(pokemon, context = {}) {
       score += 3;
       reasons.push(sunReason);
     }
+    if (sunAntiSynergy(pokemon)) {
+      score -= 4;
+      reasons.push("Water-druk wordt zwakker in sun");
+    }
   }
 
   if (balance.special < targets.special && pokemon.spa > pokemon.atk) {
@@ -7289,31 +7807,184 @@ function teamStyleMatch(pokemon, style = state.teamStyle) {
 
   if (style === "offense") return bestAttack >= 120 || pokemon.spe >= 100 || ["Sweeper", "Wallbreaker", "Speed control"].includes(role);
   if (style === "bulky") return bulk >= 290 || ["Wall", "Bulky pivot"].includes(role);
-  if (style === "rain") return hasAbility(pokemon, "Drizzle") || hasAbility(pokemon, "Swift Swim") || pokemon.types.includes("Water") || pokemon.types.includes("Electric") || pokemon.types.includes("Grass") || pokemon.types.includes("Steel");
-  if (style === "sun") return hasAbility(pokemon, "Drought") || hasAbility(pokemon, "Chlorophyll") || pokemon.types.includes("Fire") || pokemon.types.includes("Grass") || pokemon.types.includes("Ground") || pokemon.types.includes("Dragon");
+  if (style === "rain") return hasAbility(pokemon, "Drizzle") || isRainAbuser(pokemon, build) || isRainWaterPressure(pokemon, build) || coversRainPressureType(pokemon);
+  if (style === "sun") return hasAbility(pokemon, "Drought") || isChlorophyllAbuser(pokemon, build) || isSunFirePressure(pokemon, build) || pokemon.name === "Venusaur-Mega" || coversSunPressureType(pokemon);
   if (style === "trickroom") return pokemon.spe <= 65 && (bestAttack >= 105 || bulk >= 280);
   if (style === "doublesupport") return hasAbility(pokemon, "Intimidate") || hasAbility(pokemon, "Prankster") || hasAbility(pokemon, "Friend Guard") || role === "Bulky pivot" || role === "Wall";
   if (style === "hyperoffense") return bestAttack >= 125 || pokemon.spe >= 105 || hasMove("Swords Dance", "Dragon Dance", "Nasty Plot", "Quiver Dance", "Shell Smash");
-  if (style === "voltturn") return hasMove("U-turn", "Volt Switch", "Flip Turn", "Parting Shot") || hasAbility(pokemon, "Regenerator") || hasAbility(pokemon, "Intimidate") || (pokemon.spe >= 100 && bulk >= 260);
-  if (style === "sand") return hasAbility(pokemon, "Sand Stream") || hasAbility(pokemon, "Sand Rush") || hasAbility(pokemon, "Sand Force") || pokemon.types.some((type) => ["Rock", "Ground", "Steel"].includes(type));
-  if (style === "snow") return hasAbility(pokemon, "Snow Warning") || hasAbility(pokemon, "Slush Rush") || pokemon.types.includes("Ice") || (bulk >= 285 && pokemon.types.some((type) => ["Water", "Steel"].includes(type)));
+  if (style === "voltturn") return hasMove("U-turn", "Volt Switch", "Flip Turn", "Parting Shot") || hasAbility(pokemon, "Regenerator") || hasAbility(pokemon, "Intimidate");
+  if (style === "sand") return hasAbility(pokemon, "Sand Stream") || isSandAbuser(pokemon, build) || isSandBreaker(pokemon, build) || coversSandPressureType(pokemon);
+  if (style === "snow") return hasAbility(pokemon, "Snow Warning") || isSnowAbuser(pokemon, build) || isSnowIcePressure(pokemon, build) || coversSnowPressureType(pokemon);
   if (style === "stall") return bulk >= 305 || hasAbility(pokemon, "Regenerator") || hasAbility(pokemon, "Unaware") || hasAbility(pokemon, "Poison Heal") || hasAbility(pokemon, "Magic Guard") || hasMove("Recover", "Roost", "Protect", "Will-O-Wisp", "Toxic");
   if (style === "antiMeta") return isReliableThreatAnswer(pokemon) && (pokemon.spe >= 100 || bulk >= 285 || pokemon.types.some((type) => ["Steel", "Fairy", "Ground", "Dark", "Ghost"].includes(type)));
   return true;
 }
 
 function weatherConflictsWithStyle(pokemon, style = state.teamStyle) {
-  if (style !== "sun") return false;
-  return hasAbility(pokemon, "Drizzle") || hasAbility(pokemon, "Sand Stream") || hasAbility(pokemon, "Snow Warning");
+  return weatherConflictMembers([pokemon], style).length > 0;
+}
+
+function sunAntiSynergy(pokemon, build = selectedBuild(pokemon)) {
+  if (state.teamStyle !== "sun" || weatherConflictsWithStyle(pokemon, "sun")) return false;
+  const bestAttack = Math.max(pokemon.atk, pokemon.spa);
+  const hasWaterStab = pokemon.types.includes("Water") && moveTypesForBuild(build).includes("Water");
+  return hasWaterStab && bestAttack >= 100 && !isSunTypeAnswer(pokemon, "Rock") && !isSunTypeAnswer(pokemon, "Dragon");
+}
+
+function weatherPlanAntiSynergy(pokemon) {
+  if (state.teamStyle === "snow" && pokemon.types.includes("Water") && !pokemon.types.includes("Ice") && Math.max(pokemon.atk, pokemon.spa) >= 100) return true;
+  if (state.teamStyle === "sand" && pokemon.types.includes("Water") && !pokemon.types.some((type) => ["Rock", "Ground", "Steel"].includes(type)) && Math.max(pokemon.atk, pokemon.spa) >= 100) return true;
+  return false;
+}
+
+function buildSearchText(pokemon, build = selectedBuild(pokemon)) {
+  return `${build.label ?? ""} ${build.role ?? ""} ${build.item ?? ""} ${(build.moves ?? []).join(" ")}`;
+}
+
+function hasMoveInBuild(pokemon, ...needles) {
+  const text = buildSearchText(pokemon).toLowerCase();
+  return needles.some((needle) => text.includes(String(needle).toLowerCase()));
+}
+
+function moveTypesForBuild(build = {}) {
+  return (build.moves ?? [])
+    .flatMap(moveOptionsForDisplay)
+    .map((move) => moveDetails(move).type);
+}
+
+function hasTypedMove(pokemon, type, build = selectedBuild(pokemon)) {
+  return moveTypesForBuild(build).includes(type);
+}
+
+function isRainAbuser(pokemon, build = selectedBuild(pokemon)) {
+  if (hasAbility(pokemon, "Swift Swim")) return true;
+  const bestAttack = Math.max(pokemon.atk, pokemon.spa);
+  return pokemon.types.includes("Water") && pokemon.spe >= 80 && bestAttack >= 105 && /rain|water|wave|hydro|liquidation|surf/i.test(buildSearchText(pokemon, build));
+}
+
+function isRainWaterPressure(pokemon, build = selectedBuild(pokemon)) {
+  if (weatherConflictsWithStyle(pokemon, "rain")) return false;
+  const bestAttack = Math.max(pokemon.atk, pokemon.spa);
+  return (pokemon.types.includes("Water") || hasTypedMove(pokemon, "Water", build)) && bestAttack >= 105;
+}
+
+function isRainTypeAnswer(pokemon, type) {
+  if (defensiveMultiplier(pokemon.types, type) >= 1) return false;
+  if (type === "Grass" && pokemon.types.includes("Water")) return false;
+  return true;
+}
+
+function coversRainPressureType(pokemon) {
+  return ["Electric", "Grass"].some((type) => isRainTypeAnswer(pokemon, type));
+}
+
+function isChlorophyllAbuser(pokemon, build = selectedBuild(pokemon)) {
+  if (!hasAbility(pokemon, "Chlorophyll") || usesMegaSlot(pokemon, build)) return false;
+  const bestAttack = Math.max(pokemon.atk, pokemon.spa);
+  const setText = `${build.label ?? ""} ${build.role ?? ""} ${(build.moves ?? []).join(" ")}`;
+  return bestAttack >= 95 || /sun|chlorophyll|sweeper|growth|solar/i.test(setText);
+}
+
+function isSunFirePressure(pokemon, build = selectedBuild(pokemon)) {
+  if (weatherConflictsWithStyle(pokemon, "sun")) return false;
+  const bestAttack = Math.max(pokemon.atk, pokemon.spa);
+  const hasFireMove = moveTypesForBuild(build).includes("Fire");
+  const isSetterOnly = hasAbility(pokemon, "Drought") && bestAttack < 105;
+  return (pokemon.types.includes("Fire") || hasFireMove) && !isSetterOnly && (bestAttack >= 105 || /breaker|sweeper|attacker|offensive|eruption|overheat/i.test(`${build.label ?? ""} ${build.role ?? ""} ${(build.moves ?? []).join(" ")}`));
+}
+
+function coversSunPressureType(pokemon) {
+  return ["Rock", "Water", "Dragon"].some((type) => isSunTypeAnswer(pokemon, type));
+}
+
+function isSunTypeAnswer(pokemon, type) {
+  if (defensiveMultiplier(pokemon.types, type) >= 1) return false;
+  if (type === "Water" && pokemon.types.includes("Water")) return false;
+  return true;
+}
+
+function isSandAbuser(pokemon, build = selectedBuild(pokemon)) {
+  if (hasAbility(pokemon, "Sand Rush") || hasAbility(pokemon, "Sand Force") || hasAbility(pokemon, "Sand Veil")) return true;
+  return pokemon.types.includes("Rock") && pokemon.hp + pokemon.def + pokemon.spd >= 285 && /rock|sand|assault|tank|defensive/i.test(buildSearchText(pokemon, build));
+}
+
+function isSandBreaker(pokemon, build = selectedBuild(pokemon)) {
+  const bestAttack = Math.max(pokemon.atk, pokemon.spa);
+  return pokemon.types.some((type) => ["Rock", "Ground", "Steel"].includes(type)) && bestAttack >= 110 && !weatherConflictsWithStyle(pokemon, "sand") && !/defensive|wall/i.test(buildSearchText(pokemon, build));
+}
+
+function coversSandPressureType(pokemon) {
+  return ["Water", "Grass", "Fighting"].some((type) => isPlanTypeAnswer(pokemon, type));
+}
+
+function isSnowAbuser(pokemon, build = selectedBuild(pokemon)) {
+  if (hasAbility(pokemon, "Slush Rush") || hasAbility(pokemon, "Ice Body")) return true;
+  return pokemon.types.includes("Ice") && pokemon.hp + pokemon.def + pokemon.spd >= 285 && /snow|ice|veil|defensive|tank/i.test(buildSearchText(pokemon, build));
+}
+
+function isSnowIcePressure(pokemon, build = selectedBuild(pokemon)) {
+  const bestAttack = Math.max(pokemon.atk, pokemon.spa);
+  return (pokemon.types.includes("Ice") || hasTypedMove(pokemon, "Ice", build)) && bestAttack >= 100 && !weatherConflictsWithStyle(pokemon, "snow");
+}
+
+function coversSnowPressureType(pokemon) {
+  return ["Fire", "Steel", "Rock"].some((type) => isPlanTypeAnswer(pokemon, type));
+}
+
+function isPlanTypeAnswer(pokemon, type) {
+  if (state.teamStyle === "sun") return isSunTypeAnswer(pokemon, type);
+  if (state.teamStyle === "rain") return isRainTypeAnswer(pokemon, type);
+  if (state.teamStyle === "sand" && type === "Water" && pokemon.types.includes("Water")) return false;
+  if (state.teamStyle === "snow" && type === "Steel" && pokemon.types.includes("Water") && !pokemon.types.includes("Ice") && pokemon.hp + pokemon.def + pokemon.spd < 300) return false;
+  return defensiveMultiplier(pokemon.types, type) < 1;
+}
+
+function isTrickRoomSetter(pokemon) {
+  return hasMoveInBuild(pokemon, "Trick Room") && (pokemon.hp + pokemon.def + pokemon.spd >= 260 || pokemon.spe <= 70);
+}
+
+function isTrickRoomAbuser(pokemon) {
+  return pokemon.spe <= 65 && Math.max(pokemon.atk, pokemon.spa) >= 105;
+}
+
+function hasTeamSpeedControl(pokemon) {
+  return hasMoveInBuild(pokemon, "Tailwind", "Icy Wind", "Thunder Wave", "Trick Room", "Electroweb") || hasAbility(pokemon, "Prankster");
+}
+
+function isDoubleUtility(pokemon) {
+  return hasAbility(pokemon, "Intimidate")
+    || hasAbility(pokemon, "Prankster")
+    || hasAbility(pokemon, "Friend Guard")
+    || hasMoveInBuild(pokemon, "Fake Out", "Follow Me", "Rage Powder", "Helping Hand", "Wide Guard", "Parting Shot");
+}
+
+function hasPivotMove(pokemon) {
+  return hasMoveInBuild(pokemon, "U-turn", "Volt Switch", "Flip Turn", "Parting Shot");
+}
+
+function isSetupPressure(pokemon) {
+  return Math.max(pokemon.atk, pokemon.spa) >= 105 && hasMoveInBuild(pokemon, "Swords Dance", "Dragon Dance", "Nasty Plot", "Quiver Dance", "Shell Smash", "Bulk Up", "Calm Mind");
+}
+
+function hasEntryPressure(pokemon) {
+  return hasMoveInBuild(pokemon, "Stealth Rock", "Spikes", "Sticky Web", "Toxic Spikes", "Reflect", "Light Screen", "Taunt");
+}
+
+function hasReliableRecovery(pokemon) {
+  return hasMoveInBuild(pokemon, "Recover", "Roost", "Slack Off", "Wish", "Moonlight", "Morning Sun", "Synthesis", "Strength Sap");
+}
+
+function hasStatusOrChip(pokemon) {
+  return hasMoveInBuild(pokemon, "Toxic", "Will-O-Wisp", "Thunder Wave", "Stealth Rock", "Spikes", "Toxic Spikes", "Salt Cure", "Leech Seed", "Whirlwind", "Roar");
 }
 
 function sunFitReason(pokemon) {
   if (weatherConflictsWithStyle(pokemon, "sun")) return "";
   if (hasAbility(pokemon, "Drought")) return "zet sun met Drought";
-  if (hasAbility(pokemon, "Chlorophyll") && !usesMegaSlot(pokemon)) return "kan als Chlorophyll-sweeper";
+  if (isChlorophyllAbuser(pokemon)) return "kan sun omzetten in aanvallend tempo";
   if (pokemon.name === "Venusaur-Mega") return "bulky Sun-anchor; niet je primaire Chlorophyll-sweeper";
-  if (pokemon.types.includes("Fire")) return "profiteert van sun-boosted Fire-druk";
-  if (["Rock", "Water", "Dragon"].some((type) => defensiveMultiplier(pokemon.types, type) < 1)) {
+  if (isSunFirePressure(pokemon)) return "profiteert van sun-boosted Fire-druk";
+  if (coversSunPressureType(pokemon)) {
     return "dekt typische Sun-checks af";
   }
   return "";
@@ -7324,10 +7995,10 @@ function styleFitReason(pokemon) {
   if (!teamStyleMatch(pokemon)) return "";
   if (state.teamStyle === "offense") return "past bij Offense-plan";
   if (state.teamStyle === "bulky") return "past bij Bulky-plan";
-  if (state.teamStyle === "rain" && (hasAbility(pokemon, "Drizzle") || hasAbility(pokemon, "Swift Swim") || pokemon.types.includes("Water"))) {
+  if (state.teamStyle === "rain" && (hasAbility(pokemon, "Drizzle") || isRainAbuser(pokemon) || isRainWaterPressure(pokemon))) {
     return "past bij Rain-plan";
   }
-  if (state.teamStyle === "sun" && (hasAbility(pokemon, "Drought") || hasAbility(pokemon, "Chlorophyll") || pokemon.types.includes("Fire") || pokemon.types.includes("Grass"))) {
+  if (state.teamStyle === "sun" && (hasAbility(pokemon, "Drought") || isChlorophyllAbuser(pokemon) || isSunFirePressure(pokemon) || pokemon.name === "Venusaur-Mega")) {
     return "past bij Sun-plan";
   }
   if (state.teamStyle === "trickroom" && pokemon.spe <= 65) {
@@ -7338,8 +8009,8 @@ function styleFitReason(pokemon) {
   }
   if (state.teamStyle === "hyperoffense") return "past bij Hyper Offense-plan";
   if (state.teamStyle === "voltturn") return "past bij VoltTurn-plan";
-  if (state.teamStyle === "sand") return "past bij Sand-plan";
-  if (state.teamStyle === "snow") return "past bij Snow-plan";
+  if (state.teamStyle === "sand" && (hasAbility(pokemon, "Sand Stream") || isSandAbuser(pokemon) || isSandBreaker(pokemon))) return "past bij Sand-plan";
+  if (state.teamStyle === "snow" && (hasAbility(pokemon, "Snow Warning") || isSnowAbuser(pokemon) || isSnowIcePressure(pokemon))) return "past bij Snow-plan";
   if (state.teamStyle === "stall") return "past bij Stall-plan";
   if (state.teamStyle === "antiMeta") return "past bij Anti-meta-plan";
   if (state.battleFormat === "double4" && (hasAbility(pokemon, "Intimidate") || hasAbility(pokemon, "Prankster"))) {
@@ -7610,6 +8281,7 @@ function buildTeamFitScore(pokemon, build) {
   if (state.teamStyle === "bulky" && (/defensive|tank|wall|pivot|boots|leftovers/i.test(label))) score += 45;
   if (state.teamStyle === "voltturn" && hasMove("U-turn", "Volt Switch", "Flip Turn", "Parting Shot")) score += 55;
   if (state.teamStyle === "trickroom" && pokemon.spe <= 65) score += 40;
+  if (state.teamStyle === "trickroom" && hasMove("Trick Room")) score += 95;
   if (state.battleFormat === "double4" && hasMove("Protect", "Fake Out", "Tailwind", "Icy Wind", "Helping Hand")) score += 45;
 
   if (balance.physical < targets.physical && pokemon.atk >= pokemon.spa && ["Sweeper", "Wallbreaker"].includes(role)) score += 35;
