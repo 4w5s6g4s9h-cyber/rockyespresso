@@ -1,8 +1,13 @@
 {
-  "source": "https://www.smogon.com/dex/champions/pokemon/",
-  "generatedAt": "2026-06-15T07:10:25.287Z",
+  "source": {
+    "primary": "https://www.smogon.com/dex/champions/pokemon/",
+    "fallback": "https://www.serebii.net/pokedex-champions/"
+  },
+  "generatedAt": "2026-06-22T12:29:34.948Z",
   "counts": {
-    "pokemon": 285,
+    "pokemon": 313,
+    "smogonChampions": 285,
+    "serebiiChampionsFallback": 28,
     "moves": 495,
     "abilities": 314,
     "items": 121
@@ -145,6 +150,9 @@
       "evos": [],
       "alts": [
         "Kangaskhan-Mega"
+      ],
+      "megaStones": [
+        "Kangaskhanite"
       ]
     },
     {
@@ -175,6 +183,9 @@
       "evos": [],
       "alts": [
         "Starmie-Mega"
+      ],
+      "megaStones": [
+        "Starminite"
       ]
     },
     {
@@ -204,6 +215,9 @@
       "evos": [],
       "alts": [
         "Pinsir-Mega"
+      ],
+      "megaStones": [
+        "Pinsirite"
       ]
     },
     {
@@ -343,6 +357,9 @@
       "evos": [],
       "alts": [
         "Gyarados-Mega"
+      ],
+      "megaStones": [
+        "Gyaradosite"
       ]
     },
     {
@@ -477,6 +494,9 @@
       "evos": [],
       "alts": [
         "Aerodactyl-Mega"
+      ],
+      "megaStones": [
+        "Aerodactylite"
       ]
     },
     {
@@ -533,6 +553,9 @@
       "evos": [],
       "alts": [
         "Dragonite-Mega"
+      ],
+      "megaStones": [
+        "Dragoninite"
       ]
     },
     {
@@ -562,6 +585,9 @@
       "evos": [],
       "alts": [
         "Beedrill-Mega"
+      ],
+      "megaStones": [
+        "Beedrillite"
       ]
     },
     {
@@ -590,6 +616,9 @@
       "evos": [],
       "alts": [
         "Meganium-Mega"
+      ],
+      "megaStones": [
+        "Meganiumite"
       ]
     },
     {
@@ -671,6 +700,9 @@
       "evos": [],
       "alts": [
         "Feraligatr-Mega"
+      ],
+      "megaStones": [
+        "Feraligite"
       ]
     },
     {
@@ -729,6 +761,9 @@
       "evos": [],
       "alts": [
         "Pidgeot-Mega"
+      ],
+      "megaStones": [
+        "Pidgeotite"
       ]
     },
     {
@@ -757,6 +792,9 @@
       "evos": [],
       "alts": [
         "Ampharos-Mega"
+      ],
+      "megaStones": [
+        "Ampharosite"
       ]
     },
     {
@@ -977,6 +1015,9 @@
       "evos": [],
       "alts": [
         "Steelix-Mega"
+      ],
+      "megaStones": [
+        "Steelixite"
       ]
     },
     {
@@ -1007,6 +1048,9 @@
       "evos": [],
       "alts": [
         "Scizor-Mega"
+      ],
+      "megaStones": [
+        "Scizorite"
       ]
     },
     {
@@ -1037,6 +1081,9 @@
       "evos": [],
       "alts": [
         "Heracross-Mega"
+      ],
+      "megaStones": [
+        "Heracronite"
       ]
     },
     {
@@ -1067,6 +1114,9 @@
       "evos": [],
       "alts": [
         "Skarmory-Mega"
+      ],
+      "megaStones": [
+        "Skarmorite"
       ]
     },
     {
@@ -1097,6 +1147,9 @@
       "evos": [],
       "alts": [
         "Houndoom-Mega"
+      ],
+      "megaStones": [
+        "Houndoominite"
       ]
     },
     {
@@ -1153,6 +1206,9 @@
       "evos": [],
       "alts": [
         "Tyranitar-Mega"
+      ],
+      "megaStones": [
+        "Tyranitarite"
       ]
     },
     {
@@ -1292,6 +1348,9 @@
       "evos": [],
       "alts": [
         "Gardevoir-Mega"
+      ],
+      "megaStones": [
+        "Gardevoirite"
       ]
     },
     {
@@ -1321,6 +1380,9 @@
       "evos": [],
       "alts": [
         "Venusaur-Mega"
+      ],
+      "megaStones": [
+        "Venusaurite"
       ]
     },
     {
@@ -1351,6 +1413,9 @@
       "evos": [],
       "alts": [
         "Sableye-Mega"
+      ],
+      "megaStones": [
+        "Sablenite"
       ]
     },
     {
@@ -1381,6 +1446,9 @@
       "evos": [],
       "alts": [
         "Aggron-Mega"
+      ],
+      "megaStones": [
+        "Aggronite"
       ]
     },
     {
@@ -1410,6 +1478,9 @@
       "evos": [],
       "alts": [
         "Medicham-Mega"
+      ],
+      "megaStones": [
+        "Medichamite"
       ]
     },
     {
@@ -1439,6 +1510,9 @@
       "evos": [],
       "alts": [
         "Manectric-Mega"
+      ],
+      "megaStones": [
+        "Manectite"
       ]
     },
     {
@@ -1468,6 +1542,9 @@
       "evos": [],
       "alts": [
         "Sharpedo-Mega"
+      ],
+      "megaStones": [
+        "Sharpedonite"
       ]
     },
     {
@@ -1498,6 +1575,9 @@
       "evos": [],
       "alts": [
         "Camerupt-Mega"
+      ],
+      "megaStones": [
+        "Cameruptite"
       ]
     },
     {
@@ -1554,6 +1634,9 @@
       "evos": [],
       "alts": [
         "Altaria-Mega"
+      ],
+      "megaStones": [
+        "Altarianite"
       ]
     },
     {
@@ -1639,6 +1722,9 @@
       "evos": [],
       "alts": [
         "Banette-Mega"
+      ],
+      "megaStones": [
+        "Banettite"
       ]
     },
     {
@@ -1666,6 +1752,9 @@
       "evos": [],
       "alts": [
         "Chimecho-Mega"
+      ],
+      "megaStones": [
+        "Chimechite"
       ]
     },
     {
@@ -1695,6 +1784,9 @@
       "evos": [],
       "alts": [
         "Absol-Mega"
+      ],
+      "megaStones": [
+        "Absolite"
       ]
     },
     {
@@ -1724,6 +1816,9 @@
       "evos": [],
       "alts": [
         "Clefable-Mega"
+      ],
+      "megaStones": [
+        "Clefablite"
       ]
     },
     {
@@ -1753,6 +1848,9 @@
       "evos": [],
       "alts": [
         "Glalie-Mega"
+      ],
+      "megaStones": [
+        "Glalitite"
       ]
     },
     {
@@ -2024,6 +2122,9 @@
       "evos": [],
       "alts": [
         "Lopunny-Mega"
+      ],
+      "megaStones": [
+        "Lopunnite"
       ]
     },
     {
@@ -2080,6 +2181,9 @@
       "evos": [],
       "alts": [
         "Garchomp-Mega"
+      ],
+      "megaStones": [
+        "Garchompite"
       ]
     },
     {
@@ -2110,6 +2214,9 @@
       "evos": [],
       "alts": [
         "Lucario-Mega"
+      ],
+      "megaStones": [
+        "Lucarionite"
       ]
     },
     {
@@ -2193,6 +2300,9 @@
       "evos": [],
       "alts": [
         "Abomasnow-Mega"
+      ],
+      "megaStones": [
+        "Abomasite"
       ]
     },
     {
@@ -2386,6 +2496,9 @@
       "evos": [],
       "alts": [
         "Gallade-Mega"
+      ],
+      "megaStones": [
+        "Galladite"
       ]
     },
     {
@@ -2415,6 +2528,9 @@
       "evos": [],
       "alts": [
         "Froslass-Mega"
+      ],
+      "megaStones": [
+        "Froslassite"
       ]
     },
     {
@@ -2626,6 +2742,9 @@
       "evos": [],
       "alts": [
         "Emboar-Mega"
+      ],
+      "megaStones": [
+        "Emboarite"
       ]
     },
     {
@@ -2841,6 +2960,9 @@
       "evos": [],
       "alts": [
         "Excadrill-Mega"
+      ],
+      "megaStones": [
+        "Excadrite"
       ]
     },
     {
@@ -2870,6 +2992,9 @@
       "evos": [],
       "alts": [
         "Audino-Mega"
+      ],
+      "megaStones": [
+        "Audinite"
       ]
     },
     {
@@ -3222,6 +3347,10 @@
       "alts": [
         "Charizard-Mega-Y",
         "Charizard-Mega-X"
+      ],
+      "megaStones": [
+        "Charizardite X",
+        "Charizardite Y"
       ]
     },
     {
@@ -3252,6 +3381,9 @@
       "evos": [],
       "alts": [
         "Chandelure-Mega"
+      ],
+      "megaStones": [
+        "Chandelurite"
       ]
     },
     {
@@ -3363,6 +3495,9 @@
       "evos": [],
       "alts": [
         "Golurk-Mega"
+      ],
+      "megaStones": [
+        "Golurkite"
       ]
     },
     {
@@ -3445,6 +3580,9 @@
       "evos": [],
       "alts": [
         "Alakazam-Mega"
+      ],
+      "megaStones": [
+        "Alakazite"
       ]
     },
     {
@@ -3474,6 +3612,9 @@
       "evos": [],
       "alts": [
         "Chesnaught-Mega"
+      ],
+      "megaStones": [
+        "Chesnaughtite"
       ]
     },
     {
@@ -3503,6 +3644,9 @@
       "evos": [],
       "alts": [
         "Delphox-Mega"
+      ],
+      "megaStones": [
+        "Delphoxite"
       ]
     },
     {
@@ -3533,6 +3677,9 @@
       "evos": [],
       "alts": [
         "Greninja-Mega"
+      ],
+      "megaStones": [
+        "Greninjite"
       ]
     },
     {
@@ -4105,6 +4252,9 @@
       "evos": [],
       "alts": [
         "Hawlucha-Mega"
+      ],
+      "megaStones": [
+        "Hawluchanite"
       ]
     },
     {
@@ -4272,6 +4422,9 @@
       "evos": [],
       "alts": [
         "Victreebel-Mega"
+      ],
+      "megaStones": [
+        "Victreebelite"
       ]
     },
     {
@@ -4633,6 +4786,9 @@
       "evos": [],
       "alts": [
         "Crabominable-Mega"
+      ],
+      "megaStones": [
+        "Crabominite"
       ]
     },
     {
@@ -4960,6 +5116,9 @@
       "evos": [],
       "alts": [
         "Drampa-Mega"
+      ],
+      "megaStones": [
+        "Drampanite"
       ]
     },
     {
@@ -5018,6 +5177,9 @@
       "evos": [],
       "alts": [
         "Slowbro-Mega"
+      ],
+      "megaStones": [
+        "Slowbronite"
       ]
     },
     {
@@ -5429,6 +5591,9 @@
       "evos": [],
       "alts": [
         "Blastoise-Mega"
+      ],
+      "megaStones": [
+        "Blastoisinite"
       ]
     },
     {
@@ -5812,6 +5977,9 @@
       "evos": [],
       "alts": [
         "Gengar-Mega"
+      ],
+      "megaStones": [
+        "Gengarite"
       ]
     },
     {
@@ -5842,6 +6010,9 @@
       "evos": [],
       "alts": [
         "Scovillain-Mega"
+      ],
+      "megaStones": [
+        "Scovillainite"
       ]
     },
     {
@@ -5979,6 +6150,9 @@
       "evos": [],
       "alts": [
         "Glimmora-Mega"
+      ],
+      "megaStones": [
+        "Glimmoranite"
       ]
     },
     {
@@ -6061,7 +6235,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Lopunnite"
+      ]
     },
     {
       "name": "Venusaur-Mega",
@@ -6087,7 +6264,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Venusaurite"
+      ]
     },
     {
       "name": "Medicham-Mega",
@@ -6113,7 +6293,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Medichamite"
+      ]
     },
     {
       "name": "Gardevoir-Mega",
@@ -6139,7 +6322,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Gardevoirite"
+      ]
     },
     {
       "name": "Alakazam-Mega",
@@ -6164,7 +6350,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Alakazite"
+      ]
     },
     {
       "name": "Garchomp-Mega",
@@ -6190,7 +6379,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Garchompite"
+      ]
     },
     {
       "name": "Drampa-Mega",
@@ -6216,7 +6408,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Drampanite"
+      ]
     },
     {
       "name": "Floette-Mega",
@@ -6241,7 +6436,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Mega Stone"
+      ]
     },
     {
       "name": "Glalie-Mega",
@@ -6266,7 +6464,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Glalitite"
+      ]
     },
     {
       "name": "Clefable-Mega",
@@ -6292,7 +6493,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Clefablite"
+      ]
     },
     {
       "name": "Tyranitar-Mega",
@@ -6318,7 +6522,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Tyranitarite"
+      ]
     },
     {
       "name": "Greninja-Mega",
@@ -6344,7 +6551,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Greninjite"
+      ]
     },
     {
       "name": "Chesnaught-Mega",
@@ -6370,7 +6580,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Chesnaughtite"
+      ]
     },
     {
       "name": "Meowstic-M-Mega",
@@ -6395,7 +6608,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Mega Stone"
+      ]
     },
     {
       "name": "Mimikyu-Busted",
@@ -6447,7 +6663,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Chimechite"
+      ]
     },
     {
       "name": "Gyarados-Mega",
@@ -6473,7 +6692,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Gyaradosite"
+      ]
     },
     {
       "name": "Morpeko-Hangry",
@@ -6525,7 +6747,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Gengarite"
+      ]
     },
     {
       "name": "Scizor-Mega",
@@ -6551,7 +6776,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Scizorite"
+      ]
     },
     {
       "name": "Emboar-Mega",
@@ -6577,7 +6805,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Emboarite"
+      ]
     },
     {
       "name": "Excadrill-Mega",
@@ -6603,7 +6834,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Excadrite"
+      ]
     },
     {
       "name": "Banette-Mega",
@@ -6628,7 +6862,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Banettite"
+      ]
     },
     {
       "name": "Altaria-Mega",
@@ -6654,7 +6891,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Altarianite"
+      ]
     },
     {
       "name": "Chandelure-Mega",
@@ -6680,7 +6920,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Chandelurite"
+      ]
     },
     {
       "name": "Starmie-Mega",
@@ -6706,7 +6949,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Starminite"
+      ]
     },
     {
       "name": "Glimmora-Mega",
@@ -6732,7 +6978,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Glimmoranite"
+      ]
     },
     {
       "name": "Lucario-Mega",
@@ -6758,7 +7007,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Lucarionite"
+      ]
     },
     {
       "name": "Pinsir-Mega",
@@ -6784,7 +7036,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Pinsirite"
+      ]
     },
     {
       "name": "Scovillain-Mega",
@@ -6810,7 +7065,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Scovillainite"
+      ]
     },
     {
       "name": "Audino-Mega",
@@ -6836,7 +7094,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Audinite"
+      ]
     },
     {
       "name": "Hawlucha-Mega",
@@ -6862,7 +7123,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Hawluchanite"
+      ]
     },
     {
       "name": "Feraligatr-Mega",
@@ -6888,7 +7152,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Feraligite"
+      ]
     },
     {
       "name": "Houndoom-Mega",
@@ -6914,7 +7181,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Houndoominite"
+      ]
     },
     {
       "name": "Pidgeot-Mega",
@@ -6940,7 +7210,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Pidgeotite"
+      ]
     },
     {
       "name": "Castform-Rainy",
@@ -6991,7 +7264,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Charizardite Y"
+      ]
     },
     {
       "name": "Ampharos-Mega",
@@ -7017,7 +7293,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Ampharosite"
+      ]
     },
     {
       "name": "Heracross-Mega",
@@ -7043,7 +7322,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Heracronite"
+      ]
     },
     {
       "name": "Victreebel-Mega",
@@ -7069,7 +7351,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Victreebelite"
+      ]
     },
     {
       "name": "Aerodactyl-Mega",
@@ -7095,7 +7380,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Aerodactylite"
+      ]
     },
     {
       "name": "Steelix-Mega",
@@ -7121,7 +7409,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Steelixite"
+      ]
     },
     {
       "name": "Crabominable-Mega",
@@ -7147,7 +7438,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Crabominite"
+      ]
     },
     {
       "name": "Dragonite-Mega",
@@ -7173,7 +7467,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Dragoninite"
+      ]
     },
     {
       "name": "Absol-Mega",
@@ -7198,7 +7495,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Absolite"
+      ]
     },
     {
       "name": "Castform-Sunny",
@@ -7249,7 +7549,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Sablenite"
+      ]
     },
     {
       "name": "Froslass-Mega",
@@ -7275,7 +7578,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Froslassite"
+      ]
     },
     {
       "name": "Gallade-Mega",
@@ -7301,7 +7607,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Galladite"
+      ]
     },
     {
       "name": "Meganium-Mega",
@@ -7327,7 +7636,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Meganiumite"
+      ]
     },
     {
       "name": "Aegislash-Blade",
@@ -7403,7 +7715,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Aggronite"
+      ]
     },
     {
       "name": "Beedrill-Mega",
@@ -7429,7 +7744,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Beedrillite"
+      ]
     },
     {
       "name": "Camerupt-Mega",
@@ -7455,7 +7773,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Cameruptite"
+      ]
     },
     {
       "name": "Blastoise-Mega",
@@ -7480,7 +7801,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Blastoisinite"
+      ]
     },
     {
       "name": "Skarmory-Mega",
@@ -7506,7 +7830,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Skarmorite"
+      ]
     },
     {
       "name": "Slowbro-Mega",
@@ -7532,7 +7859,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Slowbronite"
+      ]
     },
     {
       "name": "Delphox-Mega",
@@ -7558,7 +7888,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Delphoxite"
+      ]
     },
     {
       "name": "Sharpedo-Mega",
@@ -7584,7 +7917,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Sharpedonite"
+      ]
     },
     {
       "name": "Charizard-Mega-X",
@@ -7610,7 +7946,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Charizardite X"
+      ]
     },
     {
       "name": "Meowstic-F-Mega",
@@ -7635,7 +7974,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Mega Stone"
+      ]
     },
     {
       "name": "Golurk-Mega",
@@ -7661,7 +8003,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Golurkite"
+      ]
     },
     {
       "name": "Manectric-Mega",
@@ -7686,7 +8031,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Manectite"
+      ]
     },
     {
       "name": "Abomasnow-Mega",
@@ -7712,7 +8060,10 @@
       "isNonstandard": "Standard",
       "dexNumber": -1,
       "evos": [],
-      "alts": []
+      "alts": [],
+      "megaStones": [
+        "Abomasite"
+      ]
     },
     {
       "name": "Palafin-Hero",
@@ -7761,6 +8112,808 @@
       ],
       "isNonstandard": "Standard",
       "dexNumber": -1,
+      "evos": [],
+      "alts": [],
+      "megaStones": [
+        "Kangaskhanite"
+      ]
+    },
+    {
+      "name": "Vileplume",
+      "hp": 75,
+      "atk": 80,
+      "def": 85,
+      "spa": 110,
+      "spd": 90,
+      "spe": 50,
+      "bst": 490,
+      "weight": 18.6,
+      "height": 1.2,
+      "types": [
+        "Grass",
+        "Poison"
+      ],
+      "abilities": [
+        "Chlorophyll",
+        "Effect Spore"
+      ],
+      "formats": [
+        "PU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 45,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Qwilfish",
+      "hp": 65,
+      "atk": 95,
+      "def": 85,
+      "spa": 55,
+      "spd": 55,
+      "spe": 85,
+      "bst": 440,
+      "weight": 3.9,
+      "height": 0.5,
+      "types": [
+        "Water",
+        "Poison"
+      ],
+      "abilities": [
+        "Poison Point",
+        "Swift Swim",
+        "Intimidate"
+      ],
+      "formats": [
+        "PU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 211,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Sceptile",
+      "hp": 70,
+      "atk": 85,
+      "def": 65,
+      "spa": 105,
+      "spd": 85,
+      "spe": 120,
+      "bst": 530,
+      "weight": 52.2,
+      "height": 1.7,
+      "types": [
+        "Grass"
+      ],
+      "abilities": [
+        "Overgrow",
+        "Unburden"
+      ],
+      "formats": [
+        "ZU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 254,
+      "evos": [],
+      "alts": [
+        "Sceptile-Mega"
+      ],
+      "megaStones": [
+        "Sceptilite"
+      ]
+    },
+    {
+      "name": "Sceptile-Mega",
+      "hp": 70,
+      "atk": 110,
+      "def": 75,
+      "spa": 145,
+      "spd": 85,
+      "spe": 145,
+      "bst": 630,
+      "weight": 55.2,
+      "height": 1.9,
+      "types": [
+        "Grass",
+        "Dragon"
+      ],
+      "abilities": [
+        "Lightning Rod"
+      ],
+      "formats": [
+        "National Dex"
+      ],
+      "isNonstandard": "NatDex",
+      "dexNumber": 254,
+      "evos": [],
+      "alts": [],
+      "megaStones": [
+        "Sceptilite"
+      ]
+    },
+    {
+      "name": "Blaziken",
+      "hp": 80,
+      "atk": 120,
+      "def": 70,
+      "spa": 110,
+      "spd": 70,
+      "spe": 80,
+      "bst": 530,
+      "weight": 52,
+      "height": 1.9,
+      "types": [
+        "Fire",
+        "Fighting"
+      ],
+      "abilities": [
+        "Blaze",
+        "Speed Boost"
+      ],
+      "formats": [
+        "UUBL"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 257,
+      "evos": [],
+      "alts": [
+        "Blaziken-Mega"
+      ],
+      "megaStones": [
+        "Blazikenite"
+      ]
+    },
+    {
+      "name": "Blaziken-Mega",
+      "hp": 80,
+      "atk": 160,
+      "def": 80,
+      "spa": 130,
+      "spd": 80,
+      "spe": 100,
+      "bst": 630,
+      "weight": 52,
+      "height": 1.9,
+      "types": [
+        "Fire",
+        "Fighting"
+      ],
+      "abilities": [
+        "Speed Boost"
+      ],
+      "formats": [
+        "National Dex"
+      ],
+      "isNonstandard": "NatDex",
+      "dexNumber": 257,
+      "evos": [],
+      "alts": [],
+      "megaStones": [
+        "Blazikenite"
+      ]
+    },
+    {
+      "name": "Swampert",
+      "hp": 100,
+      "atk": 110,
+      "def": 90,
+      "spa": 85,
+      "spd": 90,
+      "spe": 60,
+      "bst": 535,
+      "weight": 81.9,
+      "height": 1.5,
+      "types": [
+        "Water",
+        "Ground"
+      ],
+      "abilities": [
+        "Torrent",
+        "Damp"
+      ],
+      "formats": [
+        "NU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 260,
+      "evos": [],
+      "alts": [
+        "Swampert-Mega"
+      ],
+      "megaStones": [
+        "Swampertite"
+      ]
+    },
+    {
+      "name": "Swampert-Mega",
+      "hp": 100,
+      "atk": 150,
+      "def": 110,
+      "spa": 95,
+      "spd": 110,
+      "spe": 70,
+      "bst": 635,
+      "weight": 102,
+      "height": 1.9,
+      "types": [
+        "Water",
+        "Ground"
+      ],
+      "abilities": [
+        "Swift Swim"
+      ],
+      "formats": [
+        "National Dex"
+      ],
+      "isNonstandard": "NatDex",
+      "dexNumber": 260,
+      "evos": [],
+      "alts": [],
+      "megaStones": [
+        "Swampertite"
+      ]
+    },
+    {
+      "name": "Mawile",
+      "hp": 50,
+      "atk": 85,
+      "def": 85,
+      "spa": 55,
+      "spd": 55,
+      "spe": 50,
+      "bst": 380,
+      "weight": 11.5,
+      "height": 0.6,
+      "types": [
+        "Steel",
+        "Fairy"
+      ],
+      "abilities": [
+        "Hyper Cutter",
+        "Intimidate",
+        "Sheer Force"
+      ],
+      "formats": [
+        "National Dex"
+      ],
+      "isNonstandard": "NatDex",
+      "dexNumber": 303,
+      "evos": [],
+      "alts": [
+        "Mawile-Mega"
+      ],
+      "megaStones": [
+        "Mawilite"
+      ]
+    },
+    {
+      "name": "Mawile-Mega",
+      "hp": 50,
+      "atk": 105,
+      "def": 125,
+      "spa": 55,
+      "spd": 95,
+      "spe": 50,
+      "bst": 480,
+      "weight": 23.5,
+      "height": 1,
+      "types": [
+        "Steel",
+        "Fairy"
+      ],
+      "abilities": [
+        "Huge Power"
+      ],
+      "formats": [
+        "National Dex"
+      ],
+      "isNonstandard": "NatDex",
+      "dexNumber": 303,
+      "evos": [],
+      "alts": [],
+      "megaStones": [
+        "Mawilite"
+      ]
+    },
+    {
+      "name": "Metagross",
+      "hp": 80,
+      "atk": 135,
+      "def": 130,
+      "spa": 95,
+      "spd": 90,
+      "spe": 70,
+      "bst": 600,
+      "weight": 550,
+      "height": 1.6,
+      "types": [
+        "Steel",
+        "Psychic"
+      ],
+      "abilities": [
+        "Clear Body",
+        "Light Metal"
+      ],
+      "formats": [
+        "UU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 376,
+      "evos": [],
+      "alts": [
+        "Metagross-Mega"
+      ],
+      "megaStones": [
+        "Metagrossite"
+      ]
+    },
+    {
+      "name": "Metagross-Mega",
+      "hp": 80,
+      "atk": 145,
+      "def": 150,
+      "spa": 105,
+      "spd": 110,
+      "spe": 110,
+      "bst": 700,
+      "weight": 942.9,
+      "height": 2.5,
+      "types": [
+        "Steel",
+        "Psychic"
+      ],
+      "abilities": [
+        "Tough Claws"
+      ],
+      "formats": [
+        "National Dex"
+      ],
+      "isNonstandard": "NatDex",
+      "dexNumber": 376,
+      "evos": [],
+      "alts": [],
+      "megaStones": [
+        "Metagrossite"
+      ]
+    },
+    {
+      "name": "Staraptor",
+      "hp": 85,
+      "atk": 120,
+      "def": 70,
+      "spa": 50,
+      "spd": 60,
+      "spe": 100,
+      "bst": 485,
+      "weight": 24.9,
+      "height": 1.2,
+      "types": [
+        "Normal",
+        "Flying"
+      ],
+      "abilities": [
+        "Intimidate",
+        "Reckless"
+      ],
+      "formats": [
+        "NU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 398,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Musharna",
+      "hp": 116,
+      "atk": 55,
+      "def": 85,
+      "spa": 107,
+      "spd": 95,
+      "spe": 29,
+      "bst": 487,
+      "weight": 60.5,
+      "height": 1.1,
+      "types": [
+        "Psychic"
+      ],
+      "abilities": [
+        "Forewarn",
+        "Synchronize",
+        "Telepathy"
+      ],
+      "formats": [
+        "National Dex"
+      ],
+      "isNonstandard": "NatDex",
+      "dexNumber": 518,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Scolipede",
+      "hp": 60,
+      "atk": 100,
+      "def": 89,
+      "spa": 55,
+      "spd": 69,
+      "spe": 112,
+      "bst": 485,
+      "weight": 200.5,
+      "height": 2.5,
+      "types": [
+        "Bug",
+        "Poison"
+      ],
+      "abilities": [
+        "Poison Point",
+        "Swarm",
+        "Speed Boost"
+      ],
+      "formats": [
+        "National Dex"
+      ],
+      "isNonstandard": "NatDex",
+      "dexNumber": 545,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Scrafty",
+      "hp": 65,
+      "atk": 90,
+      "def": 115,
+      "spa": 45,
+      "spd": 115,
+      "spe": 58,
+      "bst": 488,
+      "weight": 30,
+      "height": 1.1,
+      "types": [
+        "Dark",
+        "Fighting"
+      ],
+      "abilities": [
+        "Shed Skin",
+        "Moxie",
+        "Intimidate"
+      ],
+      "formats": [
+        "PUBL"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 560,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Eelektross",
+      "hp": 85,
+      "atk": 115,
+      "def": 80,
+      "spa": 105,
+      "spd": 80,
+      "spe": 50,
+      "bst": 515,
+      "weight": 80.5,
+      "height": 2.1,
+      "types": [
+        "Electric"
+      ],
+      "abilities": [
+        "Levitate"
+      ],
+      "formats": [
+        "ZU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 604,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Pyroar",
+      "hp": 86,
+      "atk": 68,
+      "def": 72,
+      "spa": 109,
+      "spd": 66,
+      "spe": 106,
+      "bst": 507,
+      "weight": 81.5,
+      "height": 1.5,
+      "types": [
+        "Fire",
+        "Normal"
+      ],
+      "abilities": [
+        "Rivalry",
+        "Unnerve",
+        "Moxie"
+      ],
+      "formats": [
+        "ZU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 668,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Floette",
+      "hp": 54,
+      "atk": 45,
+      "def": 47,
+      "spa": 75,
+      "spd": 98,
+      "spe": 52,
+      "bst": 371,
+      "weight": 0.9,
+      "height": 0.2,
+      "types": [
+        "Fairy"
+      ],
+      "abilities": [
+        "Flower Veil",
+        "Symbiosis"
+      ],
+      "formats": [
+        "NFE"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 670,
+      "evos": [
+        "Florges"
+      ],
+      "alts": []
+    },
+    {
+      "name": "Malamar",
+      "hp": 86,
+      "atk": 92,
+      "def": 88,
+      "spa": 68,
+      "spd": 75,
+      "spe": 73,
+      "bst": 482,
+      "weight": 47,
+      "height": 1.5,
+      "types": [
+        "Dark",
+        "Psychic"
+      ],
+      "abilities": [
+        "Contrary",
+        "Suction Cups",
+        "Infiltrator"
+      ],
+      "formats": [
+        "ZU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 687,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Barbaracle",
+      "hp": 72,
+      "atk": 105,
+      "def": 115,
+      "spa": 54,
+      "spd": 86,
+      "spe": 68,
+      "bst": 500,
+      "weight": 96,
+      "height": 1.3,
+      "types": [
+        "Rock",
+        "Water"
+      ],
+      "abilities": [
+        "Tough Claws",
+        "Sniper",
+        "Pickpocket"
+      ],
+      "formats": [
+        "National Dex"
+      ],
+      "isNonstandard": "NatDex",
+      "dexNumber": 689,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Dragalge",
+      "hp": 65,
+      "atk": 75,
+      "def": 90,
+      "spa": 97,
+      "spd": 123,
+      "spe": 44,
+      "bst": 494,
+      "weight": 81.5,
+      "height": 1.8,
+      "types": [
+        "Poison",
+        "Dragon"
+      ],
+      "abilities": [
+        "Poison Point",
+        "Poison Touch",
+        "Adaptability"
+      ],
+      "formats": [
+        "PUBL"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 691,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Grimmsnarl",
+      "hp": 95,
+      "atk": 120,
+      "def": 65,
+      "spa": 95,
+      "spd": 75,
+      "spe": 60,
+      "bst": 510,
+      "weight": 61,
+      "height": 1.5,
+      "types": [
+        "Dark",
+        "Fairy"
+      ],
+      "abilities": [
+        "Prankster",
+        "Frisk",
+        "Pickpocket"
+      ],
+      "formats": [
+        "PU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 861,
+      "evos": [],
+      "alts": [
+        "Grimmsnarl-Gmax"
+      ]
+    },
+    {
+      "name": "Falinks",
+      "hp": 65,
+      "atk": 100,
+      "def": 100,
+      "spa": 70,
+      "spd": 60,
+      "spe": 75,
+      "bst": 470,
+      "weight": 62,
+      "height": 3,
+      "types": [
+        "Fighting"
+      ],
+      "abilities": [
+        "Battle Armor",
+        "Defiant"
+      ],
+      "formats": [
+        "ZU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 870,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Overqwil",
+      "hp": 85,
+      "atk": 115,
+      "def": 95,
+      "spa": 65,
+      "spd": 65,
+      "spe": 85,
+      "bst": 510,
+      "weight": 60.5,
+      "height": 2.5,
+      "types": [
+        "Dark",
+        "Poison"
+      ],
+      "abilities": [
+        "Poison Point",
+        "Swift Swim",
+        "Intimidate"
+      ],
+      "formats": [
+        "NU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 904,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Houndstone",
+      "hp": 72,
+      "atk": 101,
+      "def": 100,
+      "spa": 50,
+      "spd": 97,
+      "spe": 68,
+      "bst": 488,
+      "weight": 15,
+      "height": 2,
+      "types": [
+        "Ghost"
+      ],
+      "abilities": [
+        "Sand Rush",
+        "Fluffy"
+      ],
+      "formats": [
+        "NU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 972,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Annihilape",
+      "hp": 110,
+      "atk": 115,
+      "def": 80,
+      "spa": 50,
+      "spd": 90,
+      "spe": 90,
+      "bst": 535,
+      "weight": 56,
+      "height": 1.2,
+      "types": [
+        "Fighting",
+        "Ghost"
+      ],
+      "abilities": [
+        "Vital Spirit",
+        "Inner Focus",
+        "Defiant"
+      ],
+      "formats": [
+        "Uber"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 979,
+      "evos": [],
+      "alts": []
+    },
+    {
+      "name": "Gholdengo",
+      "hp": 87,
+      "atk": 60,
+      "def": 95,
+      "spa": 133,
+      "spd": 91,
+      "spe": 84,
+      "bst": 550,
+      "weight": 30,
+      "height": 1.2,
+      "types": [
+        "Steel",
+        "Ghost"
+      ],
+      "abilities": [
+        "Good as Gold"
+      ],
+      "formats": [
+        "OU"
+      ],
+      "isNonstandard": "Standard",
+      "dexNumber": 1000,
       "evos": [],
       "alts": []
     }

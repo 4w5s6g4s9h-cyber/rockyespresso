@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import {
   baseSpecies,
   megaBaseFromItem,
+  megaStoneOptionsForPokemon,
+  normalizeMegaItem,
   normalizeSpSpread,
   pokemonUsesMegaSlot,
   reorderTeam,
@@ -22,7 +24,10 @@ const teamStyles = {
 
 const garchomp = { name: "Garchomp", hp: 108, atk: 130, def: 95, spa: 80, spd: 85, spe: 102, bst: 600, types: ["Dragon", "Ground"], abilities: [], evos: [] };
 const megaChomp = { ...garchomp, name: "Garchomp-Mega" };
-const dragonite = { name: "Dragonite", hp: 91, atk: 134, def: 95, spa: 100, spd: 100, spe: 80, bst: 600, types: ["Dragon", "Flying"], abilities: [], evos: [] };
+const megaCrab = { name: "Crabominable-Mega", megaStones: ["Crabominablite"], hp: 97, atk: 132, def: 117, spa: 62, spd: 87, spe: 43, bst: 538, types: ["Fighting", "Ice"], abilities: [], evos: [] };
+const crab = { ...megaCrab, name: "Crabominable", megaStones: ["Crabominablite"] };
+const megaGreninja = { name: "Greninja-Mega", megaStones: ["Greninjite"], hp: 72, atk: 145, def: 67, spa: 153, spd: 71, spe: 122, bst: 630, types: ["Water", "Dark"], abilities: [], evos: [] };
+const dragonite = { name: "Dragonite", megaStones: ["Dragoninite"], hp: 91, atk: 134, def: 95, spa: 100, spd: 100, spe: 80, bst: 600, types: ["Dragon", "Flying"], abilities: [], evos: [] };
 const corviknight = { name: "Corviknight", hp: 98, atk: 87, def: 105, spa: 53, spd: 85, spe: 67, bst: 495, types: ["Flying", "Steel"], abilities: [], evos: [] };
 const starmie = { name: "Starmie", hp: 60, atk: 75, def: 85, spa: 100, spd: 85, spe: 115, bst: 520, types: ["Water", "Psychic"], abilities: [], evos: [] };
 const charizard = { name: "Charizard", hp: 78, atk: 104, def: 78, spa: 159, spd: 115, spe: 100, bst: 634, types: ["Fire", "Flying"], abilities: [], evos: [] };
@@ -30,8 +35,14 @@ const charizard = { name: "Charizard", hp: 78, atk: 104, def: 78, spa: 159, spd:
 assert.equal(baseSpecies("Charizard-Mega-Y"), "Charizard");
 assert.equal(baseSpecies("Garchomp-Mega"), "Garchomp");
 assert.equal(megaBaseFromItem("Charizardite Y"), "Charizard");
+assert.deepEqual(megaStoneOptionsForPokemon(megaCrab), ["Crabominablite"]);
+assert.equal(normalizeMegaItem(megaCrab, "Leftovers"), "Crabominablite");
+assert.equal(normalizeMegaItem(garchomp, "Leftovers"), "Leftovers");
 assert.equal(pokemonUsesMegaSlot(charizard, { item: "Charizardite Y" }), true);
+assert.equal(pokemonUsesMegaSlot(crab, { item: "Crabominablite" }), true);
 assert.equal(pokemonUsesMegaSlot(garchomp, { item: "Venusaurite" }), false);
+assert.equal(pokemonUsesMegaSlot(dragonite, { item: "Dragoninite" }), true);
+assert.equal(pokemonUsesMegaSlot(dragonite, { item: "Lum Berry / Dragoninite" }), false);
 
 assert.equal(normalizeSpSpread("252 Atk / 252 Spe / 4 HP"), "2 HP / 32 Atk / 32 Spe");
 assert.equal(normalizeSpSpread("40 HP / 40 Atk / 40 Def"), "22 HP / 22 Atk / 22 Def");
@@ -55,6 +66,13 @@ assert.equal(teamLegality({
   battleFormats,
   selectedBuild: (pokemon) => pokemon.name === "Charizard" ? { item: "Charizardite Y" } : {}
 }).ok, false);
+assert.equal(teamLegality({
+  pokemon: megaGreninja,
+  team: [dragonite],
+  battleFormat: "single3",
+  battleFormats,
+  selectedBuild: (pokemon) => pokemon.name === "Dragonite" ? { item: "Lum Berry / Dragoninite" } : { item: "Greninjite" }
+}).ok, true);
 assert.equal(teamLegality({ pokemon: dragonite, team: [garchomp, starmie, corviknight], battleFormat: "single3", battleFormats }).ok, true);
 assert.equal(teamLegality({ pokemon: dragonite, team: [garchomp, starmie, corviknight, starmie, corviknight, starmie], battleFormat: "single3", battleFormats }).ok, false);
 

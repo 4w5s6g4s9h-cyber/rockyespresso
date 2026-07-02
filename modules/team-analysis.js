@@ -115,12 +115,46 @@ export function isMega(pokemonOrName) {
 }
 
 export function megaBaseFromItem(item = "") {
-  return MEGA_STONE_BASES[String(item).trim()] ?? "";
+  return splitItemOptions(item)
+    .map((option) => MEGA_STONE_BASES[option] ?? "")
+    .find(Boolean) ?? "";
+}
+
+export function megaStoneOptionsForPokemon(pokemonOrName) {
+  const pokemon = typeof pokemonOrName === "string" ? null : pokemonOrName;
+  const name = typeof pokemonOrName === "string" ? pokemonOrName : pokemonOrName?.name;
+  if (!isMega(name)) return [];
+
+  const stored = pokemon?.megaStones?.filter(Boolean) ?? [];
+  if (stored.length) return [...new Set(stored)];
+
+  const base = baseSpecies(name);
+  const suffix = name?.endsWith("-Mega-X") ? " X" : name?.endsWith("-Mega-Y") ? " Y" : "";
+  const inferred = Object.entries(MEGA_STONE_BASES)
+    .filter(([stone, stoneBase]) => {
+      if (stoneBase !== base) return false;
+      if (!suffix) return true;
+      return stone.endsWith(suffix);
+    })
+    .map(([stone]) => stone);
+  return inferred.length ? inferred : ["Mega Stone"];
+}
+
+export function normalizeMegaItem(pokemonOrName, item = "") {
+  if (!isMega(pokemonOrName)) return item;
+  const options = megaStoneOptionsForPokemon(pokemonOrName);
+  const selected = splitItemOptions(item).find((option) => options.includes(option));
+  return selected ?? options[0] ?? "Mega Stone";
 }
 
 export function pokemonUsesMegaSlot(pokemonOrName, build = {}) {
   const name = typeof pokemonOrName === "string" ? pokemonOrName : pokemonOrName?.name;
   if (isMega(name)) return true;
+  const itemOptions = splitItemOptions(build.item);
+  const knownMegaStones = typeof pokemonOrName === "string" ? [] : pokemonOrName?.megaStones ?? [];
+  const nonMegaItemOptions = itemOptions.filter((option) => !MEGA_STONE_BASES[option] && !knownMegaStones.includes(option));
+  if (nonMegaItemOptions.length) return false;
+  if (knownMegaStones.some((stone) => itemOptions.includes(stone))) return true;
   const itemBase = megaBaseFromItem(build.item);
   return Boolean(itemBase && itemBase === baseSpecies(name));
 }
@@ -131,6 +165,10 @@ export function baseSpecies(name) {
 
 export function baseSpeciesLabel(name) {
   return baseSpecies(name).replace(/-/g, " ");
+}
+
+function splitItemOptions(item = "") {
+  return String(item).split("/").map((part) => part.trim()).filter(Boolean);
 }
 
 export function maxTeamSize(battleFormat, battleFormats) {

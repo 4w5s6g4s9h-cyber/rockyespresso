@@ -28,6 +28,12 @@ const MODULES = [
     ['baseSpecies', '__teamAnalysis.baseSpecies'],
     ['defensiveMultiplier', '__teamAnalysis.defensiveMultiplier'],
     ['pokemonUsesMegaSlot', '__teamAnalysis.pokemonUsesMegaSlot']
+  ] },
+  { file: 'modules/team-planner.js', namespace: '__teamPlanner', imports: [
+    ['baseSpecies', '__teamAnalysis.baseSpecies'],
+    ['defensiveMultiplier', '__teamAnalysis.defensiveMultiplier'],
+    ['pokemonUsesMegaSlot', '__teamAnalysis.pokemonUsesMegaSlot'],
+    ['teamTypeSummary', '__teamAnalysis.teamTypeSummary']
   ] }
 ];
 
@@ -57,11 +63,18 @@ const bindUiEvents = __uiEvents.bindEvents;
 const pureCounterRecommendations = __battleSimulation.counterRecommendations;
 const pureGenerateOpponentTeam = __battleSimulation.generateOpponentTeam;
 const { simulateBattle, selectedBattleMembers } = __battleSimulation;
+const pureChooseBestBattleSelection = __teamPlanner.chooseBestBattleSelection;
+const pureEvaluateTeam = __teamPlanner.evaluateTeam;
+const purePlanTeam = __teamPlanner.planTeam;
+const pureSuggestTeamAdditions = __teamPlanner.suggestTeamAdditions;
+const pureSuggestTeamReplacements = __teamPlanner.suggestTeamReplacements;
 const pureBaseSpecies = __teamAnalysis.baseSpecies;
 const pureBaseSpeciesLabel = __teamAnalysis.baseSpeciesLabel;
 const pureDefensiveMultiplier = __teamAnalysis.defensiveMultiplier;
 const pureIsMega = __teamAnalysis.isMega;
 const pureMegaBaseFromItem = __teamAnalysis.megaBaseFromItem;
+const pureMegaStoneOptionsForPokemon = __teamAnalysis.megaStoneOptionsForPokemon;
+const pureNormalizeMegaItem = __teamAnalysis.normalizeMegaItem;
 const pureNormalizeSpSpread = __teamAnalysis.normalizeSpSpread;
 const pureNormalizeSpValues = __teamAnalysis.normalizeSpValues;
 const pureParseSp = __teamAnalysis.parseSp;

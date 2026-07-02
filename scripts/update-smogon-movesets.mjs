@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const ROOT = process.cwd();
 const POKEMON_PATH = path.join(ROOT, 'data/champions-pokemon.json');
@@ -160,6 +161,19 @@ function megaItemCandidates(pokemonName, basicsByGen) {
     .map((item) => item.name))];
 }
 
+function megaStoneOptionsForPokemon(pokemon, megaItems = []) {
+  if (!pokemon.name.includes('-Mega')) return [];
+  const stored = pokemon.megaStones?.filter(Boolean) ?? [];
+  return [...new Set([...megaItems, ...stored])].filter(Boolean);
+}
+
+function normalizeMegaSetItem(item, pokemon, megaItems = []) {
+  if (!pokemon.name.includes('-Mega')) return item;
+  const options = megaStoneOptionsForPokemon(pokemon, megaItems);
+  const selected = splitMoveOptions(item).find((option) => options.includes(option));
+  return selected ?? options[0] ?? 'Mega Stone';
+}
+
 function moveSlotLabel(slot) {
   return slot
     .map(({ move }) => move)
@@ -223,16 +237,17 @@ function formatLabel(format) {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-function toLocalSet(set, source) {
+function toLocalSet(set, source, pokemon = null, megaItems = []) {
   const labelBase = set.name || formatLabel(set.format);
   const sourceSuffix = source === 'sv' ? 'SV' : 'Champions';
+  const item = set.items.join(' / ') || 'No Item';
   return {
     id: `${source}-${alias(set.pokemon)}-${alias(set.format || 'format')}-${alias(labelBase)}`.slice(0, 96),
     label: `${labelBase} (${sourceSuffix})`,
     format: set.format || 'single3',
     status: source === 'sv' ? 'smogon-sv' : 'smogon-champions',
     role: set.name || formatLabel(set.format),
-    item: set.items.join(' / ') || 'No Item',
+    item: pokemon ? normalizeMegaSetItem(item, pokemon, megaItems) : item,
     ability: set.abilities.join(' / ') || '[ability]',
     nature: set.natures.join(' / ') || '[nature]',
     evs: spLabel(set.evconfigs, set) || 'Geen SP-spread vermeld',
@@ -241,22 +256,27 @@ function toLocalSet(set, source) {
   };
 }
 
-function generatedSet(pokemon, moveDetails, learnsets) {
+function generatedSet(pokemon, moveDetails, learnsets, megaItems = []) {
   const special = pokemon.spa >= pokemon.atk + 15;
   const physical = pokemon.atk >= pokemon.spa + 15;
   const bulky = pokemon.hp + pokemon.def + pokemon.spd >= 280;
   const mode = bulky && !special && !physical ? 'bulky' : special ? 'special' : physical ? 'physical' : 'mixed';
+  const movePlan = generatedMovePlan(pokemon, mode, moveDetails, learnsets);
   return {
     id: `generated-${mode}`,
     label: mode[0].toUpperCase() + mode.slice(1),
     format: 'single3',
     status: 'generated',
     role: mode === 'bulky' ? 'Bulky pivot' : 'Allrounder',
-    item: mode === 'bulky' ? 'Leftovers / Heavy-Duty Boots' : 'Expert Belt / Heavy-Duty Boots',
+    item: normalizeMegaSetItem(mode === 'bulky' ? 'Leftovers / Heavy-Duty Boots' : 'Expert Belt / Heavy-Duty Boots', pokemon, megaItems),
     ability: pokemon.abilities?.[0] || '[ability]',
     nature: mode === 'special' ? 'Modest / Timid' : mode === 'physical' ? 'Adamant / Jolly' : 'Rash / Mild',
     evs: generatedSpSpread(mode),
-    moves: legalMovePlan(pokemon, mode, moveDetails, learnsets),
+    moves: movePlan.moves,
+    quality: movePlan.quality,
+    generatedPlan: movePlan.plan,
+    tags: movePlan.tags,
+    issues: movePlan.issues,
     sourceIds: [SOURCE_IDS.generated],
   };
 }
@@ -278,17 +298,47 @@ function ensureUniqueSetIds(sets) {
   });
 }
 
-function legalMovePlan(pokemon, mode, moveDetails, learnsets, used = []) {
+export function legalMovePlan(pokemon, mode, moveDetails, learnsets, used = []) {
+  return generatedMovePlan(pokemon, mode, moveDetails, learnsets, used).moves;
+}
+
+export function generatedMovePlan(pokemon, mode, moveDetails, learnsets, used = []) {
   const existing = new Set(used.flatMap(splitMoveOptions));
   const candidates = learnsetForPokemon(pokemon.name, learnsets)
     .filter((move) => moveAllowed(pokemon.name, move, moveDetails, learnsets))
     .filter((move) => !existing.has(move))
     .map((move) => ({
       move,
+      details: moveDetails[move] ?? {},
       score: generatedMoveScore(pokemon, mode, move, moveDetails[move]),
     }))
     .sort((a, b) => b.score - a.score || a.move.localeCompare(b.move));
-  return candidates.slice(0, 4).map(({ move }) => move);
+  const selected = [];
+  const plan = [];
+
+  if (mode === 'bulky') {
+    pickGeneratedMove(candidates, selected, plan, 'defensive utility', (item) => isUtilityMove(item.move, item.details));
+    pickGeneratedMove(candidates, selected, plan, 'reliable STAB', (item) => isStabDamage(pokemon, item.details));
+    pickGeneratedMove(candidates, selected, plan, 'coverage', (item) => isCoverageDamage(pokemon, item.details));
+    pickGeneratedMove(candidates, selected, plan, 'second utility', (item) => isUtilityMove(item.move, item.details));
+  } else {
+    pickGeneratedMove(candidates, selected, plan, 'primary STAB', (item) => isPreferredStab(pokemon, mode, item.details));
+    pickGeneratedMove(candidates, selected, plan, 'coverage', (item) => isCoverageDamage(pokemon, item.details));
+    pickGeneratedMove(candidates, selected, plan, 'setup or utility', (item) => isSetupOrUtility(item.move, item.details));
+    pickGeneratedMove(candidates, selected, plan, 'secondary STAB or coverage', (item) => isDamage(item.details));
+  }
+
+  while (selected.length < 4) {
+    if (!pickGeneratedMove(candidates, selected, plan, 'best legal filler', () => true)) break;
+  }
+
+  const moves = selected.map(({ move }) => move);
+  const metadata = generatedPlanMetadata(pokemon, mode, moves, moveDetails);
+  return {
+    moves,
+    plan,
+    ...metadata,
+  };
 }
 
 function generatedMoveScore(pokemon, mode, move, details = {}) {
@@ -308,6 +358,94 @@ function generatedMoveScore(pokemon, mode, move, details = {}) {
   return score;
 }
 
+function pickGeneratedMove(candidates, selected, plan, label, predicate) {
+  const usedMoves = new Set(selected.map(({ move }) => move));
+  const usedDamageTypes = new Set(selected
+    .filter((item) => isDamage(item.details))
+    .map((item) => item.details.type));
+  const scored = candidates
+    .filter((item) => !usedMoves.has(item.move))
+    .filter(predicate)
+    .map((item) => ({
+      ...item,
+      slotScore: item.score - (isDamage(item.details) && usedDamageTypes.has(item.details.type) ? 18 : 0)
+    }))
+    .sort((a, b) => b.slotScore - a.slotScore || a.move.localeCompare(b.move));
+  const choice = scored[0];
+  if (!choice) return false;
+  selected.push(choice);
+  plan.push(`${label}: ${choice.move}`);
+  return true;
+}
+
+function isDamage(details = {}) {
+  return details.category && details.category !== 'Status' && details.type;
+}
+
+function isPreferredStab(pokemon, mode, details = {}) {
+  if (!isStabDamage(pokemon, details)) return false;
+  if (mode === 'special') return details.category === 'Special';
+  if (mode === 'physical') return details.category === 'Physical';
+  return isDamage(details);
+}
+
+function isStabDamage(pokemon, details = {}) {
+  return isDamage(details) && pokemon.types?.includes(details.type);
+}
+
+function isCoverageDamage(pokemon, details = {}) {
+  return isDamage(details) && !pokemon.types?.includes(details.type);
+}
+
+function isUtilityMove(move, details = {}) {
+  const text = `${move} ${details.effect ?? ''}`.toLowerCase();
+  return details.category === 'Status'
+    || /protect|recover|roost|slack off|synthesis|wish|burn|paraly|poison|toxic|will-o-wisp|thunder wave|hazard|stealth rock|spikes|sticky web|reflect|light screen|aurora veil|knock off|taunt|leech seed/i.test(text);
+}
+
+function isSetupOrUtility(move, details = {}) {
+  const text = `${move} ${details.effect ?? ''}`.toLowerCase();
+  return isUtilityMove(move, details) || /boost|raises|swords dance|calm mind|nasty plot|dragon dance|bulk up|shell smash|quiver dance/i.test(text);
+}
+
+function generatedPlanMetadata(pokemon, mode, moves, moveDetails) {
+  const details = moves.map((move) => moveDetails[move] ?? {});
+  const damage = details.filter(isDamage);
+  const damageTypes = damage.map((detail) => detail.type);
+  const uniqueDamageTypes = new Set(damageTypes);
+  const hasStab = damage.some((detail) => pokemon.types?.includes(detail.type));
+  const hasCoverage = damage.some((detail) => !pokemon.types?.includes(detail.type));
+  const utility = moves.filter((move) => isUtilityMove(move, moveDetails[move] ?? {}));
+  const duplicateDamageTypes = damageTypes.length - uniqueDamageTypes.size;
+  const issues = [];
+  if (moves.length < 4) issues.push('incomplete generated moves');
+  if (!hasStab && damage.length) issues.push('no STAB damage');
+  if (!utility.length && mode === 'bulky') issues.push('bulky set lacks utility');
+  if (duplicateDamageTypes > 0) issues.push('duplicate damage type');
+  const value = Math.max(35, Math.min(82,
+    42
+    + moves.length * 8
+    + (hasStab ? 12 : 0)
+    + (hasCoverage ? 8 : 0)
+    + Math.min(utility.length, 2) * 6
+    - duplicateDamageTypes * 8
+    - issues.length * 5
+  ));
+  return {
+    quality: {
+      value,
+      label: value >= 70 ? 'Middel' : 'Laag'
+    },
+    tags: [
+      mode,
+      hasStab ? 'stab' : '',
+      hasCoverage ? 'coverage' : '',
+      utility.length ? 'utility' : ''
+    ].filter(Boolean),
+    issues
+  };
+}
+
 function generatedModeFromSet(set = {}, pokemon = {}) {
   const haystack = `${set.id ?? ''} ${set.label ?? ''} ${set.role ?? ''}`.toLowerCase();
   if (haystack.includes('bulky') || haystack.includes('wall') || haystack.includes('tank') || haystack.includes('support')) return 'bulky';
@@ -318,7 +456,7 @@ function generatedModeFromSet(set = {}, pokemon = {}) {
   return 'mixed';
 }
 
-function sanitizeSetMoves(set, pokemon, moveDetails, learnsets, source) {
+function sanitizeSetMoves(set, pokemon, moveDetails, learnsets, source, megaItems = []) {
   const nextMoves = [];
   const replacements = legalMovePlan(pokemon, generatedModeFromSet(set, pokemon), moveDetails, learnsets);
 
@@ -341,10 +479,13 @@ function sanitizeSetMoves(set, pokemon, moveDetails, learnsets, source) {
   }
 
   const changed = JSON.stringify(nextMoves) !== JSON.stringify(set.moves);
+  const metadata = changed ? generatedPlanMetadata(pokemon, generatedModeFromSet(set, pokemon), nextMoves, moveDetails) : null;
   return {
     ...set,
+    item: normalizeMegaSetItem(set.item, pokemon, megaItems),
     moves: nextMoves.slice(0, 4),
     ...(changed ? { championsAdjusted: true } : {}),
+    ...(changed ? { quality: metadata.quality, tags: metadata.tags, issues: metadata.issues } : {}),
     sourceIds: changed && source === 'sv'
       ? [...new Set([...(set.sourceIds ?? []), SOURCE_IDS.champions])]
       : set.sourceIds,
@@ -417,7 +558,7 @@ async function main() {
       const allChampionsSets = [...championsSets, ...championsBaseSets];
       if (allChampionsSets.length) {
         nextSets[pokemon.name] = ensureUniqueSetIds(allChampionsSets
-          .map((set) => sanitizeSetMoves(toLocalSet(set, 'champions'), pokemon, moveDetails, learnsets, 'champions'))
+          .map((set) => sanitizeSetMoves(toLocalSet(set, 'champions', pokemon, megaItems), pokemon, moveDetails, learnsets, 'champions', megaItems))
           .filter((set) => set.moves.length > 0));
         stats.champions += nextSets[pokemon.name].length;
       } else {
@@ -430,19 +571,19 @@ async function main() {
         const allSvSets = [...svSets, ...svBaseSets];
         if (allSvSets.length) {
           const sanitized = allSvSets
-            .map((set) => sanitizeSetMoves(toLocalSet(set, 'sv'), pokemon, moveDetails, learnsets, 'sv'))
+            .map((set) => sanitizeSetMoves(toLocalSet(set, 'sv', pokemon, megaItems), pokemon, moveDetails, learnsets, 'sv', megaItems))
             .filter((set) => set.moves.length > 0);
-          nextSets[pokemon.name] = ensureUniqueSetIds(sanitized.length ? sanitized : [generatedSet(pokemon, moveDetails, learnsets)]);
+          nextSets[pokemon.name] = ensureUniqueSetIds(sanitized.length ? sanitized : [generatedSet(pokemon, moveDetails, learnsets, megaItems)]);
           if (sanitized.length) stats.sv += nextSets[pokemon.name].length;
           else stats.generated += 1;
         } else {
-          nextSets[pokemon.name] = [generatedSet(pokemon, moveDetails, learnsets)];
+          nextSets[pokemon.name] = [generatedSet(pokemon, moveDetails, learnsets, megaItems)];
           stats.generated += 1;
         }
       }
     } catch (error) {
       stats.errors.push({ name: pokemon.name, error: error.message });
-      nextSets[pokemon.name] = [generatedSet(pokemon, moveDetails, learnsets)];
+      nextSets[pokemon.name] = [generatedSet(pokemon, moveDetails, learnsets, megaItems)];
       stats.generated += 1;
     }
 
@@ -478,7 +619,9 @@ async function main() {
   console.error(JSON.stringify(stats, null, 2));
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}

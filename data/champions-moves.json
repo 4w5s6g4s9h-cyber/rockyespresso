@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15",
+  "generatedAt": "2026-06-22",
   "sources": [
     {
       "id": "smogon-champions",
@@ -94,6 +94,14 @@
       "pp": "20",
       "effect": "Usually goes first."
     },
+    "Aqua Ring": {
+      "type": "Water",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "20",
+      "effect": "User recovers 1/16 max HP per turn."
+    },
     "Aqua Step": {
       "type": "Water",
       "category": "Physical",
@@ -117,6 +125,14 @@
       "accuracy": "100",
       "pp": "5",
       "effect": "Lowers the user's Defense and Sp. Def by 1."
+    },
+    "Aromatic Mist": {
+      "type": "Fairy",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "20",
+      "effect": "Raises an ally's Sp. Def by 1."
     },
     "Aura Sphere": {
       "type": "Fighting",
@@ -157,6 +173,14 @@
       "accuracy": "-",
       "pp": "10",
       "effect": "Protects from moves. Contact: poison."
+    },
+    "Barb Barrage": {
+      "type": "Poison",
+      "category": "Physical",
+      "power": "60",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "50% psn. 2x power if target already poisoned."
     },
     "Baton Pass": {
       "type": "Normal",
@@ -213,6 +237,14 @@
       "accuracy": "90",
       "pp": "5",
       "effect": "User cannot move next turn."
+    },
+    "Blaze Kick": {
+      "type": "Fire",
+      "category": "Physical",
+      "power": "85",
+      "accuracy": "90",
+      "pp": "10",
+      "effect": "High critical hit ratio. 10% chance to burn."
     },
     "Blizzard": {
       "type": "Ice",
@@ -326,6 +358,14 @@
       "pp": "5",
       "effect": "User's Fire type becomes typeless; must be Fire."
     },
+    "Burning Jealousy": {
+      "type": "Fire",
+      "category": "Special",
+      "power": "70",
+      "accuracy": "100",
+      "pp": "5",
+      "effect": "100% burns a target that had a stat rise this turn."
+    },
     "Calm Mind": {
       "type": "Psychic",
       "category": "Status",
@@ -398,6 +438,14 @@
       "pp": "20",
       "effect": "Raises user's Attack, Defense, accuracy by 1."
     },
+    "Confuse Ray": {
+      "type": "Ghost",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "Confuses the target."
+    },
     "Counter": {
       "type": "Fighting",
       "category": "Physical",
@@ -405,14 +453,6 @@
       "accuracy": "100",
       "pp": "20",
       "effect": "If hit by physical attack, returns double damage."
-    },
-    "Cross Chop": {
-      "type": "Fighting",
-      "category": "Physical",
-      "power": "100",
-      "accuracy": "80",
-      "pp": "5",
-      "effect": "High critical hit ratio."
     },
     "Cross Poison": {
       "type": "Poison",
@@ -510,14 +550,6 @@
       "pp": "15",
       "effect": "30% chance to paralyze adjacent Pokemon."
     },
-    "Dive": {
-      "type": "Water",
-      "category": "Physical",
-      "power": "80",
-      "accuracy": "100",
-      "pp": "10",
-      "effect": "Dives underwater turn 1, strikes turn 2."
-    },
     "Double-Edge": {
       "type": "Normal",
       "category": "Physical",
@@ -605,14 +637,6 @@
       "accuracy": "100",
       "pp": "10",
       "effect": "User recovers 75% of the damage dealt."
-    },
-    "Drill Peck": {
-      "type": "Flying",
-      "category": "Physical",
-      "power": "80",
-      "accuracy": "100",
-      "pp": "20",
-      "effect": "No additional effect."
     },
     "Drill Run": {
       "type": "Ground",
@@ -774,14 +798,6 @@
       "pp": "10",
       "effect": "Nullifies Detect, Protect, and Quick/Wide Guard."
     },
-    "Fell Stinger": {
-      "type": "Bug",
-      "category": "Physical",
-      "power": "50",
-      "accuracy": "100",
-      "pp": "25",
-      "effect": "Raises user's Attack by 3 if this KOes the target."
-    },
     "Fickle Beam": {
       "type": "Dragon",
       "category": "Special",
@@ -797,6 +813,14 @@
       "accuracy": "100",
       "pp": "10",
       "effect": "50% chance to raise the user's Sp. Atk by 1."
+    },
+    "Final Gambit": {
+      "type": "Fighting",
+      "category": "Special",
+      "power": "?",
+      "accuracy": "100",
+      "pp": "5",
+      "effect": "Does damage equal to the user's HP. User faints."
     },
     "Fire Blast": {
       "type": "Fire",
@@ -870,6 +894,22 @@
       "pp": "10",
       "effect": "10% chance to lower the target's Sp. Def by 1."
     },
+    "Flatter": {
+      "type": "Dark",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "100",
+      "pp": "15",
+      "effect": "Raises the target's Sp. Atk by 1 and confuses it."
+    },
+    "Fling": {
+      "type": "Dark",
+      "category": "Physical",
+      "power": "?",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "Flings the user's item at the target. Power varies."
+    },
     "Flip Turn": {
       "type": "Water",
       "category": "Physical",
@@ -885,14 +925,6 @@
       "accuracy": "-",
       "pp": "10",
       "effect": "Always results in a critical hit; no accuracy check."
-    },
-    "Fly": {
-      "type": "Flying",
-      "category": "Physical",
-      "power": "90",
-      "accuracy": "95",
-      "pp": "15",
-      "effect": "Flies up on first turn, then strikes the next turn."
     },
     "Focus Blast": {
       "type": "Fighting",
@@ -926,14 +958,6 @@
       "pp": "15",
       "effect": "Uses target's Attack stat in damage calculation."
     },
-    "Freeze-Dry": {
-      "type": "Ice",
-      "category": "Special",
-      "power": "70",
-      "accuracy": "100",
-      "pp": "20",
-      "effect": "10% chance to freeze. Super effective on Water."
-    },
     "Frenzy Plant": {
       "type": "Grass",
       "category": "Special",
@@ -941,14 +965,6 @@
       "accuracy": "90",
       "pp": "5",
       "effect": "User cannot move next turn."
-    },
-    "Frost Breath": {
-      "type": "Ice",
-      "category": "Special",
-      "power": "60",
-      "accuracy": "90",
-      "pp": "10",
-      "effect": "Always results in a critical hit."
     },
     "Future Sight": {
       "type": "Psychic",
@@ -998,22 +1014,6 @@
       "pp": "20",
       "effect": "More power the heavier the target."
     },
-    "Grassy Glide": {
-      "type": "Grass",
-      "category": "Physical",
-      "power": "55",
-      "accuracy": "100",
-      "pp": "20",
-      "effect": "User on Grassy Terrain: +1 priority."
-    },
-    "Grav Apple": {
-      "type": "Grass",
-      "category": "Physical",
-      "power": "80",
-      "accuracy": "100",
-      "pp": "10",
-      "effect": "Target: 100% -1 Def. During Gravity: 1.5x power."
-    },
     "Growth": {
       "type": "Normal",
       "category": "Status",
@@ -1037,6 +1037,14 @@
       "accuracy": "100",
       "pp": "5",
       "effect": "More power the slower the user than the target."
+    },
+    "Hammer Arm": {
+      "type": "Fighting",
+      "category": "Physical",
+      "power": "100",
+      "accuracy": "90",
+      "pp": "10",
+      "effect": "Lowers the user's Speed by 1."
     },
     "Haze": {
       "type": "Ice",
@@ -1109,14 +1117,6 @@
       "accuracy": "100",
       "pp": "10",
       "effect": "Power doubles if the target has a status ailment."
-    },
-    "High Horsepower": {
-      "type": "Ground",
-      "category": "Physical",
-      "power": "95",
-      "accuracy": "95",
-      "pp": "10",
-      "effect": "No additional effect."
     },
     "Horn Leech": {
       "type": "Grass",
@@ -1254,13 +1254,13 @@
       "pp": "10",
       "effect": "No foe can use any move known by the user."
     },
-    "Inferno": {
-      "type": "Fire",
+    "Infernal Parade": {
+      "type": "Ghost",
       "category": "Special",
-      "power": "100",
-      "accuracy": "50",
-      "pp": "5",
-      "effect": "100% chance to burn the target."
+      "power": "60",
+      "accuracy": "100",
+      "pp": "15",
+      "effect": "30% burn. 2x power if target is already statused."
     },
     "Infestation": {
       "type": "Bug",
@@ -1333,14 +1333,6 @@
       "accuracy": "-",
       "pp": "10",
       "effect": "This move does not check accuracy."
-    },
-    "Last Resort": {
-      "type": "Normal",
-      "category": "Physical",
-      "power": "140",
-      "accuracy": "100",
-      "pp": "5",
-      "effect": "Fails unless each known move has been used."
     },
     "Last Respects": {
       "type": "Ghost",
@@ -1430,6 +1422,14 @@
       "pp": "20",
       "effect": "More power the heavier the target."
     },
+    "Low Sweep": {
+      "type": "Fighting",
+      "category": "Physical",
+      "power": "65",
+      "accuracy": "100",
+      "pp": "20",
+      "effect": "100% chance to lower the target's Speed by 1."
+    },
     "Lumina Crash": {
       "type": "Psychic",
       "category": "Special",
@@ -1461,6 +1461,14 @@
       "accuracy": "-",
       "pp": "10",
       "effect": "For 5 turns, the user has immunity to Ground."
+    },
+    "Make It Rain": {
+      "type": "Steel",
+      "category": "Special",
+      "power": "120",
+      "accuracy": "100",
+      "pp": "5",
+      "effect": "Lowers the user's Sp. Atk by 1. Hits foe(s)."
     },
     "Matcha Gotcha": {
       "type": "Grass",
@@ -1830,6 +1838,14 @@
       "pp": "30",
       "effect": "Usually goes first."
     },
+    "Quick Guard": {
+      "type": "Fighting",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "15",
+      "effect": "Protects allies from priority attacks this turn."
+    },
     "Quiver Dance": {
       "type": "Bug",
       "category": "Status",
@@ -1838,6 +1854,14 @@
       "pp": "20",
       "effect": "Raises the user's Sp. Atk, Sp. Def, Speed by 1."
     },
+    "Rage Fist": {
+      "type": "Ghost",
+      "category": "Physical",
+      "power": "50",
+      "accuracy": "100",
+      "pp": "10",
+      "effect": "+50 power for each time user was hit. Max 6 hits."
+    },
     "Rage Powder": {
       "type": "Bug",
       "category": "Status",
@@ -1845,14 +1869,6 @@
       "accuracy": "-",
       "pp": "20",
       "effect": "The foes' moves target the user on the turn used."
-    },
-    "Raging Fury": {
-      "type": "Fire",
-      "category": "Physical",
-      "power": "120",
-      "accuracy": "100",
-      "pp": "10",
-      "effect": "Lasts 2-3 turns. Confuses the user afterwards."
     },
     "Rapid Spin": {
       "type": "Normal",
@@ -1893,14 +1909,6 @@
       "accuracy": "-",
       "pp": "5",
       "effect": "User sleeps 2 turns and restores HP and status."
-    },
-    "Reversal": {
-      "type": "Fighting",
-      "category": "Physical",
-      "power": "?",
-      "accuracy": "100",
-      "pp": "15",
-      "effect": "More power the less HP the user has left."
     },
     "Roar": {
       "type": "Normal",
@@ -1950,14 +1958,6 @@
       "pp": "5",
       "effect": "Heals 50% HP. Flying-type removed 'til turn ends."
     },
-    "Round": {
-      "type": "Normal",
-      "category": "Special",
-      "power": "60",
-      "accuracy": "100",
-      "pp": "15",
-      "effect": "Power doubles if others used Round this turn."
-    },
     "Sacred Sword": {
       "type": "Fighting",
       "category": "Physical",
@@ -2006,6 +2006,14 @@
       "pp": "15",
       "effect": "No additional effect."
     },
+    "Self-Destruct": {
+      "type": "Normal",
+      "category": "Physical",
+      "power": "200",
+      "accuracy": "100",
+      "pp": "5",
+      "effect": "Hits adjacent Pokemon. The user faints."
+    },
     "Shadow Ball": {
       "type": "Ghost",
       "category": "Special",
@@ -2021,14 +2029,6 @@
       "accuracy": "100",
       "pp": "15",
       "effect": "High critical hit ratio."
-    },
-    "Shadow Punch": {
-      "type": "Ghost",
-      "category": "Physical",
-      "power": "60",
-      "accuracy": "-",
-      "pp": "20",
-      "effect": "This move does not check accuracy."
     },
     "Shadow Sneak": {
       "type": "Ghost",
@@ -2126,13 +2126,13 @@
       "pp": "15",
       "effect": "Removes the target's Ground immunity."
     },
-    "Snore": {
-      "type": "Normal",
-      "category": "Special",
-      "power": "50",
-      "accuracy": "100",
-      "pp": "15",
-      "effect": "User must be asleep. 30% chance to flinch target."
+    "Snowscape": {
+      "type": "Ice",
+      "category": "Status",
+      "power": "-",
+      "accuracy": "-",
+      "pp": "10",
+      "effect": "For 5 turns, snow falls. Ice: 1.5x Def."
     },
     "Soak": {
       "type": "Water",
@@ -2182,6 +2182,14 @@
       "pp": "10",
       "effect": "Protects from moves. Contact: loses 1/8 max HP."
     },
+    "Spirit Break": {
+      "type": "Fairy",
+      "category": "Physical",
+      "power": "75",
+      "accuracy": "100",
+      "pp": "15",
+      "effect": "100% chance to lower the target's Sp. Atk by 1."
+    },
     "Spirit Shackle": {
       "type": "Ghost",
       "category": "Physical",
@@ -2205,6 +2213,14 @@
       "accuracy": "95",
       "pp": "5",
       "effect": "User loses 50% max HP."
+    },
+    "Steel Roller": {
+      "type": "Steel",
+      "category": "Physical",
+      "power": "130",
+      "accuracy": "100",
+      "pp": "5",
+      "effect": "Fails if there is no terrain active. Ends the terrain."
     },
     "Sticky Web": {
       "type": "Bug",
@@ -2534,14 +2550,6 @@
       "pp": "20",
       "effect": "User switches out after damaging the target."
     },
-    "Uproar": {
-      "type": "Normal",
-      "category": "Special",
-      "power": "90",
-      "accuracy": "100",
-      "pp": "10",
-      "effect": "Lasts 3 turns. Active Pokemon cannot fall asleep."
-    },
     "Vacuum Wave": {
       "type": "Fighting",
       "category": "Special",
@@ -2549,14 +2557,6 @@
       "accuracy": "100",
       "pp": "30",
       "effect": "Usually goes first."
-    },
-    "Venoshock": {
-      "type": "Poison",
-      "category": "Special",
-      "power": "65",
-      "accuracy": "100",
-      "pp": "10",
-      "effect": "Power doubles if the target is poisoned."
     },
     "Volt Switch": {
       "type": "Electric",

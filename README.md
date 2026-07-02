@@ -21,3 +21,9 @@ Run the lightweight logic tests with:
 ```sh
 node tests/team-analysis.test.mjs
 ```
+
+Audit generated Champions data with:
+
+```sh
+node scripts/audit-champions-data.mjs
+```
