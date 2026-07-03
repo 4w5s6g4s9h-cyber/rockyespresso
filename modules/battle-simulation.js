@@ -2,6 +2,29 @@ import { baseSpecies, defensiveMultiplier, pokemonUsesMegaSlot } from "./team-an
 
 const DEFAULT_FORMAT = { maxTeamSize: 6, selectionSize: 3, label: "Single 3v3" };
 
+// De matchup-score blijft een heuristiek (geen volledige damage-berekening),
+// maar Choice-items en Life Orb verschuiven matchups zó sterk dat ze als
+// statmodifier meegenomen worden.
+const ITEM_MODIFIERS = {
+  "Choice Band": { atk: 1.5 },
+  "Choice Specs": { spa: 1.5 },
+  "Choice Scarf": { spe: 1.5 },
+  "Life Orb": { atk: 1.3, spa: 1.3 }
+};
+
+function heldItem(build = {}) {
+  return String(build.item ?? "").split("/")[0].trim();
+}
+
+export function effectiveBattleStats(pokemon, build = {}) {
+  const mods = ITEM_MODIFIERS[heldItem(build)] ?? {};
+  return {
+    atk: (pokemon.atk ?? 0) * (mods.atk ?? 1),
+    spa: (pokemon.spa ?? 0) * (mods.spa ?? 1),
+    spe: (pokemon.spe ?? 0) * (mods.spe ?? 1)
+  };
+}
+
 export function selectedBattleMembers(team = [], selection = [], format = DEFAULT_FORMAT) {
   const limit = format.selectionSize ?? DEFAULT_FORMAT.selectionSize;
   const byName = new Map(team.map((pokemon) => [pokemon.name, pokemon]));
@@ -119,10 +142,13 @@ export function matchupScore(attacker, defender, {
   const defendingTypes = offensiveTypes(defender, defendBuild, moveDetails);
   const bestAttack = bestTypePressure(attackingTypes, defender.types);
   const bestDefense = bestTypePressure(defendingTypes, attacker.types);
-  const offense = Math.max(attacker.atk, attacker.spa);
-  const opposingOffense = Math.max(defender.atk, defender.spa);
+  const attackerStats = effectiveBattleStats(attacker, attackBuild);
+  const defenderStats = effectiveBattleStats(defender, defendBuild);
+  const offense = Math.max(attackerStats.atk, attackerStats.spa);
+  const opposingOffense = Math.max(defenderStats.atk, defenderStats.spa);
   const bulk = attacker.hp + attacker.def + attacker.spd;
   const opposingBulk = defender.hp + defender.def + defender.spd;
+  const speedDelta = Math.round(attackerStats.spe - defenderStats.spe);
   const role = roleFor(attacker).label ?? "";
   const opposingRole = roleFor(defender).label ?? "";
 
@@ -130,7 +156,7 @@ export function matchupScore(attacker, defender, {
   score += (bestAttack.multiplier - bestDefense.multiplier) * 36;
   score += (offense - opposingBulk / 2) * 0.18;
   score += (bulk / 2 - opposingOffense) * 0.12;
-  score += (attacker.spe - defender.spe) * speedWeight(attacker, defender, role, opposingRole);
+  score += speedDelta * speedWeight(attacker, defender, role, opposingRole);
   score += setQualityBonus(attackBuild) - setQualityBonus(defendBuild);
 
   if (bestAttack.multiplier === 0) score -= 28;
@@ -142,26 +168,26 @@ export function matchupScore(attacker, defender, {
   const metrics = {
     offensePressure: clamp(Math.round(50 + (bestAttack.multiplier - 1) * 28 + (offense - opposingBulk / 2) * 0.22), 0, 100),
     defensiveAnswer: clamp(Math.round(50 + (1 - bestDefense.multiplier) * 30 + (bulk / 2 - opposingOffense) * 0.16), 0, 100),
-    speedAdvantage: clamp(Math.round(50 + (attacker.spe - defender.spe) * 0.45), 0, 100),
+    speedAdvantage: clamp(Math.round(50 + speedDelta * 0.45), 0, 100),
     moveCoverage: clamp(Math.round(bestAttack.multiplier * 42), 0, 100),
     setReliability: clamp(Math.round(50 + setQualityBonus(attackBuild) * 5), 0, 100)
   };
 
   return {
     score: roundedScore,
-    label: matchupLabel({ score: roundedScore, attackMultiplier: bestAttack.multiplier, defenseMultiplier: bestDefense.multiplier, speedDelta: attacker.spe - defender.spe, role }),
+    label: matchupLabel({ score: roundedScore, attackMultiplier: bestAttack.multiplier, defenseMultiplier: bestDefense.multiplier, speedDelta, role }),
     attackMultiplier: bestAttack.multiplier,
     defenseMultiplier: bestDefense.multiplier,
     attackType: bestAttack.type,
     defenseType: bestDefense.type,
-    speedDelta: attacker.spe - defender.spe,
+    speedDelta,
     metrics,
     reasons: matchupReasons({
       attacker,
       defender,
       bestAttack,
       bestDefense,
-      speedDelta: attacker.spe - defender.spe,
+      speedDelta,
       role,
       build: attackBuild
     })
@@ -429,7 +455,7 @@ function teamProfile(team, selectedBuild, roleFor) {
 }
 
 function battleNotes(playerMembers, opponentMembers, winChance) {
-  const notes = [];
+  const notes = ["Indicatie op basis van types, stats, items en sets — geen volledige damage-berekening."];
   if (winChance >= 62) notes.push("Je selectie heeft duidelijk momentum; speel rond je positieve pairings.");
   else if (winChance <= 38) notes.push("Deze matchup vraagt strakke preview-keuzes; vermijd je slechtste pairing als lead.");
   else notes.push("De matchup is close; lead-keuze en setkeuze maken hier veel verschil.");

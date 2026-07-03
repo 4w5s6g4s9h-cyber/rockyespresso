@@ -1,5 +1,5 @@
-import { loadChampionsMeta as fetchChampionsMeta, loadPokemonData, officialPokemon } from './modules/data.js?v=2';
-import { isMoveBlockedForPokemon as pureIsMoveBlockedForPokemon, loadMovesets as fetchMovesets, pokemonCanLearnMoves as purePokemonCanLearnMoves, validateMoveSlots as pureValidateMoveSlots } from './modules/movesets.js?v=2';
+import { loadChampionsMeta as fetchChampionsMeta, loadPokemonData, officialPokemon } from './modules/data.js';
+import { isMoveBlockedForPokemon as pureIsMoveBlockedForPokemon, loadMovesets as fetchMovesets, pokemonCanLearnMoves as purePokemonCanLearnMoves, validateMoveSlots as pureValidateMoveSlots } from './modules/movesets.js';
 import {
   BATTLE_FORMATS,
   ITEM_OPTIONS,
@@ -13,9 +13,9 @@ import {
   TYPE_COLORS,
   TYPES
 } from './modules/constants.js';
-import { renderApp, renderWithoutScrollJump } from './modules/rendering.js?v=2';
+import { renderApp, renderWithoutScrollJump } from './modules/rendering.js';
 import { readJsonStorage, STORAGE_KEYS, writeJsonStorage } from './modules/storage.js';
-import { bindEvents as bindUiEvents } from './modules/ui-events.js?v=4';
+import { bindEvents as bindUiEvents } from './modules/ui-events.js';
 import { counterRecommendations as pureCounterRecommendations, generateOpponentTeam as pureGenerateOpponentTeam, simulateBattle, selectedBattleMembers } from './modules/battle-simulation.js';
 import { baseSpecies as pureBaseSpecies, baseSpeciesLabel as pureBaseSpeciesLabel, defensiveMultiplier as pureDefensiveMultiplier, isMega as pureIsMega, megaBaseFromItem as pureMegaBaseFromItem, megaStoneOptionsForPokemon as pureMegaStoneOptionsForPokemon, normalizeMegaItem as pureNormalizeMegaItem, normalizeSpSpread as pureNormalizeSpSpread, normalizeSpValues as pureNormalizeSpValues, parseSp as pureParseSp, pokemonUsesMegaSlot as purePokemonUsesMegaSlot, reorderTeam as pureReorderTeam, spPartsFromValues as pureSpPartsFromValues, teamLegality as pureTeamLegality, teamTypeSummary as pureTeamTypeSummary, trainedStatValue as pureTrainedStatValue } from './modules/team-analysis.js';
 import { chooseBestBattleSelection as pureChooseBestBattleSelection, evaluateTeam as pureEvaluateTeam, planTeam as purePlanTeam, suggestTeamAdditions as pureSuggestTeamAdditions, suggestTeamReplacements as pureSuggestTeamReplacements } from './modules/team-planner.js';
@@ -393,32 +393,73 @@ function scheduleAfterPaint(work) {
   });
 }
 
+// Pijltjesnavigatie door het Pokémon-grid: links/rechts één kaart,
+// omhoog/omlaag één rij (kolomaantal wordt uit de layout afgeleid).
+grid.addEventListener("keydown", (event) => {
+  if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) return;
+  const cards = [...grid.querySelectorAll(".card-button")];
+  const currentIndex = cards.indexOf(document.activeElement);
+  if (currentIndex === -1 || !cards.length) return;
+  const firstTop = cards[0].getBoundingClientRect().top;
+  const columns = Math.max(1, cards.filter((card) => Math.abs(card.getBoundingClientRect().top - firstTop) < 2).length);
+  const delta = event.key === "ArrowLeft" ? -1
+    : event.key === "ArrowRight" ? 1
+    : event.key === "ArrowUp" ? -columns
+    : columns;
+  const target = cards[currentIndex + delta];
+  if (!target) return;
+  event.preventDefault();
+  target.focus();
+  target.scrollIntoView({ block: "nearest" });
+});
+
+let storageToastTimer = null;
+
+function warnStorageFailure(message) {
+  console.warn(message);
+  let toast = document.getElementById("storageToast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "storageToast";
+    toast.className = "storage-toast";
+    toast.setAttribute("role", "status");
+    toast.setAttribute("aria-live", "polite");
+    document.body.append(toast);
+  }
+  toast.textContent = `${message} Mogelijk is de browseropslag vol of geblokkeerd.`;
+  toast.classList.add("visible");
+  window.clearTimeout(storageToastTimer);
+  storageToastTimer = window.setTimeout(() => toast.classList.remove("visible"), 6000);
+}
+
+const isPlainObject = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+
 function loadCustomSets() {
-  state.customSets = readJsonStorage(STORAGE_KEYS.customSets, {});
+  state.customSets = readJsonStorage(STORAGE_KEYS.customSets, {}, undefined, { validate: isPlainObject });
 }
 
 function saveCustomSets() {
-  if (!writeJsonStorage(STORAGE_KEYS.customSets, state.customSets)) console.warn("Custom sets konden niet worden opgeslagen.");
+  if (!writeJsonStorage(STORAGE_KEYS.customSets, state.customSets)) warnStorageFailure("Custom sets konden niet worden opgeslagen.");
 }
 
 function loadSavedTeams() {
-  state.savedTeams = readJsonStorage(STORAGE_KEYS.savedTeams, []);
+  state.savedTeams = readJsonStorage(STORAGE_KEYS.savedTeams, [], undefined, { validate: Array.isArray });
 }
 
 function saveSavedTeams() {
-  if (!writeJsonStorage(STORAGE_KEYS.savedTeams, state.savedTeams)) console.warn("Teams konden niet worden opgeslagen.");
+  if (!writeJsonStorage(STORAGE_KEYS.savedTeams, state.savedTeams)) warnStorageFailure("Teams konden niet worden opgeslagen.");
 }
 
 function loadFavorites() {
-  state.favorites = readJsonStorage(STORAGE_KEYS.favorites, []);
+  state.favorites = readJsonStorage(STORAGE_KEYS.favorites, [], undefined, { validate: Array.isArray });
 }
 
 function saveFavorites() {
-  if (!writeJsonStorage(STORAGE_KEYS.favorites, state.favorites)) console.warn("Favorieten konden niet worden opgeslagen.");
+  if (!writeJsonStorage(STORAGE_KEYS.favorites, state.favorites)) warnStorageFailure("Favorieten konden niet worden opgeslagen.");
 }
 
 function loadBattleSimState() {
-  const saved = readJsonStorage(STORAGE_KEYS.battleSim, {});
+  const saved = readJsonStorage(STORAGE_KEYS.battleSim, {}, undefined, { validate: isPlainObject });
   state.opponentTeam = [];
   state.opponentSelection = [];
   state.opponentMode = saved.opponentMode ?? "manual";
@@ -432,7 +473,7 @@ function saveBattleSimState() {
     opponentSelection: [...state.opponentSelection],
     opponentMode: state.opponentMode
   };
-  if (!writeJsonStorage(STORAGE_KEYS.battleSim, saved)) console.warn("Battle sim kon niet worden opgeslagen.");
+  if (!writeJsonStorage(STORAGE_KEYS.battleSim, saved)) warnStorageFailure("Battle sim kon niet worden opgeslagen.");
 }
 
 function showLoadError(error) {
@@ -761,64 +802,85 @@ function requiredPlanCandidate(anchor) {
   return candidate && candidate.name !== anchor.name ? candidate : null;
 }
 
+// Gewichten voor kandidaat-scoring bij teamopbouw. Positief = bonus,
+// negatief = penalty. De verhoudingen bepalen hoe zwaar planpassing weegt
+// t.o.v. ruwe stats; de type-synergiebonussen liggen bewust een orde lager
+// zodat ze doorslag geven tussen verder gelijkwaardige kandidaten.
+const CANDIDATE_SCORING = {
+  styleMatch: 90,          // kandidaat past bij het gekozen teamplan
+  styleMismatch: -150,     // plan heeft eisen en kandidaat voldoet niet
+  weatherConflict: -180,   // ability/afhankelijkheid botst met het weerplan
+  sunAntiSynergy: -140,    // ondermijnt een sun-plan (bv. pure Water-breaker)
+  weatherPlanAntiSynergy: -160,
+  unvalidatedCore: -120,   // set is niet gevalideerd voor kernrol (en geen Mega)
+  generatedSet: -70,       // alleen auto-gegenereerde set, geen curated data
+  offensiveRoles: ["Sweeper", "Wallbreaker", "Speed control"],
+  defensiveRoles: ["Support", "Bulky pivot", "Wall"],
+  anchorSynergy: {
+    immuneToAnchorWeakness: 36, // kandidaat is immuun voor een type van de anchor
+    resistsAnchorWeakness: 26,  // kandidaat weerstaat een type van de anchor
+    anchorResistsCandidate: 8   // anchor weerstaat een type van de kandidaat
+  }
+};
+
+// Gedeelde stijl-/weer-penalty's voor beide kandidaat-scorers.
+function stylePlanScore(pokemon, styleMatched) {
+  const w = CANDIDATE_SCORING;
+  let score = 0;
+  if (styleMatched) score += w.styleMatch;
+  else if (stylePlanChecks().length) score += w.styleMismatch;
+  if (weatherConflictsWithStyle(pokemon)) score += w.weatherConflict;
+  if (sunAntiSynergy(pokemon)) score += w.sunAntiSynergy;
+  if (weatherPlanAntiSynergy(pokemon)) score += w.weatherPlanAntiSynergy;
+  return score;
+}
+
+// Defensieve synergie met de anchor: dekt de kandidaat de zwaktes van de
+// anchor af, en andersom?
+function anchorSynergyScore(pokemon, anchor) {
+  const w = CANDIDATE_SCORING.anchorSynergy;
+  let score = 0;
+  anchor.types.forEach((type) => {
+    const multiplier = defensiveMultiplier(pokemon.types, type);
+    if (multiplier === 0) score += w.immuneToAnchorWeakness;
+    else if (multiplier < 1) score += w.resistsAnchorWeakness;
+  });
+  pokemon.types.forEach((type) => {
+    if (defensiveMultiplier(anchor.types, type) < 1) score += w.anchorResistsCandidate;
+  });
+  return score;
+}
+
 function teamAroundCandidateScore(pokemon, anchor) {
+  const w = CANDIDATE_SCORING;
   const build = selectedBuild(pokemon);
   const reasons = suggestionReasons(pokemon);
   const role = roleFor(pokemon).label;
   let score = ultraTeamBaseScore(pokemon) + reasons.score * 45;
 
-  if (teamStyleMatch(pokemon)) score += 90;
-  else if (stylePlanChecks().length) score -= 150;
-  if (weatherConflictsWithStyle(pokemon)) score -= 180;
-  if (sunAntiSynergy(pokemon)) score -= 140;
-  if (weatherPlanAntiSynergy(pokemon)) score -= 160;
-  if (build.status === "generated") score -= 70;
-  if (needsValidationAsCore(pokemon, build) && !usesMegaSlot(pokemon, build)) score -= 120;
-  if (["Support", "Bulky pivot", "Wall"].includes(role)) score += state.team.length < 3 ? 35 : 10;
-  if (["Sweeper", "Wallbreaker", "Speed control"].includes(role)) score += state.team.length >= 3 ? 30 : 10;
+  score += stylePlanScore(pokemon, teamStyleMatch(pokemon));
+  if (build.status === "generated") score += w.generatedSet;
+  if (needsValidationAsCore(pokemon, build) && !usesMegaSlot(pokemon, build)) score += w.unvalidatedCore;
+  // Vroeg in het team wegen defensieve rollen zwaarder, later offensieve.
+  if (w.defensiveRoles.includes(role)) score += state.team.length < 3 ? 35 : 10;
+  if (w.offensiveRoles.includes(role)) score += state.team.length >= 3 ? 30 : 10;
 
-  anchor.types.forEach((type) => {
-    const multiplier = defensiveMultiplier(pokemon.types, type);
-    if (multiplier === 0) score += 36;
-    else if (multiplier < 1) score += 26;
-  });
-
-  pokemon.types.forEach((type) => {
-    const multiplier = defensiveMultiplier(anchor.types, type);
-    if (multiplier < 1) score += 8;
-  });
-
-  return score;
+  return score + anchorSynergyScore(pokemon, anchor);
 }
 
 function autoTeamCandidateScore(pokemon, anchor) {
+  const w = CANDIDATE_SCORING;
   const role = roleFor(pokemon).label;
   let score = pokemon.bst + pokemon.spe * 0.6 + Math.max(pokemon.atk, pokemon.spa);
 
-  if (["Sweeper", "Wallbreaker", "Speed control"].includes(role)) score += 80;
-  if (["Wall", "Bulky pivot"].includes(role)) score += 50;
+  if (w.offensiveRoles.includes(role)) score += 80 + 28;
+  if (w.defensiveRoles.includes(role)) score += 50 + 28;
   if (hasCuratedBuildData(pokemon)) score += 80;
-  if (autoTeamStyleMatch(pokemon)) score += 90;
-  else if (stylePlanChecks().length) score -= 150;
-  if (weatherConflictsWithStyle(pokemon)) score -= 180;
-  if (sunAntiSynergy(pokemon)) score -= 140;
-  if (weatherPlanAntiSynergy(pokemon)) score -= 160;
-  if (needsValidationAsCore(pokemon) && !isMega(pokemon)) score -= 120;
+  score += stylePlanScore(pokemon, autoTeamStyleMatch(pokemon));
+  if (needsValidationAsCore(pokemon) && !isMega(pokemon)) score += w.unvalidatedCore;
   if (isMega(pokemon)) score += 35;
-  if (["Support", "Bulky pivot", "Wall"].includes(role)) score += 28;
-  if (["Sweeper", "Wallbreaker", "Speed control"].includes(role)) score += 28;
 
-  anchor.types.forEach((type) => {
-    const multiplier = defensiveMultiplier(pokemon.types, type);
-    if (multiplier === 0) score += 36;
-    else if (multiplier < 1) score += 26;
-  });
-
-  pokemon.types.forEach((type) => {
-    if (defensiveMultiplier(anchor.types, type) < 1) score += 8;
-  });
-
-  return score;
+  return score + anchorSynergyScore(pokemon, anchor);
 }
 
 function hasCuratedBuildData(pokemon) {
@@ -2298,7 +2360,7 @@ function renderTeamSlots() {
     slot.className = `team-slot${member ? " filled" : ""}${member && member.name === state.selected?.name ? " selected" : ""}`;
     if (member) {
       slot.innerHTML = `
-        <img src="${spriteUrl(member.name)}" alt="">
+        <img src="${spriteUrl(member.name)}" alt="${escapeHtml(displayPokemonName(member))}">
       `;
       slot.title = displayPokemonName(member);
       slot.addEventListener("click", () => {
@@ -2670,7 +2732,7 @@ function renderQuickNav(nav, onSelect) {
     button.title = displayPokemonName(pokemon);
     button.innerHTML = `
       <span>${index + 1}</span>
-      <img src="${spriteUrl(pokemon.name)}" alt="">
+      <img src="${spriteUrl(pokemon.name)}" alt="${escapeHtml(displayPokemonName(pokemon))}">
     `;
     const remove = document.createElement("button");
     remove.type = "button";
@@ -4978,7 +5040,7 @@ function createTeamVariantCard(variant) {
   const comparison = variantComparison(variant);
   const roster = variant.team.map((pokemon) => `
     <span class="variant-mon${isCoreLocked(pokemon) ? " locked" : ""}" title="${escapeHtml(displayPokemonName(pokemon))}">
-      <img src="${spriteUrl(pokemon.name)}" alt="">
+      <img src="${spriteUrl(pokemon.name)}" alt="${escapeHtml(displayPokemonName(pokemon))}">
     </span>
   `).join("");
   card.innerHTML = `

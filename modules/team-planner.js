@@ -1,5 +1,20 @@
 import { baseSpecies, defensiveMultiplier, pokemonUsesMegaSlot, teamTypeSummary } from "./team-analysis.js";
 
+// teamTypeSummary is puur en hangt alleen af van de types van de teamleden.
+// Tijdens beam search en kandidaat-scoring komen dezelfde (deel)teams vele
+// malen terug, dus cachen op teamsignatuur scheelt veel herberekening.
+const typeSummaryCache = new Map();
+
+function cachedTypeSummary(team) {
+  const key = teamSignature(team);
+  const hit = typeSummaryCache.get(key);
+  if (hit) return hit;
+  const value = teamTypeSummary(team);
+  if (typeSummaryCache.size >= 5000) typeSummaryCache.clear();
+  typeSummaryCache.set(key, value);
+  return value;
+}
+
 const DEFAULT_FORMAT = { label: "Single 3v3", maxTeamSize: 6, selectionSize: 3 };
 const DEFAULT_STYLE = { label: "Balanced", targets: { physical: 2, special: 2, fast: 1, bulky: 2 } };
 const VARIANT_MODES = ["balanced", "safe", "pressure"];
@@ -55,7 +70,7 @@ export function evaluateTeam(team = [], context = {}, options = {}) {
   const legal = teamLegalityStatus(members, ctx);
   const balance = teamBalance(members, ctx);
   const roleChecks = roleChecksForTeam(members, ctx, balance);
-  const typeRows = teamTypeSummary(members);
+  const typeRows = cachedTypeSummary(members);
   const typeRiskRows = typeRows.filter((item) => item.weak >= 2 && item.resist + item.immune === 0);
   const severeTypeRows = typeRows.filter((item) => item.weak >= 3);
   const threatRows = threatStatusesForTeam(members, ctx);
@@ -67,7 +82,10 @@ export function evaluateTeam(team = [], context = {}, options = {}) {
   const sizeScore = targetSize ? clamp(members.length / targetSize * 100, 0, 100) : 100;
 
   const roleScore = average(roleChecks.map((check) => check.score), 100);
-  const typeScore = clamp(100 - typeRiskRows.length * 23 - severeTypeRows.length * 10 + typeRows.filter((item) => item.resist + item.immune >= 2).length * 2, 0, 100);
+  // 4x-zwaktes (severe) wegen extra mee: één dubbel-zwak teamlid is riskanter
+  // dan twee enkel-zwakke leden met dekking.
+  const quadWeakCount = typeRows.reduce((sum, item) => sum + (item.severe ?? 0), 0);
+  const typeScore = clamp(100 - typeRiskRows.length * 23 - severeTypeRows.length * 10 - quadWeakCount * 6 + typeRows.filter((item) => item.resist + item.immune >= 2).length * 2, 0, 100);
   const threatScore = threatRows.length ? weightedAverage(threatRows.map((threat) => ({ value: threat.score, weight: threat.weight ?? 1 })), 100) : 100;
   const styleScore = styleChecks.length ? average(styleChecks.map((check) => check.score), 100) : 100;
   const weights = scoreWeights(options.mode);
@@ -321,8 +339,8 @@ function teamBalance(team, ctx) {
 
 function roleChecksForTeam(team, ctx, balance = teamBalance(team, ctx)) {
   const targets = ctx.style.targets ?? DEFAULT_STYLE.targets;
-  const groundRows = teamTypeSummary(team).find((item) => item.type === "Ground");
-  const fairyRows = teamTypeSummary(team).find((item) => item.type === "Fairy");
+  const groundRows = cachedTypeSummary(team).find((item) => item.type === "Ground");
+  const fairyRows = cachedTypeSummary(team).find((item) => item.type === "Fairy");
   const hasGroundAnswer = team.some((pokemon) => defensiveMultiplier(pokemon.types ?? [], "Ground") === 0) || (groundRows?.resist ?? 0) > 0;
   const hasFairyAnswer = team.some((pokemon) => (pokemon.types ?? []).includes("Steel") || (pokemon.types ?? []).includes("Poison")) || (fairyRows?.resist ?? 0) > 0;
   return [
@@ -602,7 +620,7 @@ function normalizedBuildQuality(build = {}) {
   return null;
 }
 
-function redundancySummary(team, ctx, typeRows = teamTypeSummary(team)) {
+function redundancySummary(team, ctx, typeRows = cachedTypeSummary(team)) {
   if (!team.length) return { value: 100, label: "Geen data", note: "Nog geen teamleden", issues: [] };
   const issues = [];
   let penalty = 0;

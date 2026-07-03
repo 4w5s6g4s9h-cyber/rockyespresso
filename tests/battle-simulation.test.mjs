@@ -132,6 +132,24 @@ const highConfidence = confidenceScore([charizard, garchomp], helpers);
 const lowConfidence = confidenceScore([ferrothorn, alakazam], helpers);
 assert.ok(highConfidence.value > lowConfidence.value, "confidence daalt bij generated/unknown data");
 
+// Item-modifiers: Choice Scarf draait het speed-voordeel om (Dragonite 80 → 120 vs Starmie 115).
+const scarfHelpers = {
+  ...helpers,
+  selectedBuild: (pokemon) => pokemon.name === "Dragonite" ? { status: "generated", item: "Choice Scarf", moves: [] } : helpers.selectedBuild(pokemon)
+};
+const noItemMatchup = matchupScore(dragonite, starmie, helpers);
+const scarfMatchup = matchupScore(dragonite, starmie, scarfHelpers);
+assert.ok(noItemMatchup.speedDelta < 0, "zonder item is Dragonite langzamer dan Starmie");
+assert.ok(scarfMatchup.speedDelta > 0, "Choice Scarf moet het speed-voordeel omdraaien");
+assert.ok(scarfMatchup.score > noItemMatchup.score, "Choice Scarf moet de matchup-score verhogen");
+
+// Choice Band verhoogt de offensieve druk.
+const bandHelpers = {
+  ...helpers,
+  selectedBuild: (pokemon) => pokemon.name === "Dragonite" ? { status: "generated", item: "Choice Band", moves: [] } : helpers.selectedBuild(pokemon)
+};
+assert.ok(matchupScore(dragonite, starmie, bandHelpers).score > noItemMatchup.score, "Choice Band moet offensieve druk verhogen");
+
 assert.equal(matchupLabel({ score: 30, attackMultiplier: 2, defenseMultiplier: 1, speedDelta: 10 }), "Sterk");
 assert.equal(matchupLabel({ score: -30, attackMultiplier: 0, defenseMultiplier: 1, speedDelta: 0 }), "Coverage nodig");
 assert.equal(matchupLabel({ score: 12, attackMultiplier: 1, defenseMultiplier: 0, speedDelta: -10 }), "Wallt");
