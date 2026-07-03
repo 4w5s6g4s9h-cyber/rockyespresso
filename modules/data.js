@@ -16,9 +16,26 @@ export async function ensureLocalData() {
   return localDataScriptPromise;
 }
 
+const FETCH_TIMEOUT_MS = 8000;
+
+async function fetchWithTimeout(path) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  try {
+    return await fetch(path, { signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export async function fetchJson(path, errorLabel) {
   try {
-    const response = await fetch(path);
+    let response;
+    try {
+      response = await fetchWithTimeout(path);
+    } catch {
+      response = await fetchWithTimeout(path);
+    }
     if (!response.ok) throw new Error(`${errorLabel} (${response.status})`);
     return response.json();
   } catch (error) {

@@ -32,4 +32,24 @@ const failingStorage = {
 assert.deepEqual(readJsonStorage(STORAGE_KEYS.favorites, ["fallback"], failingStorage), ["fallback"]);
 assert.equal(writeJsonStorage(STORAGE_KEYS.favorites, [], failingStorage), false);
 
+// Envelope: writes worden opgeslagen als { __v, data } en zo teruggelezen.
+const envelopeStorage = memoryStorage();
+writeJsonStorage("key", { a: 1 }, envelopeStorage);
+assert.deepEqual(JSON.parse(envelopeStorage.getItem("key")), { __v: 1, data: { a: 1 } });
+assert.deepEqual(readJsonStorage("key", null, envelopeStorage), { a: 1 });
+
+// Legacy kale waarden (van vóór de envelope) blijven leesbaar.
+const legacyStorage = memoryStorage({ legacy: JSON.stringify(["Garchomp"]) });
+assert.deepEqual(readJsonStorage("legacy", [], legacyStorage), ["Garchomp"]);
+
+// Data van een nieuwere schemaversie wordt genegeerd.
+const futureStorage = memoryStorage({ future: JSON.stringify({ __v: 99, data: { nieuw: true } }) });
+assert.deepEqual(readJsonStorage("future", "fallback", futureStorage), "fallback");
+
+// Validatie: afgekeurde data valt terug op de fallback.
+const typeStorage = memoryStorage({ favs: JSON.stringify({ __v: 1, data: "geen array" }) });
+assert.deepEqual(readJsonStorage("favs", [], typeStorage, { validate: Array.isArray }), []);
+const okStorage = memoryStorage({ favs: JSON.stringify({ __v: 1, data: ["Starmie"] }) });
+assert.deepEqual(readJsonStorage("favs", [], okStorage, { validate: Array.isArray }), ["Starmie"]);
+
 console.log("storage tests passed");

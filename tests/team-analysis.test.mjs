@@ -86,6 +86,9 @@ assert.deepEqual(lockedReorder.team.map((pokemon) => pokemon.name), ["Garchomp",
 const summary = teamTypeSummary([garchomp, dragonite]);
 assert.equal(summary.find((item) => item.type === "Ice").weak, 2);
 assert.equal(summary.find((item) => item.type === "Ground").immune, 1);
+// 4x-zwaktes worden apart geteld: beide leden zijn dubbel zwak voor Ice.
+assert.equal(summary.find((item) => item.type === "Ice").severe, 2);
+assert.equal(summary.find((item) => item.type === "Rock").severe, 0);
 
 const picks = suggestedPokemon({
   pokemon: [garchomp, dragonite, corviknight, starmie],

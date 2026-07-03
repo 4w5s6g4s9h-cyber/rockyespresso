@@ -1,0 +1,17 @@
+{
+  "name": "champions-builder",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static web app for building Pokemon Champions teams.",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-browser-bundle.mjs && node scripts/embed-local-data.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "data:sync": "node scripts/sync-smogon-pokemon.mjs && node scripts/sync-champions-learnsets.mjs && node scripts/update-smogon-movesets.mjs && node scripts/embed-local-data.mjs",
+    "audit:data": "node scripts/audit-champions-data.mjs",
+    "serve": "python3 -m http.server 8000"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

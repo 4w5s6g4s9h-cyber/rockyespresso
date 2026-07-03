@@ -264,6 +264,26 @@ assert.ok(
   "redundancy score should punish repeated pressure slots and low-confidence sets"
 );
 
+// Leeg team mag niet crashen en moet bruikbare suggesties + volledige varianten geven.
+const emptyPlan = planTeam({ ...baseContext, team: [], core: [], battleFormat: "single3", teamStyle: "balanced" });
+assert.ok(Array.isArray(emptyPlan.suggestions) && emptyPlan.suggestions.length > 0, "leeg team moet suggesties geven");
+assert.equal(emptyPlan.selectionAdvice.picks.length, 0);
+assert.ok(emptyPlan.variants.length >= 1);
+assert.equal(emptyPlan.variants[0].team.length, 6, "variant vanaf leeg team moet volledig team bouwen");
+
+// Double 4v4: selectie-advies kiest 4 leden.
+const doubleSelection = chooseBestBattleSelection([torkoal, venusaur, arcanine, rotomWash, dragonite, steelix], {
+  ...baseContext,
+  battleFormat: "double4",
+  teamStyle: "balanced"
+});
+assert.equal(doubleSelection.picks.length, 4);
+
+// 4x-zwaktes wegen extra mee in het type-risico.
+const quadWeakEvaluation = evaluateTeam([garchomp, dragonite], { ...baseContext, battleFormat: "single3", teamStyle: "balanced" });
+assert.equal(quadWeakEvaluation.diagnostics.typeSummary.find((row) => row.type === "Ice").severe, 2);
+assert.ok(quadWeakEvaluation.breakdown.find((item) => item.id === "types").value < 60, "dubbele 4x Ice-zwakte moet het typerisico duidelijk drukken");
+
 console.log("team-planner tests passed");
 
 function mon(name, types, hp, atk, def, spa, spd, spe, bst, abilities = []) {

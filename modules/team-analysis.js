@@ -99,6 +99,7 @@ export function teamTypeSummary(team = [], types = TYPES, typeChart = TYPE_CHART
     return {
       type,
       weak: matchups.filter((value) => value > 1).length,
+      severe: matchups.filter((value) => value >= 4).length,
       resist: matchups.filter((value) => value > 0 && value < 1).length,
       immune: matchups.filter((value) => value === 0).length
     };
