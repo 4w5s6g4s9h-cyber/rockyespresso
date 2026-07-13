@@ -26,7 +26,8 @@ const VARIANT_LABELS = {
 
 export function planTeam(context = {}, options = {}) {
   const ctx = normalizeContext(context);
-  const team = legalTeam((context.team ?? []).slice(0, ctx.maxTeamSize), ctx);
+  const rawTeam = Array.isArray(context.team) ? context.team : [];
+  const team = legalTeam(rawTeam.slice(0, ctx.maxTeamSize), ctx);
   const core = legalTeam(((context.core?.length ? context.core : team) ?? []).slice(0, ctx.maxTeamSize), ctx);
   const includeVariants = options.includeVariants ?? true;
   const includeSuggestions = options.includeSuggestions ?? true;
@@ -36,7 +37,7 @@ export function planTeam(context = {}, options = {}) {
       .map((mode) => completeTeamVariant(core, ctx, mode))
       .filter(Boolean)
     : [];
-  const evaluation = evaluateTeam(team, ctx);
+  const evaluation = evaluateTeam(rawTeam, ctx);
 
   return {
     variants,
@@ -66,8 +67,9 @@ export function suggestTeamReplacements(context = {}, options = {}) {
 
 export function evaluateTeam(team = [], context = {}, options = {}) {
   const ctx = normalizeContext(context);
-  const members = legalTeam(team, ctx);
-  const legal = teamLegalityStatus(members, ctx);
+  const rawTeam = Array.isArray(team) ? team : [];
+  const legal = teamLegalityStatus(rawTeam, ctx);
+  const members = legalTeam(rawTeam.slice(0, ctx.maxTeamSize), ctx);
   const balance = teamBalance(members, ctx);
   const roleChecks = roleChecksForTeam(members, ctx, balance);
   const typeRows = cachedTypeSummary(members);
@@ -97,7 +99,7 @@ export function evaluateTeam(team = [], context = {}, options = {}) {
     scoreItem("style", `${ctx.style.label}-kern`, styleScore, styleChecks.length ? `${styleChecks.filter((check) => check.done).length}/${styleChecks.length} planchecks` : "Geen specifieke planchecks", weights.style),
     scoreItem("format", ctx.format.label, format.value, format.note, weights.format),
     scoreItem("redundancy", "Redundantie", redundancy.value, redundancy.note, weights.redundancy),
-    scoreItem("sets", "Setkwaliteit", setQuality.value, setQuality.note, weights.sets),
+    scoreItem("sets", "Setvertrouwen", setQuality.value, setQuality.note, weights.sets),
     scoreItem("legality", "Teamregels", legal.ok ? 100 : 15, legal.ok ? "Legaal roster" : legal.issues.join(" · "), weights.legality)
   ];
   const totalWeight = breakdown.reduce((sum, item) => sum + item.weight, 0);
@@ -572,7 +574,8 @@ function setQualitySummary(team, ctx) {
     value,
     label: value >= 78 ? "Hoog" : value >= 55 ? "Middel" : "Laag",
     note: issues.length ? issues.join(" · ") : `${scores.filter((item) => item.value >= 75).length}/${scores.length} sterke sets`,
-    issues
+    issues,
+    hasGenerated: scores.some((item) => item.generated)
   };
 }
 
@@ -587,6 +590,7 @@ function setQualityForBuild(build = {}, pokemon = null, ctx = {}) {
     else if (build.status === "generated") value = 45;
   }
   if (build.status === "generated") {
+    value = Math.min(value, 45);
     if (pokemon) issues.push(`${pokemon.name}: generated set`);
   }
   if (build.championsCompatibility && !build.championsCompatibility.ok) {
@@ -610,7 +614,8 @@ function setQualityForBuild(build = {}, pokemon = null, ctx = {}) {
   return {
     value: clamp(value, 5, 100),
     label: value >= 78 ? "Hoog" : value >= 55 ? "Middel" : "Laag",
-    issues
+    issues,
+    generated: build.status === "generated"
   };
 }
 
@@ -716,7 +721,7 @@ function evaluationRisks({ legal, redundancy, typeRiskRows, threatRows, styleChe
 function confidenceSummary({ legal, redundancy, typeRiskRows, threatRows, setQuality, format }) {
   const typeSafety = clamp(100 - typeRiskRows.length * 18, 0, 100);
   const threatSafety = threatRows.length ? weightedAverage(threatRows.map((threat) => ({ value: threat.score, weight: threat.weight ?? 1 })), 100) : 75;
-  const value = Math.round(average([
+  const rawValue = Math.round(average([
     setQuality.value,
     redundancy.value,
     typeSafety,
@@ -724,6 +729,8 @@ function confidenceSummary({ legal, redundancy, typeRiskRows, threatRows, setQua
     format.value,
     legal.ok ? 100 : 20
   ], 0));
+  const generatedCeiling = setQuality.hasGenerated ? 74 : 100;
+  const value = Math.min(rawValue, generatedCeiling);
   return {
     value: clamp(value, 0, 100),
     label: value >= 78 ? "Hoog" : value >= 55 ? "Middel" : "Laag"
@@ -731,7 +738,9 @@ function confidenceSummary({ legal, redundancy, typeRiskRows, threatRows, setQua
 }
 
 function suggestionConfidence(setConfidence, teamConfidence) {
-  const value = Math.round(average([setConfidence.value, teamConfidence.value], setConfidence.value));
+  const rawValue = Math.round(average([setConfidence.value, teamConfidence.value], setConfidence.value));
+  const generatedCeiling = setConfidence.generated ? 54 : 100;
+  const value = Math.min(rawValue, generatedCeiling);
   return {
     ...setConfidence,
     value,
@@ -841,11 +850,15 @@ function teamLegalityStatus(team, ctx) {
   if (team.length > ctx.maxTeamSize) issues.push(`Meer dan ${ctx.maxTeamSize} teamleden`);
   const bases = new Set();
   team.forEach((pokemon) => {
+    if (!pokemon?.name) {
+      issues.push("Ongeldig teamlid zonder naam");
+      return;
+    }
     const base = baseSpecies(pokemon.name);
     if (bases.has(base)) issues.push(`Dubbele basisspecies: ${base}`);
     bases.add(base);
   });
-  const megaUsers = team.filter((pokemon) => pokemonUsesMegaSlot(pokemon, buildFor(pokemon, ctx)));
+  const megaUsers = team.filter((pokemon) => pokemon?.name && pokemonUsesMegaSlot(pokemon, buildFor(pokemon, ctx)));
   if (megaUsers.length > 1) issues.push("Meer dan 1 Mega-slot");
   return { ok: issues.length === 0, issues };
 }

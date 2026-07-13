@@ -1,3 +1,5 @@
+import { assertDataset, validatePokemonDataset } from "./data-schema.js";
+
 export function localData() {
   return window.CHAMPIONS_LOCAL_DATA ?? null;
 }
@@ -17,6 +19,7 @@ export async function ensureLocalData() {
 }
 
 const FETCH_TIMEOUT_MS = 8000;
+const MAX_JSON_BYTES = 8 * 1024 * 1024;
 
 async function fetchWithTimeout(path) {
   const controller = new AbortController();
@@ -37,7 +40,19 @@ export async function fetchJson(path, errorLabel) {
       response = await fetchWithTimeout(path);
     }
     if (!response.ok) throw new Error(`${errorLabel} (${response.status})`);
-    return response.json();
+    const contentType = response.headers.get("content-type")?.toLowerCase() ?? "";
+    if (contentType && !contentType.includes("json") && !contentType.includes("javascript")) {
+      throw new Error(`${errorLabel}: onverwacht content-type ${contentType}`);
+    }
+    const declaredLength = Number(response.headers.get("content-length"));
+    if (Number.isFinite(declaredLength) && declaredLength > MAX_JSON_BYTES) {
+      throw new Error(`${errorLabel}: response is te groot`);
+    }
+    const text = await response.text();
+    if (new TextEncoder().encode(text).byteLength > MAX_JSON_BYTES) {
+      throw new Error(`${errorLabel}: response overschrijdt ${MAX_JSON_BYTES} bytes`);
+    }
+    return JSON.parse(text);
   } catch (error) {
     const fallback = await ensureLocalData().catch(() => null);
     if (fallback) return fallbackDataForPath(fallback, path);
@@ -46,11 +61,11 @@ export async function fetchJson(path, errorLabel) {
 }
 
 export async function loadPokemonData() {
-  if (localData()?.pokemon) return normalizePokemonDataset(localData().pokemon);
+  if (localData()?.pokemon) return checkedPokemonDataset(localData().pokemon);
   try {
-    return normalizePokemonDataset(await fetchJson("data/champions-pokemon.json", "Dataset kon niet worden geladen"));
+    return checkedPokemonDataset(await fetchJson("data/champions-pokemon.json", "Dataset kon niet worden geladen"));
   } catch (error) {
-    return normalizePokemonDataset((await ensureLocalData()).pokemon);
+    return checkedPokemonDataset((await ensureLocalData()).pokemon);
   }
 }
 
@@ -58,6 +73,10 @@ export async function loadChampionsMeta() {
   const data = localData()?.meta
     ?? await fetchJson("data/champions-meta.json", "Champions-meta kon niet worden geladen");
   return {
+    version: data.version ?? "unknown",
+    status: data.status ?? "unknown",
+    note: data.note ?? "",
+    regulation: data.regulation ?? { id: "unknown", status: "unverified" },
     formats: data.formats ?? {},
     archetypes: data.archetypes ?? [],
     threats: data.threats ?? []
@@ -81,6 +100,12 @@ function normalizePokemonDataset(data) {
   if (Array.isArray(data)) return { pokemon: data };
   if (Array.isArray(data?.pokemon)) return data;
   return { pokemon: [] };
+}
+
+function checkedPokemonDataset(data) {
+  const normalized = normalizePokemonDataset(data);
+  assertDataset("Pokémon-data", validatePokemonDataset(normalized));
+  return normalized;
 }
 
 function normalizePokemonList(pokemon) {

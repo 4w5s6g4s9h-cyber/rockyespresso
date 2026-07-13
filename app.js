@@ -14,7 +14,17 @@ import {
   TYPES
 } from './modules/constants.js';
 import { renderApp, renderWithoutScrollJump } from './modules/rendering.js';
-import { readJsonStorage, STORAGE_KEYS, writeJsonStorage } from './modules/storage.js';
+import {
+  readJsonStorage,
+  STORAGE_KEYS,
+  validateBattleSimState,
+  validateCustomSets,
+  validateFavorites,
+  validateSavedTeams,
+  writeJsonStorage
+} from './modules/storage.js';
+import { restoreBattleOpponentState } from './modules/persistence.js';
+import { spritePath } from './modules/sprites.js';
 import { bindEvents as bindUiEvents } from './modules/ui-events.js';
 import { counterRecommendations as pureCounterRecommendations, generateOpponentTeam as pureGenerateOpponentTeam, simulateBattle, selectedBattleMembers } from './modules/battle-simulation.js';
 import { baseSpecies as pureBaseSpecies, baseSpeciesLabel as pureBaseSpeciesLabel, defensiveMultiplier as pureDefensiveMultiplier, isMega as pureIsMega, megaBaseFromItem as pureMegaBaseFromItem, megaStoneOptionsForPokemon as pureMegaStoneOptionsForPokemon, normalizeMegaItem as pureNormalizeMegaItem, normalizeSpSpread as pureNormalizeSpSpread, normalizeSpValues as pureNormalizeSpValues, parseSp as pureParseSp, pokemonUsesMegaSlot as purePokemonUsesMegaSlot, reorderTeam as pureReorderTeam, spPartsFromValues as pureSpPartsFromValues, teamLegality as pureTeamLegality, teamTypeSummary as pureTeamTypeSummary, trainedStatValue as pureTrainedStatValue } from './modules/team-analysis.js';
@@ -24,6 +34,7 @@ const state = {
   pokemon: [],
   movesets: {},
   movesetSources: {},
+  movesetMeta: { generatedAt: "unknown", stats: {} },
   moveDetails: {},
   championsLearnsets: {},
   championsMeta: { formats: {}, archetypes: [], threats: [] },
@@ -149,6 +160,7 @@ async function init() {
   const movesetBundle = await fetchMovesets({ pokemon: state.pokemon, generatedMovePlan });
   state.movesets = movesetBundle.movesets;
   state.movesetSources = movesetBundle.movesetSources;
+  state.movesetMeta = movesetBundle.metadata;
   state.moveDetails = movesetBundle.moveDetails;
   state.championsLearnsets = movesetBundle.learnsets ?? {};
   renderMoveSearchOptions();
@@ -432,10 +444,11 @@ function warnStorageFailure(message) {
   storageToastTimer = window.setTimeout(() => toast.classList.remove("visible"), 6000);
 }
 
-const isPlainObject = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
-
 function loadCustomSets() {
-  state.customSets = readJsonStorage(STORAGE_KEYS.customSets, {}, undefined, { validate: isPlainObject });
+  state.customSets = readJsonStorage(STORAGE_KEYS.customSets, {}, undefined, {
+    validate: validateCustomSets,
+    onInvalid: () => warnStorageFailure("Ongeldige custom sets zijn veilig genegeerd.")
+  });
 }
 
 function saveCustomSets() {
@@ -443,7 +456,10 @@ function saveCustomSets() {
 }
 
 function loadSavedTeams() {
-  state.savedTeams = readJsonStorage(STORAGE_KEYS.savedTeams, [], undefined, { validate: Array.isArray });
+  state.savedTeams = readJsonStorage(STORAGE_KEYS.savedTeams, [], undefined, {
+    validate: validateSavedTeams,
+    onInvalid: () => warnStorageFailure("Ongeldige opgeslagen teams zijn veilig genegeerd.")
+  });
 }
 
 function saveSavedTeams() {
@@ -451,7 +467,12 @@ function saveSavedTeams() {
 }
 
 function loadFavorites() {
-  state.favorites = readJsonStorage(STORAGE_KEYS.favorites, [], undefined, { validate: Array.isArray });
+  const knownNames = new Set(state.pokemon.map((pokemon) => pokemon.name));
+  state.favorites = readJsonStorage(STORAGE_KEYS.favorites, [], undefined, {
+    validate: validateFavorites,
+    onInvalid: () => warnStorageFailure("Ongeldige favorieten zijn veilig genegeerd.")
+  })
+    .filter((name) => knownNames.has(name));
 }
 
 function saveFavorites() {
@@ -459,10 +480,14 @@ function saveFavorites() {
 }
 
 function loadBattleSimState() {
-  const saved = readJsonStorage(STORAGE_KEYS.battleSim, {}, undefined, { validate: isPlainObject });
-  state.opponentTeam = [];
-  state.opponentSelection = [];
-  state.opponentMode = saved.opponentMode ?? "manual";
+  const saved = readJsonStorage(STORAGE_KEYS.battleSim, {}, undefined, {
+    validate: validateBattleSimState,
+    onInvalid: () => warnStorageFailure("Ongeldige battle-state is veilig genegeerd.")
+  });
+  const restored = restoreBattleOpponentState(saved, state.pokemon);
+  state.opponentTeam = restored.opponentTeam;
+  state.opponentSelection = restored.opponentSelection;
+  state.opponentMode = restored.opponentMode;
   state.opponentSearch = "";
   state.opponentReplaceIndex = 0;
 }
@@ -501,9 +526,16 @@ function showLoadError(error) {
 function showAllPokemonList() {
   searchInput.value = "";
   if (moveSearchSelect) moveSearchSelect.value = "";
+  sourceSelect.value = "all";
+  teamStyleSelect.value = "balanced";
+  roleFilterSelect.value = "all";
   state.moveFilters = [];
   renderMoveFilterChips();
   state.selectedTypes = [];
+  state.favoritesOnly = false;
+  state.teamStyle = "balanced";
+  state.roleFilter = "all";
+  state.startSuggestionPage = 0;
   state.hasExplored = true;
   state.guideMode = false;
   state.activeView = "builder";
@@ -587,7 +619,7 @@ function toggleFavoritesFilter() {
 }
 
 function generateRandomUltraTeam() {
-  runTeamBuildWork("Random team bouwen", "De app zoekt nu naar rollen, checks en setkwaliteit.", () => {
+  runTeamBuildWork("Beste team samenstellen", "De planner zoekt nu naar rollen, checks en setvertrouwen.", () => {
     performRandomUltraTeam();
   });
 }
@@ -1106,8 +1138,9 @@ function renderGuideModeToggle() {
   favoritesToggle.setAttribute("aria-pressed", String(state.favoritesOnly));
   favoritesToggle.textContent = state.favoritesOnly ? `♥ ${state.favorites.length}` : "♡";
   favoritesToggle.title = state.favoritesOnly ? `Toon alle Pokémon (${state.favorites.length} favorieten)` : "Toon favorieten";
-  randomUltraTeam.textContent = "↻";
-  randomUltraTeam.title = "Random team";
+  randomUltraTeam.textContent = "★";
+  randomUltraTeam.title = "Bouw het best scorende team";
+  randomUltraTeam.setAttribute("aria-label", "Bouw het best scorende team");
 }
 
 function switchView(view) {
@@ -1132,9 +1165,15 @@ function renderViewTabs() {
   builderTab.setAttribute("aria-selected", String(isBuilderView));
   teamTab.setAttribute("aria-selected", String(isTeamView));
   battleTab.setAttribute("aria-selected", String(isBattleView));
+  builderTab.tabIndex = isBuilderView ? 0 : -1;
+  teamTab.tabIndex = isTeamView ? 0 : -1;
+  battleTab.tabIndex = isBattleView ? 0 : -1;
   builderView.classList.toggle("active", isBuilderView);
   teamView.classList.toggle("active", isTeamView);
   battleView.classList.toggle("active", isBattleView);
+  builderView.hidden = !isBuilderView;
+  teamView.hidden = !isTeamView;
+  battleView.hidden = !isBattleView;
   renderFloatingTeamAction();
 }
 
@@ -1203,13 +1242,6 @@ function getFilteredPokemon() {
       if (sort === "name") return a.name.localeCompare(b.name);
       return sortValue(b, sort) - sortValue(a, sort) || a.name.localeCompare(b.name);
     });
-
-  if (!filtered.length && state.pokemon.length && !query && !state.moveFilters.length && !state.selectedTypes.length) {
-    return [...state.pokemon].sort((a, b) => {
-      if (sort === "name") return a.name.localeCompare(b.name);
-      return sortValue(b, sort) - sortValue(a, sort) || a.name.localeCompare(b.name);
-    });
-  }
 
   return filtered;
 }
@@ -2539,8 +2571,74 @@ function renderTeamManager() {
     state.savedTeams.forEach((team) => list.append(createSavedTeamRow(team)));
   }
 
-  details.append(head, saveRow, list);
+  details.append(head, saveRow, createTeamBackupControls(), list);
   teamManager.append(details);
+}
+
+function createTeamBackupControls() {
+  const controls = document.createElement("div");
+  controls.className = "team-manager-backup";
+
+  const exportButton = document.createElement("button");
+  exportButton.type = "button";
+  exportButton.textContent = "Exporteer JSON-backup";
+  exportButton.disabled = !state.savedTeams.length && !Object.keys(state.customSets).length;
+  exportButton.addEventListener("click", exportTeamBackup);
+
+  const importLabel = document.createElement("label");
+  importLabel.className = "team-backup-import";
+  importLabel.textContent = "Importeer JSON-backup";
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "application/json,.json";
+  input.addEventListener("change", async () => {
+    const file = input.files?.[0];
+    if (!file) return;
+    await importTeamBackup(file);
+    input.value = "";
+  });
+  importLabel.append(input);
+  controls.append(exportButton, importLabel);
+  return controls;
+}
+
+function exportTeamBackup() {
+  const backup = {
+    schema: "champions-builder-backup",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    savedTeams: state.savedTeams,
+    customSets: state.customSets
+  };
+  const blob = new Blob([`${JSON.stringify(backup, null, 2)}\n`], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `champions-builder-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  link.click();
+  window.setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
+async function importTeamBackup(file) {
+  try {
+    if (file.size > 2 * 1024 * 1024) throw new Error("Backup is groter dan 2 MB.");
+    const backup = JSON.parse(await file.text());
+    if (backup?.schema !== "champions-builder-backup" || backup.version !== 1) {
+      throw new Error("Onbekend backupformaat.");
+    }
+    if (!validateSavedTeams(backup.savedTeams) || !validateCustomSets(backup.customSets)) {
+      throw new Error("Backup bevat ongeldige of onveilige teamdata.");
+    }
+    state.savedTeams = backup.savedTeams;
+    state.customSets = backup.customSets;
+    saveSavedTeams();
+    saveCustomSets();
+    state.teamNotice = `${state.savedTeams.length} teams uit backup hersteld.`;
+    invalidateCache();
+    render();
+  } catch (error) {
+    warnStorageFailure(`Backup niet geïmporteerd: ${error.message}`);
+  }
 }
 
 function defaultTeamName() {
@@ -2550,6 +2648,10 @@ function defaultTeamName() {
 
 function saveCurrentTeam(name) {
   const trimmed = String(name || defaultTeamName()).trim();
+  const memberNames = new Set(state.team.map((pokemon) => pokemon.name));
+  const memberCustomSets = Object.fromEntries(
+    Object.entries(state.customSets).filter(([pokemonName]) => memberNames.has(pokemonName))
+  );
   const saved = {
     id: `${Date.now()}`,
     name: trimmed,
@@ -2559,7 +2661,7 @@ function saveCurrentTeam(name) {
     lockedCore: [...state.lockedCore],
     battleSelection: [...state.battleSelection],
     selectedSets: { ...state.selectedSets },
-    customSets: { ...state.customSets },
+    customSets: memberCustomSets,
     savedAt: new Date().toISOString()
   };
   state.savedTeams = [saved, ...state.savedTeams.filter((team) => team.name !== trimmed)].slice(0, 12);
@@ -2823,6 +2925,7 @@ function renderBattleSimContent() {
     syncOpponentSelection();
     updateSimulationResult();
     battleSim.replaceChildren();
+    battleSim.append(createBattleHeader(), createBattleQuickActions());
 
     if (!state.team.length) {
       battleSim.append(createBattleEmptyState("Nog geen team", "Bouw eerst een team in de Builder. Daarna kan de simulator je preview en matchups scannen.", "Naar Builder", "builder"));
@@ -3261,12 +3364,12 @@ function createBattleScoreCard(result) {
     <div>
       <span>Matchup</span>
       <strong>${escapeHtml(result.advantage)}</strong>
-      <p>${result.notes.map(escapeHtml).join(" ")} Confidence: ${escapeHtml(result.confidence.label)} (${result.confidence.value}%).</p>
+      <p>${result.notes.map(escapeHtml).join(" ")} Datavertrouwen: ${escapeHtml(result.confidence.label)} (${result.confidence.value}/100).</p>
     </div>
-    <div class="win-meter" style="--win:${result.winChance}%">
-      <strong>${result.winChance}%</strong>
+    <div class="win-meter" style="--win:${result.matchupIndex}%">
+      <strong>${result.matchupIndex}/100</strong>
       <span><i></i></span>
-      <small>geschatte winstkans</small>
+      <small>heuristische matchupindex</small>
     </div>
   `;
   return card;
@@ -3390,20 +3493,20 @@ function createBattleMetricsPanel(result) {
   const panel = document.createElement("section");
   panel.className = "battle-metrics";
   const metrics = [
-    ["Winstkans", result.teamMetrics.winChance, `${result.advantage}`],
-    ["Preview-score", result.teamMetrics.previewScore, `${result.playerScore} vs ${result.opponentScore}`],
-    ["Speed control", result.teamMetrics.speedControl, "Aantal pairings waar jij sneller bent"],
-    ["Defensive safety", result.teamMetrics.defensiveSafety, "Pairings met veilige defensieve marge"]
+    ["Matchupindex", result.teamMetrics.matchupIndex, `${result.advantage}`, "/100"],
+    ["Preview-score", result.teamMetrics.previewScore, `${result.playerScore} vs ${result.opponentScore}`, "/100"],
+    ["Speed control", result.teamMetrics.speedControl, "Aandeel pairings waar jij sneller bent", "%"],
+    ["Defensive safety", result.teamMetrics.defensiveSafety, "Aandeel pairings met veilige defensieve marge", "%"]
   ];
   const grid = document.createElement("div");
   grid.className = "battle-metric-grid";
-  metrics.forEach(([label, value, note]) => {
+  metrics.forEach(([label, value, note, suffix]) => {
     const item = document.createElement("div");
     item.className = metricTone(value);
     item.style.setProperty("--metric", `${value}%`);
     item.innerHTML = `
       <span>${escapeHtml(label)}</span>
-      <strong>${value}%</strong>
+      <strong>${value}${suffix}</strong>
       <i><b></b></i>
       <small>${escapeHtml(note)}</small>
     `;
@@ -4356,6 +4459,7 @@ function renderTeamAnalysisContent() {
   teamAnalysis.append(createThreatChecklistPanel());
   teamAnalysis.append(createRoleChecklistPanel());
   teamAnalysis.append(createSuggestionPanel());
+  teamAnalysis.append(createDataStatusPanel());
   if (teamManager) teamAnalysis.append(teamManager);
   hydrateAbilityInfoButtons(teamAnalysis);
 }
@@ -5155,7 +5259,7 @@ function createBuilderExplanationPanel() {
   text.innerHTML = `
     <p>De app bouwt eerst een team van 6. Het gekozen format bepaalt daarna hoeveel Pokémon je bij Team Preview meeneemt: 3 in Singles of 4 in Doubles.</p>
     <p>Suggesties krijgen punten voor ontbrekende rollen, snelheid, fysieke/speciale druk, bulk, type-resists/immunities tegen gedeelde zwaktes en antwoorden op lokale threat-data. Sets met echte brondata tellen zwaarder dan generated sets.</p>
-    <p>Een optimaal team is hier dus geen absolute waarheid, maar een score op balans, matchup-dekking, setkwaliteit en formatfit. Team Preview analyseert de gekozen 3 of 4 wanneer je selectie compleet is.</p>
+    <p>Een optimaal team is hier dus geen absolute waarheid, maar een score op balans, matchup-dekking, setvertrouwen en formatfit. Team Preview analyseert de gekozen 3 of 4 wanneer je selectie compleet is.</p>
   `;
   panel.append(summary, text);
   return panel;
@@ -6382,9 +6486,13 @@ function createDataStatusPanel() {
     list.append(row);
   });
 
-  const note = document.createElement("p");
-  note.textContent = "Door de app bedachte sets zijn offline startpunten en moeten voor Champions nog gevalideerd worden.";
-  panel.append(list, note);
+  const stats = state.movesetMeta.stats ?? {};
+  const coverage = document.createElement("p");
+  coverage.textContent = `Setdata ${state.movesetMeta.generatedAt}: ${stats.champions ?? 0} Champions · ${stats.sv ?? 0} SV-afgeleid · ${stats.generated ?? 0} generated.`;
+  const regulation = document.createElement("p");
+  regulation.className = "confidence-note";
+  regulation.textContent = `Regelstatus: ${state.championsMeta.regulation?.id ?? "onbekend"} (${state.championsMeta.regulation?.status ?? "onbevestigd"}). Controleer de actieve officiële regulation voor competitief gebruik.`;
+  panel.append(list, coverage, regulation);
   return panel;
 }
 
@@ -6464,7 +6572,7 @@ function createExportPanel() {
   panel.append(createSmallTitle("Starter export"));
 
   const note = document.createElement("p");
-  note.textContent = "Deze export gebruikt placeholders voor moves/items, omdat de huidige dataset geen echte Champions movesets bevat.";
+  note.textContent = "Deze export gebruikt de gekozen lokale setdata. Controleer SV-afgeleide en gegenereerde sets altijd tegen de actieve Champions-regulation.";
 
   const exportText = document.createElement("textarea");
   exportText.className = "team-export";
@@ -7893,18 +8001,7 @@ function displayPokemonName(pokemonOrName) {
 }
 
 function spriteUrl(name) {
-  const id = spriteId(name);
-  return `assets/sprites/${id}.png`;
-}
-
-function spriteId(name) {
-  return normalize(name)
-    .replace(/♀/g, "f")
-    .replace(/♂/g, "m")
-    .replace("-mega-x", "-megax")
-    .replace("-mega-y", "-megay")
-    .replace(/[^a-z0-9-]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+  return spritePath(name);
 }
 
 function showSpriteFallback(wrapper, name) {

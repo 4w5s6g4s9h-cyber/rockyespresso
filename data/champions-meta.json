@@ -2,6 +2,13 @@
   "version": "2026-05-26-local-1",
   "status": "local-seed",
   "note": "Offline Champions meta seed. This is a local starting point for format guidance, archetypes and threat checks. Validate and update against in-game Pokemon Champions data over time.",
+  "regulation": {
+    "id": "unverified-local-seed-2026-05-26",
+    "status": "unverified",
+    "validatedAt": "2026-05-26",
+    "officialRulesUrl": "https://champions.pokemon.com/nl-nl/gameplay/",
+    "note": "Geen claim dat deze lokale seed de nu actieve regulation volledig representeert. Controleer de officiële regels voor competitief gebruik."
+  },
   "formats": {
     "single3": {
       "label": "Single 3v3",

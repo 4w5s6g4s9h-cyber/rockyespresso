@@ -1,5 +1,11 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import {
+  validateLearnsetDataset,
+  validateMoveDataset,
+  validateMovesetDataset,
+  validatePokemonDataset,
+} from '../modules/data-schema.js';
 
 const ROOT = process.cwd();
 const PLACEHOLDER_PATTERN = /STAB|coverage|utility|setup|priority|recovery|team gaps|walls|checks|betrouwbare/i;
@@ -46,7 +52,7 @@ function learnsetForPokemon(pokemonName, learnsets = {}) {
 function moveAllowed(pokemonName, move, learnsets) {
   if (BANNED_FALLBACK_MOVES.has(move)) return false;
   const learnset = learnsetForPokemon(pokemonName, learnsets);
-  return !learnset.length || learnset.includes(move);
+  return learnset.length > 0 && learnset.includes(move);
 }
 
 function countBy(items, valueFor) {
@@ -71,6 +77,17 @@ async function main() {
 
   const moveDetails = moveData.moves ?? {};
   const learnsets = learnsetData.learnsets ?? {};
+  const pokemonNames = (pokemonData.pokemon ?? []).map((pokemon) => pokemon.name);
+  const schemaErrors = [
+    ...validatePokemonDataset(pokemonData),
+    ...validateLearnsetDataset(learnsetData, pokemonNames),
+    ...validateMovesetDataset(movesetData, pokemonNames),
+    ...validateMoveDataset(moveData),
+  ];
+  const pipelineErrors = [
+    ...(learnsetData.stats?.errors ?? []).map((error) => ({ source: 'learnsets', ...error })),
+    ...(movesetData.stats?.errors ?? []).map((error) => ({ source: 'movesets', ...error })),
+  ];
   const rows = Object.entries(movesetData.sets ?? {}).flatMap(([pokemonName, sets]) => {
     return sets.map((set) => ({ pokemonName, set }));
   });
@@ -113,17 +130,21 @@ async function main() {
     illegalSetMoves: illegalSetMoves.length,
     illegalMegaItems: illegalMegaItems.length,
     placeholderMoves: placeholderMoves.length,
+    schemaErrors: schemaErrors.length,
+    pipelineErrors: pipelineErrors.length,
     samples: {
       unknownMoveDetails: unknownMoveDetails.slice(0, 5),
       illegalSetMoves: illegalSetMoves.slice(0, 5),
       illegalMegaItems: illegalMegaItems.slice(0, 5),
       placeholderMoves: placeholderMoves.slice(0, 5),
+      schemaErrors: schemaErrors.slice(0, 10),
+      pipelineErrors: pipelineErrors.slice(0, 5),
     },
   };
 
   console.log(JSON.stringify(report, null, 2));
 
-  if (unknownMoveDetails.length || illegalSetMoves.length || illegalMegaItems.length || placeholderMoves.length) {
+  if (unknownMoveDetails.length || illegalSetMoves.length || illegalMegaItems.length || placeholderMoves.length || schemaErrors.length || pipelineErrors.length) {
     process.exitCode = 1;
   }
 }

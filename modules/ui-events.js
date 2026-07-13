@@ -49,6 +49,23 @@ export function bindEvents(ctx) {
   ctx.builderTab.addEventListener("click", () => ctx.switchView("builder"));
   ctx.teamTab.addEventListener("click", () => ctx.switchView("team"));
   ctx.battleTab.addEventListener("click", () => ctx.switchView("battle"));
+  const viewTabs = [
+    [ctx.builderTab, "builder"],
+    [ctx.teamTab, "team"],
+    [ctx.battleTab, "battle"]
+  ];
+  viewTabs.forEach(([tab], index) => tab.addEventListener("keydown", (event) => {
+    let nextIndex = index;
+    if (event.key === "ArrowRight") nextIndex = (index + 1) % viewTabs.length;
+    else if (event.key === "ArrowLeft") nextIndex = (index - 1 + viewTabs.length) % viewTabs.length;
+    else if (event.key === "Home") nextIndex = 0;
+    else if (event.key === "End") nextIndex = viewTabs.length - 1;
+    else return;
+    event.preventDefault();
+    const [nextTab, view] = viewTabs[nextIndex];
+    ctx.switchView(view);
+    nextTab.focus();
+  }));
   ctx.backToBuilder.addEventListener("click", () => ctx.switchView("builder"));
   ctx.floatingTeamLab.addEventListener("click", () => {
     ctx.switchView("team");

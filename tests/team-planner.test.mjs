@@ -284,6 +284,20 @@ const quadWeakEvaluation = evaluateTeam([garchomp, dragonite], { ...baseContext,
 assert.equal(quadWeakEvaluation.diagnostics.typeSummary.find((row) => row.type === "Ice").severe, 2);
 assert.ok(quadWeakEvaluation.breakdown.find((item) => item.id === "types").value < 60, "dubbele 4x Ice-zwakte moet het typerisico duidelijk drukken");
 
+// Legaliteit wordt op de oorspronkelijke invoer beoordeeld, niet pas na opschoning.
+const duplicateEvaluation = evaluateTeam([garchomp, garchomp], baseContext);
+assert.equal(duplicateEvaluation.diagnostics.legal.ok, false);
+assert.ok(duplicateEvaluation.diagnostics.legal.issues.some((issue) => /Dubbele basisspecies/.test(issue)));
+
+// Een lokaal gegenereerde set kan door een quality-override nooit hoog bronvertrouwen krijgen.
+const generated = mon("Generated-Test", ["Normal"], 90, 100, 90, 80, 90, 80, 530);
+const generatedEvaluation = evaluateTeam([generated], {
+  ...baseContext,
+  selectedBuild: () => ({ ...build("generated", ["Protect", "Earthquake", "Crunch", "Rest"]), quality: { value: 92 } })
+});
+assert.ok(generatedEvaluation.diagnostics.dataConfidence.value <= 45);
+assert.notEqual(generatedEvaluation.confidence.label, "Hoog");
+
 console.log("team-planner tests passed");
 
 function mon(name, types, hp, atk, def, spa, spd, spe, bst, abilities = []) {

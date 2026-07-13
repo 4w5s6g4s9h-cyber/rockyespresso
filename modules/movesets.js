@@ -1,6 +1,7 @@
 import { fetchJson, localData } from "./data.js";
 import { MOVE_LEARNSET_BLOCKLIST, MOVE_REPLACEMENTS } from "./constants.js";
 import { baseSpeciesLabel } from "./team-analysis.js";
+import { assertDataset, validateLearnsetDataset, validateMoveDataset, validateMovesetDataset } from "./data-schema.js";
 
 export async function loadMovesets({ pokemon, generatedMovePlan }) {
   try {
@@ -17,12 +18,26 @@ export async function loadMovesets({ pokemon, generatedMovePlan }) {
     const moveDetails = moveData.moves ?? {};
     const learnsets = learnsetData?.learnsets ?? {};
 
+    const pokemonNames = pokemon.map((entry) => entry.name);
+    assertDataset("Moveset-data", validateMovesetDataset(movesetData, pokemonNames));
+    assertDataset("Move-details", validateMoveDataset(moveData));
+    assertDataset("Learnset-data", validateLearnsetDataset(learnsetData, pokemonNames));
+
     enrichGeneratedMovesets({ movesets, pokemon, generatedMovePlan });
     enrichChampionsCompatibility({ movesets, pokemon, moveDetails, learnsets, generatedMovePlan });
-    return { movesets, movesetSources, moveDetails, learnsets };
+    return {
+      movesets,
+      movesetSources,
+      moveDetails,
+      learnsets,
+      metadata: {
+        generatedAt: movesetData.generatedAt ?? "unknown",
+        stats: movesetData.stats ?? {}
+      }
+    };
   } catch (error) {
     console.warn("Moveset database niet geladen; de app gebruikt fallback-richtlijnen.", error);
-    return { movesets: {}, movesetSources: {}, moveDetails: {}, learnsets: {} };
+    return { movesets: {}, movesetSources: {}, moveDetails: {}, learnsets: {}, metadata: { generatedAt: "unknown", stats: {} } };
   }
 }
 

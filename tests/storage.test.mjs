@@ -1,5 +1,13 @@
 import assert from "node:assert/strict";
-import { readJsonStorage, STORAGE_KEYS, writeJsonStorage } from "../modules/storage.js";
+import {
+  readJsonStorage,
+  STORAGE_KEYS,
+  validateBattleSimState,
+  validateCustomSets,
+  validateFavorites,
+  validateSavedTeams,
+  writeJsonStorage
+} from "../modules/storage.js";
 
 function memoryStorage(seed = {}) {
   const data = new Map(Object.entries(seed));
@@ -51,5 +59,20 @@ const typeStorage = memoryStorage({ favs: JSON.stringify({ __v: 1, data: "geen a
 assert.deepEqual(readJsonStorage("favs", [], typeStorage, { validate: Array.isArray }), []);
 const okStorage = memoryStorage({ favs: JSON.stringify({ __v: 1, data: ["Starmie"] }) });
 assert.deepEqual(readJsonStorage("favs", [], okStorage, { validate: Array.isArray }), ["Starmie"]);
+
+assert.equal(validateFavorites(["Garchomp", "Starmie"]), true);
+assert.equal(validateFavorites([42]), false);
+assert.equal(validateCustomSets({ Garchomp: { item: "Yache Berry", moves: ["Earthquake"] } }), true);
+assert.equal(validateCustomSets({ Garchomp: { item: "<img onerror=alert(1)>" } }), false);
+assert.equal(validateBattleSimState({ opponentMode: "counter", opponentTeam: ["Garchomp"], opponentSelection: ["Garchomp"] }), true);
+assert.equal(validateBattleSimState({ opponentMode: "malicious" }), false);
+assert.equal(validateSavedTeams([{
+  id: "1",
+  name: "Team",
+  format: "single3",
+  teamStyle: "balanced",
+  members: ["Garchomp"]
+}]), true);
+assert.equal(validateSavedTeams([{}]), false);
 
 console.log("storage tests passed");

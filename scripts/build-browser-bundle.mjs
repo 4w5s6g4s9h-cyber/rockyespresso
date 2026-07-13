@@ -4,13 +4,15 @@ import process from 'node:process';
 
 const ROOT = process.cwd();
 const OUT_FILE = path.join(ROOT, 'dist', 'app.bundle.js');
+const production = process.argv.includes('--production');
 
 const result = await esbuild.build({
   entryPoints: [path.join(ROOT, 'app.js')],
   bundle: true,
   format: 'iife',
   target: ['es2020'],
-  sourcemap: 'linked',
+  sourcemap: production ? false : 'linked',
+  minify: production,
   outfile: OUT_FILE,
   logLevel: 'info'
 });

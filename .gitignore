@@ -1,3 +1,9 @@
 *.zip
 .DS_Store
 node_modules/
+.pages/
+.env
+.env.*
+*.pem
+*.key
+*.p12

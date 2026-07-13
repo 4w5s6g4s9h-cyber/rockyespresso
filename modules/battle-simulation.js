@@ -99,9 +99,9 @@ export function simulateBattle({
 
   const playerScore = aggregateTeamScore(playerMembers, opponentMembers, { selectedBuild, moveDetails, roleFor });
   const opponentScore = aggregateTeamScore(opponentMembers, playerMembers, { selectedBuild, moveDetails, roleFor });
-  const winChance = clamp(Math.round(50 + (playerScore - opponentScore) / 6), 5, 95);
-  const advantage = winChance >= 62 ? "Voordeel" : winChance <= 38 ? "Lastig" : "Evenwichtig";
-  const teamMetrics = scoreTeamPreview(playerMembers, opponentMembers, { selectedBuild, moveDetails, roleFor, winChance, playerScore, opponentScore });
+  const matchupIndex = clamp(Math.round(50 + (playerScore - opponentScore) / 6), 5, 95);
+  const advantage = matchupIndex >= 62 ? "Voordeel" : matchupIndex <= 38 ? "Lastig" : "Evenwichtig";
+  const teamMetrics = scoreTeamPreview(playerMembers, opponentMembers, { selectedBuild, moveDetails, roleFor, matchupIndex, playerScore, opponentScore });
   const selectionAdvice = recommendBattleSelection(playerTeam, opponentMembers, format, { selectedBuild, moveDetails, roleFor });
   const confidence = confidenceScore([...playerMembers, ...opponentMembers], { selectedBuild, moveDetails });
 
@@ -109,7 +109,7 @@ export function simulateBattle({
     formatLabel: format.label ?? DEFAULT_FORMAT.label,
     playerMembers,
     opponentMembers,
-    winChance,
+    matchupIndex,
     advantage,
     playerScore: Math.round(playerScore),
     opponentScore: Math.round(opponentScore),
@@ -122,7 +122,7 @@ export function simulateBattle({
       .sort((a, b) => a.score - b.score)
       .slice(0, 3),
     leads: selectionAdvice.leads,
-    notes: battleNotes(playerMembers, opponentMembers, winChance),
+    notes: battleNotes(playerMembers, opponentMembers, matchupIndex),
     matchupMatrix,
     selectionAdvice,
     teamMetrics,
@@ -198,7 +198,7 @@ export function scoreTeamPreview(team = [], opponents = [], {
   selectedBuild = () => ({}),
   moveDetails = () => ({}),
   roleFor = () => ({ label: "Allrounder" }),
-  winChance = 50,
+  matchupIndex = 50,
   playerScore = null,
   opponentScore = null
 } = {}) {
@@ -211,7 +211,7 @@ export function scoreTeamPreview(team = [], opponents = [], {
   const coverageHits = matrix.filter((item) => item.attackMultiplier >= 2).length;
   const total = Math.max(1, matrix.length);
   return {
-    winChance,
+    matchupIndex,
     previewScore: clamp(Math.round(50 + ((playerScore ?? aggregateTeamScore(team, opponents, helpers)) - (opponentScore ?? aggregateTeamScore(opponents, team, helpers))) / 8), 0, 100),
     speedControl: clamp(Math.round(speedWins / total * 100), 0, 100),
     defensiveSafety: clamp(Math.round(defensiveAnswers / total * 100), 0, 100),
@@ -454,10 +454,10 @@ function teamProfile(team, selectedBuild, roleFor) {
   };
 }
 
-function battleNotes(playerMembers, opponentMembers, winChance) {
+function battleNotes(playerMembers, opponentMembers, matchupIndex) {
   const notes = ["Indicatie op basis van types, stats, items en sets — geen volledige damage-berekening."];
-  if (winChance >= 62) notes.push("Je selectie heeft duidelijk momentum; speel rond je positieve pairings.");
-  else if (winChance <= 38) notes.push("Deze matchup vraagt strakke preview-keuzes; vermijd je slechtste pairing als lead.");
+  if (matchupIndex >= 62) notes.push("Je selectie heeft duidelijk momentum; speel rond je positieve pairings.");
+  else if (matchupIndex <= 38) notes.push("Deze matchup vraagt strakke preview-keuzes; vermijd je slechtste pairing als lead.");
   else notes.push("De matchup is close; lead-keuze en setkeuze maken hier veel verschil.");
   if (playerMembers.some((pokemon) => pokemon.spe >= 110) && !opponentMembers.some((pokemon) => pokemon.spe >= 110)) {
     notes.push("Je hebt de hoogste speed-tier in deze preview.");

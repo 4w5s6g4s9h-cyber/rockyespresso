@@ -1,5 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { assertDataset, validateLearnsetDataset, validatePokemonDataset } from '../modules/data-schema.js';
+import { fetchJsonResource, fetchTextResource } from './fetch-safe.mjs';
 
 const ROOT = process.cwd();
 const POKEMON_PATH = path.join(ROOT, 'data/champions-pokemon.json');
@@ -33,16 +35,11 @@ function serebiiSlug(pokemonName) {
 }
 
 async function rpc(method, body) {
-  const response = await fetch(`https://www.smogon.com/dex/_rpc/${method}`, {
+  return fetchJsonResource(`https://www.smogon.com/dex/_rpc/${method}`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body),
-  });
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`${method} ${response.status}: ${text.slice(0, 180)}`);
-  }
-  return response.json();
+  }, { label: method });
 }
 
 async function smogonLearnset(pokemonName) {
@@ -63,10 +60,7 @@ function decodeHtml(value) {
 
 async function serebiiLearnset(pokemonName) {
   const url = `https://www.serebii.net/pokedex-champions/${serebiiSlug(pokemonName)}/`;
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`Serebii ${response.status}: ${url}`);
-
-  const html = await response.text();
+  const html = await fetchTextResource(url, {}, { label: `Serebii ${pokemonName}` });
   const attacksStart = html.indexOf('<a name="attacks">');
   const statsStart = html.indexOf('<a name="stats">');
   const attackHtml = attacksStart >= 0
@@ -81,6 +75,7 @@ async function serebiiLearnset(pokemonName) {
 
 async function main() {
   const pokemonData = JSON.parse(await fs.readFile(POKEMON_PATH, 'utf8'));
+  assertDataset('Pokémon-data', validatePokemonDataset(pokemonData));
   const pokemon = pokemonData.pokemon ?? [];
   const learnsets = {};
   const errors = [];
@@ -148,9 +143,12 @@ async function main() {
     learnsets: Object.fromEntries(Object.entries(learnsets).sort(([a], [b]) => a.localeCompare(b))),
   };
 
+  if (errors.length) {
+    throw new Error(`Learnset-sync afgebroken: ${errors.length} Pokémon zonder valide Champions-learnset`);
+  }
+  assertDataset('Learnset-data', validateLearnsetDataset(output, pokemon.map((entry) => entry.name)));
   await fs.writeFile(LEARNSETS_PATH, `${JSON.stringify(output, null, 2)}\n`);
   console.error(`Wrote ${Object.keys(output.learnsets).length} Champions learnsets`);
-  if (errors.length) console.error(`Learnset errors: ${errors.length}`);
 }
 
 main().catch((error) => {

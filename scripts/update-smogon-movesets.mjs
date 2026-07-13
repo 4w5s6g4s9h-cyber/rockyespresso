@@ -1,6 +1,14 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import {
+  assertDataset,
+  validateLearnsetDataset,
+  validateMoveDataset,
+  validateMovesetDataset,
+  validatePokemonDataset,
+} from '../modules/data-schema.js';
+import { fetchJsonResource } from './fetch-safe.mjs';
 
 const ROOT = process.cwd();
 const POKEMON_PATH = path.join(ROOT, 'data/champions-pokemon.json');
@@ -62,16 +70,11 @@ function alias(name) {
 }
 
 async function rpc(method, body) {
-  const response = await fetch(`https://www.smogon.com/dex/_rpc/${method}`, {
+  return fetchJsonResource(`https://www.smogon.com/dex/_rpc/${method}`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body),
-  });
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`${method} ${response.status}: ${text.slice(0, 180)}`);
-  }
-  return response.json();
+  }, { label: method });
 }
 
 function flattenStrategies(payload) {
@@ -527,6 +530,10 @@ async function main() {
     fs.readFile(MOVES_PATH, 'utf8').then(JSON.parse),
     fs.readFile(LEARNSETS_PATH, 'utf8').then(JSON.parse),
   ]);
+  void oldMovesetsData;
+  const pokemonNames = pokemonData.pokemon?.map((pokemon) => pokemon.name) ?? [];
+  assertDataset('Pokémon-data', validatePokemonDataset(pokemonData));
+  assertDataset('Learnset-data', validateLearnsetDataset(learnsetData, pokemonNames));
 
   const basicsByGen = {
     champions: await rpc('dump-basics', { gen: 'champions' }),
@@ -614,6 +621,11 @@ async function main() {
     moves: usedMoveDetails,
   };
 
+  if (stats.errors.length) {
+    throw new Error(`Moveset-sync afgebroken: ${stats.errors.length} upstream-fouten; bestaande output blijft behouden`);
+  }
+  assertDataset('Moveset-data', validateMovesetDataset(movesetsOut, pokemonNames));
+  assertDataset('Move-details', validateMoveDataset(movesOut));
   await fs.writeFile(MOVESETS_PATH, `${JSON.stringify(movesetsOut, null, 2)}\n`);
   await fs.writeFile(MOVES_PATH, `${JSON.stringify(movesOut, null, 2)}\n`);
   console.error(JSON.stringify(stats, null, 2));

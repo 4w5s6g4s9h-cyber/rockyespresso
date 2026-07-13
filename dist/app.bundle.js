@@ -1,4 +1,133 @@
 (() => {
+  // modules/data-schema.js
+  var STAT_FIELDS = ["hp", "atk", "def", "spa", "spd", "spe", "bst"];
+  var SET_STATUSES = /* @__PURE__ */ new Set(["smogon-champions", "smogon-sv", "generated", "custom"]);
+  function isRecord(value) {
+    return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  }
+  function safeText(value, maxLength = 200) {
+    return typeof value === "string" && value.length > 0 && value.length <= maxLength && !/[<>\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(value);
+  }
+  function safeStringArray(value, { min = 0, max = 20, maxLength = 200 } = {}) {
+    return Array.isArray(value) && value.length >= min && value.length <= max && value.every((entry) => safeText(entry, maxLength));
+  }
+  function safeStructuredValue(value, depth = 0) {
+    if (depth > 6) return false;
+    if (value == null || typeof value === "boolean") return true;
+    if (typeof value === "number") return Number.isFinite(value);
+    if (typeof value === "string") return value.length <= 1e3 && !/[<>\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(value);
+    if (Array.isArray(value)) return value.length <= 100 && value.every((entry) => safeStructuredValue(entry, depth + 1));
+    if (!isRecord(value) || Object.keys(value).length > 100) return false;
+    return Object.entries(value).every(([key, entry]) => safeText(key, 160) && safeStructuredValue(entry, depth + 1));
+  }
+  function push(errors, condition, message) {
+    if (!condition) errors.push(message);
+  }
+  function validatePokemonDataset(data) {
+    const errors = [];
+    push(errors, isRecord(data), "pokemon: root moet een object zijn");
+    const pokemon = Array.isArray(data?.pokemon) ? data.pokemon : [];
+    push(errors, pokemon.length > 0 && pokemon.length <= 1e3, "pokemon: roster moet 1-1000 records bevatten");
+    const names2 = /* @__PURE__ */ new Set();
+    pokemon.forEach((entry, index) => {
+      const at = `pokemon[${index}]`;
+      push(errors, isRecord(entry), `${at}: record ontbreekt`);
+      if (!isRecord(entry)) return;
+      push(errors, safeText(entry.name, 120), `${at}.name: ongeldige naam`);
+      if (safeText(entry.name, 120)) {
+        push(errors, !names2.has(entry.name), `${at}.name: dubbele naam ${entry.name}`);
+        names2.add(entry.name);
+      }
+      STAT_FIELDS.forEach((field) => push(
+        errors,
+        Number.isFinite(entry[field]) && entry[field] >= 1 && entry[field] <= (field === "bst" ? 1530 : 255),
+        `${at}.${field}: ongeldige stat`
+      ));
+      push(errors, safeStringArray(entry.types, { min: 1, max: 2, maxLength: 30 }), `${at}.types: ongeldige types`);
+      push(errors, safeStringArray(entry.abilities, { min: 1, max: 8, maxLength: 100 }), `${at}.abilities: ongeldige abilities`);
+      push(errors, Number.isFinite(entry.weight) && entry.weight >= 0 && entry.weight <= 1e4, `${at}.weight: ongeldig`);
+      push(errors, Number.isFinite(entry.height) && entry.height >= 0 && entry.height <= 100, `${at}.height: ongeldig`);
+      ["formats", "evos", "alts", "megaStones"].forEach((field) => {
+        if (entry[field] != null) push(errors, safeStringArray(entry[field], { max: 100, maxLength: 160 }), `${at}.${field}: ongeldig`);
+      });
+    });
+    return errors;
+  }
+  function validateLearnsetDataset(data, pokemonNames = []) {
+    const errors = [];
+    const learnsets = isRecord(data?.learnsets) ? data.learnsets : {};
+    push(errors, isRecord(data), "learnsets: root moet een object zijn");
+    push(errors, isRecord(data?.learnsets), "learnsets: learnsets-object ontbreekt");
+    const pipelineErrors = data?.stats?.errors;
+    push(errors, Array.isArray(pipelineErrors), "learnsets.stats.errors: array ontbreekt");
+    push(errors, Array.isArray(pipelineErrors) && pipelineErrors.length === 0, "learnsets: sync bevat fouten");
+    Object.entries(learnsets).forEach(([name, moves]) => {
+      push(errors, safeText(name, 120), `learnsets: ongeldige sleutel ${name}`);
+      push(errors, safeStringArray(moves, { min: 1, max: 1e3, maxLength: 160 }), `learnsets.${name}: lege of ongeldige learnset`);
+    });
+    pokemonNames.forEach((name) => push(
+      errors,
+      Array.isArray(learnsets[name]) && learnsets[name].length > 0,
+      `learnsets.${name}: roster-entry ontbreekt`
+    ));
+    return errors;
+  }
+  function validateMovesetDataset(data, pokemonNames = []) {
+    const errors = [];
+    const sets = isRecord(data?.sets) ? data.sets : {};
+    push(errors, isRecord(data), "movesets: root moet een object zijn");
+    push(errors, isRecord(data?.sets), "movesets: sets-object ontbreekt");
+    const pipelineErrors = data?.stats?.errors;
+    push(errors, Array.isArray(pipelineErrors), "movesets.stats.errors: array ontbreekt");
+    push(errors, Array.isArray(pipelineErrors) && pipelineErrors.length === 0, "movesets: sync bevat fouten");
+    Object.entries(sets).forEach(([name, builds]) => {
+      push(errors, safeText(name, 120), `movesets: ongeldige sleutel ${name}`);
+      push(errors, Array.isArray(builds) && builds.length > 0 && builds.length <= 60, `movesets.${name}: sets ontbreken of zijn te groot`);
+      if (!Array.isArray(builds)) return;
+      builds.forEach((build, index) => {
+        const at = `movesets.${name}[${index}]`;
+        push(errors, isRecord(build), `${at}: ongeldig setrecord`);
+        if (!isRecord(build)) return;
+        push(errors, safeStructuredValue(build), `${at}: bevat onveilige of onbegrensde waarden`);
+        push(errors, safeText(build.id, 200), `${at}.id: ongeldig`);
+        push(errors, safeText(build.status, 40) && SET_STATUSES.has(build.status), `${at}.status: onbekend`);
+        push(errors, safeStringArray(build.moves, { min: 1, max: 4, maxLength: 240 }), `${at}.moves: ongeldig`);
+        ["label", "item", "ability", "nature", "evs"].forEach((field) => {
+          if (build[field] != null && build[field] !== "") push(errors, safeText(build[field], 300), `${at}.${field}: ongeldig`);
+        });
+      });
+    });
+    pokemonNames.forEach((name) => push(
+      errors,
+      Array.isArray(sets[name]) && sets[name].length > 0,
+      `movesets.${name}: roster-entry ontbreekt`
+    ));
+    return errors;
+  }
+  function validateMoveDataset(data) {
+    const errors = [];
+    const moves = isRecord(data?.moves) ? data.moves : {};
+    push(errors, isRecord(data), "moves: root moet een object zijn");
+    push(errors, isRecord(data?.moves) && Object.keys(moves).length > 0, "moves: move-details ontbreken");
+    Object.entries(moves).forEach(([name, details]) => {
+      const at = `moves.${name}`;
+      push(errors, safeText(name, 160), `${at}: ongeldige naam`);
+      push(errors, isRecord(details), `${at}: details ontbreken`);
+      if (!isRecord(details)) return;
+      push(errors, safeText(details.type, 30), `${at}.type: ongeldig`);
+      push(errors, ["Physical", "Special", "Status"].includes(details.category), `${at}.category: ongeldig`);
+      ["power", "accuracy", "pp"].forEach((field) => push(errors, safeText(String(details[field]), 20), `${at}.${field}: ongeldig`));
+      if (details.effect != null && details.effect !== "") push(errors, safeText(details.effect, 1e3), `${at}.effect: ongeldig`);
+    });
+    return errors;
+  }
+  function assertDataset(label, errors) {
+    if (!errors.length) return;
+    const sample = errors.slice(0, 12).join("\n- ");
+    throw new Error(`${label} voldoet niet aan het schema (${errors.length} fouten):
+- ${sample}`);
+  }
+
   // modules/data.js
   function localData() {
     return window.CHAMPIONS_LOCAL_DATA ?? null;
@@ -16,6 +145,7 @@
     return localDataScriptPromise;
   }
   var FETCH_TIMEOUT_MS = 8e3;
+  var MAX_JSON_BYTES = 8 * 1024 * 1024;
   async function fetchWithTimeout(path) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
@@ -34,7 +164,19 @@
         response = await fetchWithTimeout(path);
       }
       if (!response.ok) throw new Error(`${errorLabel} (${response.status})`);
-      return response.json();
+      const contentType = response.headers.get("content-type")?.toLowerCase() ?? "";
+      if (contentType && !contentType.includes("json") && !contentType.includes("javascript")) {
+        throw new Error(`${errorLabel}: onverwacht content-type ${contentType}`);
+      }
+      const declaredLength = Number(response.headers.get("content-length"));
+      if (Number.isFinite(declaredLength) && declaredLength > MAX_JSON_BYTES) {
+        throw new Error(`${errorLabel}: response is te groot`);
+      }
+      const text = await response.text();
+      if (new TextEncoder().encode(text).byteLength > MAX_JSON_BYTES) {
+        throw new Error(`${errorLabel}: response overschrijdt ${MAX_JSON_BYTES} bytes`);
+      }
+      return JSON.parse(text);
     } catch (error) {
       const fallback = await ensureLocalData().catch(() => null);
       if (fallback) return fallbackDataForPath(fallback, path);
@@ -42,16 +184,20 @@
     }
   }
   async function loadPokemonData() {
-    if (localData()?.pokemon) return normalizePokemonDataset(localData().pokemon);
+    if (localData()?.pokemon) return checkedPokemonDataset(localData().pokemon);
     try {
-      return normalizePokemonDataset(await fetchJson("data/champions-pokemon.json", "Dataset kon niet worden geladen"));
+      return checkedPokemonDataset(await fetchJson("data/champions-pokemon.json", "Dataset kon niet worden geladen"));
     } catch (error) {
-      return normalizePokemonDataset((await ensureLocalData()).pokemon);
+      return checkedPokemonDataset((await ensureLocalData()).pokemon);
     }
   }
   async function loadChampionsMeta() {
     const data = localData()?.meta ?? await fetchJson("data/champions-meta.json", "Champions-meta kon niet worden geladen");
     return {
+      version: data.version ?? "unknown",
+      status: data.status ?? "unknown",
+      note: data.note ?? "",
+      regulation: data.regulation ?? { id: "unknown", status: "unverified" },
       formats: data.formats ?? {},
       archetypes: data.archetypes ?? [],
       threats: data.threats ?? []
@@ -72,6 +218,11 @@
     if (Array.isArray(data)) return { pokemon: data };
     if (Array.isArray(data?.pokemon)) return data;
     return { pokemon: [] };
+  }
+  function checkedPokemonDataset(data) {
+    const normalized = normalizePokemonDataset(data);
+    assertDataset("Pok\xE9mon-data", validatePokemonDataset(normalized));
+    return normalized;
   }
   function normalizePokemonList(pokemon) {
     if (Array.isArray(pokemon)) return pokemon;
@@ -546,12 +697,25 @@
       const movesetSources = Object.fromEntries((movesetData.sources ?? []).map((source) => [source.id, source]));
       const moveDetails2 = moveData.moves ?? {};
       const learnsets = learnsetData?.learnsets ?? {};
+      const pokemonNames = pokemon.map((entry) => entry.name);
+      assertDataset("Moveset-data", validateMovesetDataset(movesetData, pokemonNames));
+      assertDataset("Move-details", validateMoveDataset(moveData));
+      assertDataset("Learnset-data", validateLearnsetDataset(learnsetData, pokemonNames));
       enrichGeneratedMovesets({ movesets, pokemon, generatedMovePlan: generatedMovePlan2 });
       enrichChampionsCompatibility({ movesets, pokemon, moveDetails: moveDetails2, learnsets, generatedMovePlan: generatedMovePlan2 });
-      return { movesets, movesetSources, moveDetails: moveDetails2, learnsets };
+      return {
+        movesets,
+        movesetSources,
+        moveDetails: moveDetails2,
+        learnsets,
+        metadata: {
+          generatedAt: movesetData.generatedAt ?? "unknown",
+          stats: movesetData.stats ?? {}
+        }
+      };
     } catch (error) {
       console.warn("Moveset database niet geladen; de app gebruikt fallback-richtlijnen.", error);
-      return { movesets: {}, movesetSources: {}, moveDetails: {}, learnsets: {} };
+      return { movesets: {}, movesetSources: {}, moveDetails: {}, learnsets: {}, metadata: { generatedAt: "unknown", stats: {} } };
     }
   }
   function enrichChampionsCompatibility({ movesets, pokemon, moveDetails: moveDetails2, learnsets, generatedMovePlan: generatedMovePlan2 }) {
@@ -766,21 +930,79 @@
     battleSim: "championsBattleSim"
   };
   var STORAGE_VERSION = 1;
+  var BATTLE_MODES = /* @__PURE__ */ new Set(["manual", "counter", "bulky", "offense", "random", "mirror"]);
+  function isPlainObject(value) {
+    return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  }
+  function isBoundedString(value, maxLength = 120) {
+    return typeof value === "string" && value.length > 0 && value.length <= maxLength;
+  }
+  function isStringArray(value, { maxItems = 12, maxLength = 120 } = {}) {
+    return Array.isArray(value) && value.length <= maxItems && value.every((item) => isBoundedString(item, maxLength));
+  }
+  function isSafeJsonValue(value, depth = 0) {
+    if (depth > 5) return false;
+    if (value == null || typeof value === "boolean") return true;
+    if (typeof value === "number") return Number.isFinite(value);
+    if (typeof value === "string") {
+      return value.length <= 500 && !/[<>\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(value);
+    }
+    if (Array.isArray(value)) return value.length <= 40 && value.every((item) => isSafeJsonValue(item, depth + 1));
+    if (!isPlainObject(value) || Object.keys(value).length > 80) return false;
+    return Object.entries(value).every(([key, item]) => key.length <= 120 && isSafeJsonValue(item, depth + 1));
+  }
+  function isStringRecord(value, maxEntries = 400) {
+    return isPlainObject(value) && Object.keys(value).length <= maxEntries && Object.entries(value).every(([key, item]) => isBoundedString(key) && isBoundedString(item, 200));
+  }
+  function validateFavorites(value) {
+    return isStringArray(value, { maxItems: 400, maxLength: 120 });
+  }
+  function validateCustomSets(value) {
+    return isPlainObject(value) && Object.keys(value).length <= 400 && Object.entries(value).every(([name, build]) => isBoundedString(name) && isPlainObject(build) && isSafeJsonValue(build));
+  }
+  function validateSavedTeams(value) {
+    if (!Array.isArray(value) || value.length > 12) return false;
+    return value.every((team) => {
+      if (!isPlainObject(team)) return false;
+      if (!isBoundedString(team.id, 80) || !isBoundedString(team.name, 120)) return false;
+      if (!isBoundedString(team.format, 40) || !isBoundedString(team.teamStyle, 40)) return false;
+      if (!isStringArray(team.members, { maxItems: 6 })) return false;
+      if (team.lockedCore != null && !isStringArray(team.lockedCore, { maxItems: 6 })) return false;
+      if (team.battleSelection != null && !isStringArray(team.battleSelection, { maxItems: 4 })) return false;
+      if (team.selectedSets != null && !isStringRecord(team.selectedSets)) return false;
+      if (team.customSets != null && !validateCustomSets(team.customSets)) return false;
+      return team.savedAt == null || isBoundedString(team.savedAt, 80);
+    });
+  }
+  function validateBattleSimState(value) {
+    if (!isPlainObject(value)) return false;
+    if (value.opponentMode != null && !BATTLE_MODES.has(value.opponentMode)) return false;
+    if (value.opponentTeam != null && !isStringArray(value.opponentTeam, { maxItems: 6 })) return false;
+    if (value.opponentSelection != null && !isStringArray(value.opponentSelection, { maxItems: 4 })) return false;
+    return true;
+  }
   function isEnvelope(parsed) {
     return Boolean(parsed) && typeof parsed === "object" && !Array.isArray(parsed) && "__v" in parsed && "data" in parsed;
   }
   function readJsonStorage(key, fallback, storage = globalThis.localStorage, options = {}) {
-    const { version = STORAGE_VERSION, validate } = options;
+    const { version = STORAGE_VERSION, validate, onInvalid } = options;
     try {
       const raw = storage?.getItem(key);
       if (!raw) return fallback;
       const parsed = JSON.parse(raw);
       const envelope = isEnvelope(parsed);
-      if (envelope && parsed.__v > version) return fallback;
+      if (envelope && parsed.__v > version) {
+        onInvalid?.("newer-version");
+        return fallback;
+      }
       const value = envelope ? parsed.data : parsed;
-      if (validate && !validate(value)) return fallback;
+      if (validate && !validate(value)) {
+        onInvalid?.("schema");
+        return fallback;
+      }
       return value;
-    } catch {
+    } catch (error) {
+      onInvalid?.("parse", error);
       return fallback;
     }
   }
@@ -792,6 +1014,42 @@
     } catch {
       return false;
     }
+  }
+
+  // modules/persistence.js
+  var ALLOWED_OPPONENT_MODES = /* @__PURE__ */ new Set(["manual", "counter", "bulky", "offense", "random", "mirror"]);
+  function restoreBattleOpponentState(saved = {}, pokemon = []) {
+    const byName = new Map(pokemon.map((entry) => [entry.name, entry]));
+    const opponentTeam = [...new Set(saved.opponentTeam ?? [])].map((name) => byName.get(name)).filter(Boolean).slice(0, 6);
+    const teamNames = new Set(opponentTeam.map((entry) => entry.name));
+    const opponentSelection = [...new Set(saved.opponentSelection ?? [])].filter((name) => teamNames.has(name)).slice(0, 4);
+    return {
+      opponentTeam,
+      opponentSelection,
+      opponentMode: ALLOWED_OPPONENT_MODES.has(saved.opponentMode) ? saved.opponentMode : "manual"
+    };
+  }
+
+  // modules/sprites.js
+  var ASSET_OVERRIDES = {
+    "Tauros-Paldea-Aqua": "tauros.png",
+    "Tauros-Paldea-Blaze": "tauros.png",
+    "Tauros-Paldea-Combat": "tauros.png",
+    "Meowstic-M": "meowstic-f.png",
+    "Meowstic-M-Mega": "meowstic-f.png",
+    "Meowstic-F-Mega": "meowstic-f.png",
+    "Castform-Rainy": "castform.png",
+    "Castform-Sunny": "castform.png",
+    "Castform-Snowy": "castform.png",
+    "Aegislash-Blade": "aegislash.png",
+    "Kommo-o": "fallback.svg",
+    "Mr. Rime": "fallback.svg"
+  };
+  function spriteId(name) {
+    return String(name).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/♀/g, "f").replace(/♂/g, "m").replace("-mega-x", "-megax").replace("-mega-y", "-megay").replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "");
+  }
+  function spritePath(name) {
+    return `assets/sprites/${ASSET_OVERRIDES[name] ?? `${spriteId(name)}.png`}`;
   }
 
   // modules/ui-events.js
@@ -846,6 +1104,23 @@
     ctx.builderTab.addEventListener("click", () => ctx.switchView("builder"));
     ctx.teamTab.addEventListener("click", () => ctx.switchView("team"));
     ctx.battleTab.addEventListener("click", () => ctx.switchView("battle"));
+    const viewTabs = [
+      [ctx.builderTab, "builder"],
+      [ctx.teamTab, "team"],
+      [ctx.battleTab, "battle"]
+    ];
+    viewTabs.forEach(([tab], index) => tab.addEventListener("keydown", (event) => {
+      let nextIndex = index;
+      if (event.key === "ArrowRight") nextIndex = (index + 1) % viewTabs.length;
+      else if (event.key === "ArrowLeft") nextIndex = (index - 1 + viewTabs.length) % viewTabs.length;
+      else if (event.key === "Home") nextIndex = 0;
+      else if (event.key === "End") nextIndex = viewTabs.length - 1;
+      else return;
+      event.preventDefault();
+      const [nextTab, view] = viewTabs[nextIndex];
+      ctx.switchView(view);
+      nextTab.focus();
+    }));
     ctx.backToBuilder.addEventListener("click", () => ctx.switchView("builder"));
     ctx.floatingTeamLab.addEventListener("click", () => {
       ctx.switchView("team");
@@ -971,23 +1246,23 @@
     const matchupMatrix = createMatchupMatrix(playerMembers, opponentMembers, pairings);
     const playerScore = aggregateTeamScore(playerMembers, opponentMembers, { selectedBuild: selectedBuild2, moveDetails: moveDetails2, roleFor: roleFor2 });
     const opponentScore = aggregateTeamScore(opponentMembers, playerMembers, { selectedBuild: selectedBuild2, moveDetails: moveDetails2, roleFor: roleFor2 });
-    const winChance = clamp(Math.round(50 + (playerScore - opponentScore) / 6), 5, 95);
-    const advantage = winChance >= 62 ? "Voordeel" : winChance <= 38 ? "Lastig" : "Evenwichtig";
-    const teamMetrics = scoreTeamPreview(playerMembers, opponentMembers, { selectedBuild: selectedBuild2, moveDetails: moveDetails2, roleFor: roleFor2, winChance, playerScore, opponentScore });
+    const matchupIndex = clamp(Math.round(50 + (playerScore - opponentScore) / 6), 5, 95);
+    const advantage = matchupIndex >= 62 ? "Voordeel" : matchupIndex <= 38 ? "Lastig" : "Evenwichtig";
+    const teamMetrics = scoreTeamPreview(playerMembers, opponentMembers, { selectedBuild: selectedBuild2, moveDetails: moveDetails2, roleFor: roleFor2, matchupIndex, playerScore, opponentScore });
     const selectionAdvice = recommendBattleSelection(playerTeam, opponentMembers, format, { selectedBuild: selectedBuild2, moveDetails: moveDetails2, roleFor: roleFor2 });
     const confidence = confidenceScore([...playerMembers, ...opponentMembers], { selectedBuild: selectedBuild2, moveDetails: moveDetails2 });
     return {
       formatLabel: format.label ?? DEFAULT_FORMAT.label,
       playerMembers,
       opponentMembers,
-      winChance,
+      matchupIndex,
       advantage,
       playerScore: Math.round(playerScore),
       opponentScore: Math.round(opponentScore),
       bestMatchups: pairings.filter((pairing) => pairing.score > 0).sort((a, b) => b.score - a.score).slice(0, 3),
       threats: pairings.filter((pairing) => pairing.score < 0).sort((a, b) => a.score - b.score).slice(0, 3),
       leads: selectionAdvice.leads,
-      notes: battleNotes(playerMembers, opponentMembers, winChance),
+      notes: battleNotes(playerMembers, opponentMembers, matchupIndex),
       matchupMatrix,
       selectionAdvice,
       teamMetrics,
@@ -1057,7 +1332,7 @@
     selectedBuild: selectedBuild2 = () => ({}),
     moveDetails: moveDetails2 = () => ({}),
     roleFor: roleFor2 = () => ({ label: "Allrounder" }),
-    winChance = 50,
+    matchupIndex = 50,
     playerScore = null,
     opponentScore = null
   } = {}) {
@@ -1070,7 +1345,7 @@
     const coverageHits = matrix.filter((item) => item.attackMultiplier >= 2).length;
     const total = Math.max(1, matrix.length);
     return {
-      winChance,
+      matchupIndex,
       previewScore: clamp(Math.round(50 + ((playerScore ?? aggregateTeamScore(team, opponents, helpers)) - (opponentScore ?? aggregateTeamScore(opponents, team, helpers))) / 8), 0, 100),
       speedControl: clamp(Math.round(speedWins / total * 100), 0, 100),
       defensiveSafety: clamp(Math.round(defensiveAnswers / total * 100), 0, 100),
@@ -1271,10 +1546,10 @@
       averageBulk: totals.bulk / team.length
     };
   }
-  function battleNotes(playerMembers, opponentMembers, winChance) {
+  function battleNotes(playerMembers, opponentMembers, matchupIndex) {
     const notes = ["Indicatie op basis van types, stats, items en sets \u2014 geen volledige damage-berekening."];
-    if (winChance >= 62) notes.push("Je selectie heeft duidelijk momentum; speel rond je positieve pairings.");
-    else if (winChance <= 38) notes.push("Deze matchup vraagt strakke preview-keuzes; vermijd je slechtste pairing als lead.");
+    if (matchupIndex >= 62) notes.push("Je selectie heeft duidelijk momentum; speel rond je positieve pairings.");
+    else if (matchupIndex <= 38) notes.push("Deze matchup vraagt strakke preview-keuzes; vermijd je slechtste pairing als lead.");
     else notes.push("De matchup is close; lead-keuze en setkeuze maken hier veel verschil.");
     if (playerMembers.some((pokemon) => pokemon.spe >= 110) && !opponentMembers.some((pokemon) => pokemon.spe >= 110)) {
       notes.push("Je hebt de hoogste speed-tier in deze preview.");
@@ -1343,13 +1618,14 @@
   };
   function planTeam(context = {}, options = {}) {
     const ctx = normalizeContext(context);
-    const team = legalTeam((context.team ?? []).slice(0, ctx.maxTeamSize), ctx);
+    const rawTeam = Array.isArray(context.team) ? context.team : [];
+    const team = legalTeam(rawTeam.slice(0, ctx.maxTeamSize), ctx);
     const core = legalTeam(((context.core?.length ? context.core : team) ?? []).slice(0, ctx.maxTeamSize), ctx);
     const includeVariants = options.includeVariants ?? true;
     const includeSuggestions = options.includeSuggestions ?? true;
     const includeReplacements = options.includeReplacements ?? true;
     const variants = includeVariants ? VARIANT_MODES.map((mode) => completeTeamVariant(core, ctx, mode)).filter(Boolean) : [];
-    const evaluation = evaluateTeam(team, ctx);
+    const evaluation = evaluateTeam(rawTeam, ctx);
     return {
       variants,
       suggestions: includeSuggestions ? candidateSuggestions(team, ctx, options.suggestionLimit ?? 12, options.suggestionMode ?? "balanced") : [],
@@ -1371,8 +1647,9 @@
   }
   function evaluateTeam(team = [], context = {}, options = {}) {
     const ctx = normalizeContext(context);
-    const members = legalTeam(team, ctx);
-    const legal = teamLegalityStatus(members, ctx);
+    const rawTeam = Array.isArray(team) ? team : [];
+    const legal = teamLegalityStatus(rawTeam, ctx);
+    const members = legalTeam(rawTeam.slice(0, ctx.maxTeamSize), ctx);
     const balance = teamBalance(members, ctx);
     const roleChecks = roleChecksForTeam(members, ctx, balance);
     const typeRows = cachedTypeSummary(members);
@@ -1399,7 +1676,7 @@
       scoreItem("style", `${ctx.style.label}-kern`, styleScore, styleChecks.length ? `${styleChecks.filter((check2) => check2.done).length}/${styleChecks.length} planchecks` : "Geen specifieke planchecks", weights.style),
       scoreItem("format", ctx.format.label, format.value, format.note, weights.format),
       scoreItem("redundancy", "Redundantie", redundancy.value, redundancy.note, weights.redundancy),
-      scoreItem("sets", "Setkwaliteit", setQuality.value, setQuality.note, weights.sets),
+      scoreItem("sets", "Setvertrouwen", setQuality.value, setQuality.note, weights.sets),
       scoreItem("legality", "Teamregels", legal.ok ? 100 : 15, legal.ok ? "Legaal roster" : legal.issues.join(" \xB7 "), weights.legality)
     ];
     const totalWeight = breakdown.reduce((sum, item) => sum + item.weight, 0);
@@ -1815,7 +2092,8 @@
       value,
       label: value >= 78 ? "Hoog" : value >= 55 ? "Middel" : "Laag",
       note: issues.length ? issues.join(" \xB7 ") : `${scores.filter((item) => item.value >= 75).length}/${scores.length} sterke sets`,
-      issues
+      issues,
+      hasGenerated: scores.some((item) => item.generated)
     };
   }
   function setQualityForBuild(build = {}, pokemon = null, ctx = {}) {
@@ -1829,6 +2107,7 @@
       else if (build.status === "generated") value = 45;
     }
     if (build.status === "generated") {
+      value = Math.min(value, 45);
       if (pokemon) issues.push(`${pokemon.name}: generated set`);
     }
     if (build.championsCompatibility && !build.championsCompatibility.ok) {
@@ -1852,7 +2131,8 @@
     return {
       value: clamp2(value, 5, 100),
       label: value >= 78 ? "Hoog" : value >= 55 ? "Middel" : "Laag",
-      issues
+      issues,
+      generated: build.status === "generated"
     };
   }
   function normalizedBuildQuality(build = {}) {
@@ -1945,7 +2225,7 @@
   function confidenceSummary({ legal, redundancy, typeRiskRows, threatRows, setQuality, format }) {
     const typeSafety = clamp2(100 - typeRiskRows.length * 18, 0, 100);
     const threatSafety = threatRows.length ? weightedAverage(threatRows.map((threat) => ({ value: threat.score, weight: threat.weight ?? 1 })), 100) : 75;
-    const value = Math.round(average([
+    const rawValue = Math.round(average([
       setQuality.value,
       redundancy.value,
       typeSafety,
@@ -1953,13 +2233,17 @@
       format.value,
       legal.ok ? 100 : 20
     ], 0));
+    const generatedCeiling = setQuality.hasGenerated ? 74 : 100;
+    const value = Math.min(rawValue, generatedCeiling);
     return {
       value: clamp2(value, 0, 100),
       label: value >= 78 ? "Hoog" : value >= 55 ? "Middel" : "Laag"
     };
   }
   function suggestionConfidence(setConfidence, teamConfidence) {
-    const value = Math.round(average([setConfidence.value, teamConfidence.value], setConfidence.value));
+    const rawValue = Math.round(average([setConfidence.value, teamConfidence.value], setConfidence.value));
+    const generatedCeiling = setConfidence.generated ? 54 : 100;
+    const value = Math.min(rawValue, generatedCeiling);
     return {
       ...setConfidence,
       value,
@@ -2053,11 +2337,15 @@
     if (team.length > ctx.maxTeamSize) issues.push(`Meer dan ${ctx.maxTeamSize} teamleden`);
     const bases = /* @__PURE__ */ new Set();
     team.forEach((pokemon) => {
+      if (!pokemon?.name) {
+        issues.push("Ongeldig teamlid zonder naam");
+        return;
+      }
       const base = baseSpecies(pokemon.name);
       if (bases.has(base)) issues.push(`Dubbele basisspecies: ${base}`);
       bases.add(base);
     });
-    const megaUsers = team.filter((pokemon) => pokemonUsesMegaSlot(pokemon, buildFor(pokemon, ctx)));
+    const megaUsers = team.filter((pokemon) => pokemon?.name && pokemonUsesMegaSlot(pokemon, buildFor(pokemon, ctx)));
     if (megaUsers.length > 1) issues.push("Meer dan 1 Mega-slot");
     return { ok: issues.length === 0, issues };
   }
@@ -2250,6 +2538,7 @@
     pokemon: [],
     movesets: {},
     movesetSources: {},
+    movesetMeta: { generatedAt: "unknown", stats: {} },
     moveDetails: {},
     championsLearnsets: {},
     championsMeta: { formats: {}, archetypes: [], threats: [] },
@@ -2370,6 +2659,7 @@
     const movesetBundle = await loadMovesets({ pokemon: state.pokemon, generatedMovePlan });
     state.movesets = movesetBundle.movesets;
     state.movesetSources = movesetBundle.movesetSources;
+    state.movesetMeta = movesetBundle.metadata;
     state.moveDetails = movesetBundle.moveDetails;
     state.championsLearnsets = movesetBundle.learnsets ?? {};
     renderMoveSearchOptions();
@@ -2627,30 +2917,43 @@
     window.clearTimeout(storageToastTimer);
     storageToastTimer = window.setTimeout(() => toast.classList.remove("visible"), 6e3);
   }
-  var isPlainObject = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
   function loadCustomSets() {
-    state.customSets = readJsonStorage(STORAGE_KEYS.customSets, {}, void 0, { validate: isPlainObject });
+    state.customSets = readJsonStorage(STORAGE_KEYS.customSets, {}, void 0, {
+      validate: validateCustomSets,
+      onInvalid: () => warnStorageFailure("Ongeldige custom sets zijn veilig genegeerd.")
+    });
   }
   function saveCustomSets() {
     if (!writeJsonStorage(STORAGE_KEYS.customSets, state.customSets)) warnStorageFailure("Custom sets konden niet worden opgeslagen.");
   }
   function loadSavedTeams() {
-    state.savedTeams = readJsonStorage(STORAGE_KEYS.savedTeams, [], void 0, { validate: Array.isArray });
+    state.savedTeams = readJsonStorage(STORAGE_KEYS.savedTeams, [], void 0, {
+      validate: validateSavedTeams,
+      onInvalid: () => warnStorageFailure("Ongeldige opgeslagen teams zijn veilig genegeerd.")
+    });
   }
   function saveSavedTeams() {
     if (!writeJsonStorage(STORAGE_KEYS.savedTeams, state.savedTeams)) warnStorageFailure("Teams konden niet worden opgeslagen.");
   }
   function loadFavorites() {
-    state.favorites = readJsonStorage(STORAGE_KEYS.favorites, [], void 0, { validate: Array.isArray });
+    const knownNames = new Set(state.pokemon.map((pokemon) => pokemon.name));
+    state.favorites = readJsonStorage(STORAGE_KEYS.favorites, [], void 0, {
+      validate: validateFavorites,
+      onInvalid: () => warnStorageFailure("Ongeldige favorieten zijn veilig genegeerd.")
+    }).filter((name) => knownNames.has(name));
   }
   function saveFavorites() {
     if (!writeJsonStorage(STORAGE_KEYS.favorites, state.favorites)) warnStorageFailure("Favorieten konden niet worden opgeslagen.");
   }
   function loadBattleSimState() {
-    const saved = readJsonStorage(STORAGE_KEYS.battleSim, {}, void 0, { validate: isPlainObject });
-    state.opponentTeam = [];
-    state.opponentSelection = [];
-    state.opponentMode = saved.opponentMode ?? "manual";
+    const saved = readJsonStorage(STORAGE_KEYS.battleSim, {}, void 0, {
+      validate: validateBattleSimState,
+      onInvalid: () => warnStorageFailure("Ongeldige battle-state is veilig genegeerd.")
+    });
+    const restored = restoreBattleOpponentState(saved, state.pokemon);
+    state.opponentTeam = restored.opponentTeam;
+    state.opponentSelection = restored.opponentSelection;
+    state.opponentMode = restored.opponentMode;
     state.opponentSearch = "";
     state.opponentReplaceIndex = 0;
   }
@@ -2685,9 +2988,16 @@
   function showAllPokemonList() {
     searchInput.value = "";
     if (moveSearchSelect) moveSearchSelect.value = "";
+    sourceSelect.value = "all";
+    teamStyleSelect.value = "balanced";
+    roleFilterSelect.value = "all";
     state.moveFilters = [];
     renderMoveFilterChips();
     state.selectedTypes = [];
+    state.favoritesOnly = false;
+    state.teamStyle = "balanced";
+    state.roleFilter = "all";
+    state.startSuggestionPage = 0;
     state.hasExplored = true;
     state.guideMode = false;
     state.activeView = "builder";
@@ -2757,7 +3067,7 @@
     render();
   }
   function generateRandomUltraTeam() {
-    runTeamBuildWork("Random team bouwen", "De app zoekt nu naar rollen, checks en setkwaliteit.", () => {
+    runTeamBuildWork("Beste team samenstellen", "De planner zoekt nu naar rollen, checks en setvertrouwen.", () => {
       performRandomUltraTeam();
     });
   }
@@ -3122,8 +3432,9 @@
     favoritesToggle.setAttribute("aria-pressed", String(state.favoritesOnly));
     favoritesToggle.textContent = state.favoritesOnly ? `\u2665 ${state.favorites.length}` : "\u2661";
     favoritesToggle.title = state.favoritesOnly ? `Toon alle Pok\xE9mon (${state.favorites.length} favorieten)` : "Toon favorieten";
-    randomUltraTeam.textContent = "\u21BB";
-    randomUltraTeam.title = "Random team";
+    randomUltraTeam.textContent = "\u2605";
+    randomUltraTeam.title = "Bouw het best scorende team";
+    randomUltraTeam.setAttribute("aria-label", "Bouw het best scorende team");
   }
   function switchView(view) {
     state.activeView = view;
@@ -3146,9 +3457,15 @@
     builderTab.setAttribute("aria-selected", String(isBuilderView));
     teamTab.setAttribute("aria-selected", String(isTeamView));
     battleTab.setAttribute("aria-selected", String(isBattleView));
+    builderTab.tabIndex = isBuilderView ? 0 : -1;
+    teamTab.tabIndex = isTeamView ? 0 : -1;
+    battleTab.tabIndex = isBattleView ? 0 : -1;
     builderView.classList.toggle("active", isBuilderView);
     teamView.classList.toggle("active", isTeamView);
     battleView.classList.toggle("active", isBattleView);
+    builderView.hidden = !isBuilderView;
+    teamView.hidden = !isTeamView;
+    battleView.hidden = !isBattleView;
     renderFloatingTeamAction();
   }
   function renderFloatingTeamAction() {
@@ -3199,12 +3516,6 @@
       if (sort === "name") return a.name.localeCompare(b.name);
       return sortValue(b, sort) - sortValue(a, sort) || a.name.localeCompare(b.name);
     });
-    if (!filtered.length && state.pokemon.length && !query && !state.moveFilters.length && !state.selectedTypes.length) {
-      return [...state.pokemon].sort((a, b) => {
-        if (sort === "name") return a.name.localeCompare(b.name);
-        return sortValue(b, sort) - sortValue(a, sort) || a.name.localeCompare(b.name);
-      });
-    }
     return filtered;
   }
   function sortValue(pokemon, sort) {
@@ -4315,8 +4626,70 @@
     } else {
       state.savedTeams.forEach((team) => list.append(createSavedTeamRow(team)));
     }
-    details.append(head, saveRow, list);
+    details.append(head, saveRow, createTeamBackupControls(), list);
     teamManager.append(details);
+  }
+  function createTeamBackupControls() {
+    const controls = document.createElement("div");
+    controls.className = "team-manager-backup";
+    const exportButton = document.createElement("button");
+    exportButton.type = "button";
+    exportButton.textContent = "Exporteer JSON-backup";
+    exportButton.disabled = !state.savedTeams.length && !Object.keys(state.customSets).length;
+    exportButton.addEventListener("click", exportTeamBackup);
+    const importLabel = document.createElement("label");
+    importLabel.className = "team-backup-import";
+    importLabel.textContent = "Importeer JSON-backup";
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "application/json,.json";
+    input.addEventListener("change", async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      await importTeamBackup(file);
+      input.value = "";
+    });
+    importLabel.append(input);
+    controls.append(exportButton, importLabel);
+    return controls;
+  }
+  function exportTeamBackup() {
+    const backup = {
+      schema: "champions-builder-backup",
+      version: 1,
+      exportedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      savedTeams: state.savedTeams,
+      customSets: state.customSets
+    };
+    const blob = new Blob([`${JSON.stringify(backup, null, 2)}
+`], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `champions-builder-backup-${(/* @__PURE__ */ new Date()).toISOString().slice(0, 10)}.json`;
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+  }
+  async function importTeamBackup(file) {
+    try {
+      if (file.size > 2 * 1024 * 1024) throw new Error("Backup is groter dan 2 MB.");
+      const backup = JSON.parse(await file.text());
+      if (backup?.schema !== "champions-builder-backup" || backup.version !== 1) {
+        throw new Error("Onbekend backupformaat.");
+      }
+      if (!validateSavedTeams(backup.savedTeams) || !validateCustomSets(backup.customSets)) {
+        throw new Error("Backup bevat ongeldige of onveilige teamdata.");
+      }
+      state.savedTeams = backup.savedTeams;
+      state.customSets = backup.customSets;
+      saveSavedTeams();
+      saveCustomSets();
+      state.teamNotice = `${state.savedTeams.length} teams uit backup hersteld.`;
+      invalidateCache();
+      render();
+    } catch (error) {
+      warnStorageFailure(`Backup niet ge\xEFmporteerd: ${error.message}`);
+    }
   }
   function defaultTeamName() {
     const names2 = state.team.map(displayPokemonName2).join(" + ");
@@ -4324,6 +4697,10 @@
   }
   function saveCurrentTeam(name) {
     const trimmed = String(name || defaultTeamName()).trim();
+    const memberNames = new Set(state.team.map((pokemon) => pokemon.name));
+    const memberCustomSets = Object.fromEntries(
+      Object.entries(state.customSets).filter(([pokemonName]) => memberNames.has(pokemonName))
+    );
     const saved = {
       id: `${Date.now()}`,
       name: trimmed,
@@ -4333,7 +4710,7 @@
       lockedCore: [...state.lockedCore],
       battleSelection: [...state.battleSelection],
       selectedSets: { ...state.selectedSets },
-      customSets: { ...state.customSets },
+      customSets: memberCustomSets,
       savedAt: (/* @__PURE__ */ new Date()).toISOString()
     };
     state.savedTeams = [saved, ...state.savedTeams.filter((team) => team.name !== trimmed)].slice(0, 12);
@@ -4569,6 +4946,7 @@
       syncOpponentSelection();
       updateSimulationResult();
       battleSim.replaceChildren();
+      battleSim.append(createBattleHeader(), createBattleQuickActions());
       if (!state.team.length) {
         battleSim.append(createBattleEmptyState("Nog geen team", "Bouw eerst een team in de Builder. Daarna kan de simulator je preview en matchups scannen.", "Naar Builder", "builder"));
         return;
@@ -4596,6 +4974,49 @@
     } finally {
       clearBusySoon(battleSim);
     }
+  }
+  function createBattleHeader() {
+    const header = document.createElement("section");
+    header.className = "battle-sim-header";
+    header.innerHTML = `
+    <div>
+      <h2>Battle sim</h2>
+      <p>Bouw een party van 6, kies je battle core van ${battleSelectionSize()}, en scan daarna matchups. Geen volledige battle-engine, wel direct zicht op voordeel, threats en beste picks.</p>
+    </div>
+    <div class="battle-sim-format">
+      <span>Format</span>
+      <strong>${escapeHtml(BATTLE_FORMATS[state.battleFormat].label)}</strong>
+      <small>${state.battleSelection.length}/${battleSelectionSize()} jouw battle core</small>
+    </div>
+  `;
+    return header;
+  }
+  function createBattleQuickActions() {
+    const actions = document.createElement("section");
+    actions.className = "battle-quick-actions";
+    [
+      [state.cache.battleWorkLabel || "Maak counter-team", () => buildOpponentTeam("counter"), state.team.length >= battleSelectionSize()],
+      ["Optimaliseer preview", () => applySimulationAdvice(), state.team.length >= battleSelectionSize()],
+      ["Ga naar Team lab", () => switchView("team"), state.team.length > 0]
+    ].forEach(([label, onClick, enabled]) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = label;
+      button.disabled = !enabled;
+      button.addEventListener("click", onClick);
+      actions.append(button);
+    });
+    return actions;
+  }
+  function applySimulationAdvice() {
+    if (state.simulationResult?.selectionAdvice?.picks?.length) {
+      state.battleSelection = state.simulationResult.selectionAdvice.picks.map(({ pokemon }) => pokemon.name).slice(0, battleSelectionSize());
+    } else {
+      selectBestBattleTeam();
+    }
+    updateSimulationResult();
+    renderTeamPreviewAnalysis();
+    if (state.activeView === "battle") renderBattleSim();
   }
   function createBattleEmptyState(title, text, actionLabel, action) {
     const empty = document.createElement("section");
@@ -4926,12 +5347,12 @@
     <div>
       <span>Matchup</span>
       <strong>${escapeHtml(result.advantage)}</strong>
-      <p>${result.notes.map(escapeHtml).join(" ")} Confidence: ${escapeHtml(result.confidence.label)} (${result.confidence.value}%).</p>
+      <p>${result.notes.map(escapeHtml).join(" ")} Datavertrouwen: ${escapeHtml(result.confidence.label)} (${result.confidence.value}/100).</p>
     </div>
-    <div class="win-meter" style="--win:${result.winChance}%">
-      <strong>${result.winChance}%</strong>
+    <div class="win-meter" style="--win:${result.matchupIndex}%">
+      <strong>${result.matchupIndex}/100</strong>
       <span><i></i></span>
-      <small>geschatte winstkans</small>
+      <small>heuristische matchupindex</small>
     </div>
   `;
     return card;
@@ -5036,20 +5457,20 @@
     const panel = document.createElement("section");
     panel.className = "battle-metrics";
     const metrics = [
-      ["Winstkans", result.teamMetrics.winChance, `${result.advantage}`],
-      ["Preview-score", result.teamMetrics.previewScore, `${result.playerScore} vs ${result.opponentScore}`],
-      ["Speed control", result.teamMetrics.speedControl, "Aantal pairings waar jij sneller bent"],
-      ["Defensive safety", result.teamMetrics.defensiveSafety, "Pairings met veilige defensieve marge"]
+      ["Matchupindex", result.teamMetrics.matchupIndex, `${result.advantage}`, "/100"],
+      ["Preview-score", result.teamMetrics.previewScore, `${result.playerScore} vs ${result.opponentScore}`, "/100"],
+      ["Speed control", result.teamMetrics.speedControl, "Aandeel pairings waar jij sneller bent", "%"],
+      ["Defensive safety", result.teamMetrics.defensiveSafety, "Aandeel pairings met veilige defensieve marge", "%"]
     ];
     const grid2 = document.createElement("div");
     grid2.className = "battle-metric-grid";
-    metrics.forEach(([label, value, note]) => {
+    metrics.forEach(([label, value, note, suffix]) => {
       const item = document.createElement("div");
       item.className = metricTone(value);
       item.style.setProperty("--metric", `${value}%`);
       item.innerHTML = `
       <span>${escapeHtml(label)}</span>
-      <strong>${value}%</strong>
+      <strong>${value}${suffix}</strong>
       <i><b></b></i>
       <small>${escapeHtml(note)}</small>
     `;
@@ -5851,6 +6272,7 @@
     teamAnalysis.append(createThreatChecklistPanel());
     teamAnalysis.append(createRoleChecklistPanel());
     teamAnalysis.append(createSuggestionPanel());
+    teamAnalysis.append(createDataStatusPanel());
     if (teamManager) teamAnalysis.append(teamManager);
     hydrateAbilityInfoButtons(teamAnalysis);
   }
@@ -6381,7 +6803,7 @@
     text.innerHTML = `
     <p>De app bouwt eerst een team van 6. Het gekozen format bepaalt daarna hoeveel Pok\xE9mon je bij Team Preview meeneemt: 3 in Singles of 4 in Doubles.</p>
     <p>Suggesties krijgen punten voor ontbrekende rollen, snelheid, fysieke/speciale druk, bulk, type-resists/immunities tegen gedeelde zwaktes en antwoorden op lokale threat-data. Sets met echte brondata tellen zwaarder dan generated sets.</p>
-    <p>Een optimaal team is hier dus geen absolute waarheid, maar een score op balans, matchup-dekking, setkwaliteit en formatfit. Team Preview analyseert de gekozen 3 of 4 wanneer je selectie compleet is.</p>
+    <p>Een optimaal team is hier dus geen absolute waarheid, maar een score op balans, matchup-dekking, setvertrouwen en formatfit. Team Preview analyseert de gekozen 3 of 4 wanneer je selectie compleet is.</p>
   `;
     panel.append(summary, text);
     return panel;
@@ -7127,6 +7549,32 @@
       steps.splice(1, 0, "In Doubles: kies leads die elkaar beschermen, niet alleen de twee sterkste losse Pok\xE9mon.");
     }
     return steps;
+  }
+  function createDataStatusPanel() {
+    const panel = document.createElement("div");
+    panel.className = "analysis-block data-status-panel";
+    panel.append(createSmallTitle("Data-status"));
+    const list = document.createElement("div");
+    list.className = "data-status-list";
+    state.team.forEach((pokemon) => {
+      const build = selectedBuild(pokemon);
+      const row = document.createElement("div");
+      row.className = "data-status-row";
+      row.innerHTML = `
+      <strong>${escapeHtml(displayPokemonName2(pokemon))}</strong>
+      <span>${escapeHtml(setQualityLabel(build))}</span>
+      <small>${escapeHtml(buildSourceLabel(build))}</small>
+    `;
+      list.append(row);
+    });
+    const stats = state.movesetMeta.stats ?? {};
+    const coverage = document.createElement("p");
+    coverage.textContent = `Setdata ${state.movesetMeta.generatedAt}: ${stats.champions ?? 0} Champions \xB7 ${stats.sv ?? 0} SV-afgeleid \xB7 ${stats.generated ?? 0} generated.`;
+    const regulation = document.createElement("p");
+    regulation.className = "confidence-note";
+    regulation.textContent = `Regelstatus: ${state.championsMeta.regulation?.id ?? "onbekend"} (${state.championsMeta.regulation?.status ?? "onbevestigd"}). Controleer de actieve offici\xEBle regulation voor competitief gebruik.`;
+    panel.append(list, coverage, regulation);
+    return panel;
   }
   function relevantThreats() {
     const existing = new Set(state.pokemon.map((pokemon) => pokemon.name));
@@ -8326,11 +8774,7 @@
     return `Mega ${megaMatch[1]}${megaMatch[2] ? ` ${megaMatch[2]}` : ""}`;
   }
   function spriteUrl(name) {
-    const id = spriteId(name);
-    return `assets/sprites/${id}.png`;
-  }
-  function spriteId(name) {
-    return normalize(name).replace(/♀/g, "f").replace(/♂/g, "m").replace("-mega-x", "-megax").replace("-mega-y", "-megay").replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "");
+    return spritePath(name);
   }
   function showSpriteFallback(wrapper, name) {
     wrapper.replaceChildren();

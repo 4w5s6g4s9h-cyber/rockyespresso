@@ -96,19 +96,19 @@ const result = simulateBattle({
 });
 assert.equal(result.playerMembers.length, 3);
 assert.equal(result.opponentMembers.length, 3);
-assert.ok(result.winChance >= 5 && result.winChance <= 95);
+assert.ok(result.matchupIndex >= 5 && result.matchupIndex <= 95);
 assert.ok(result.bestMatchups.length || result.threats.length);
 assert.equal(result.matchupMatrix.length, 3);
 assert.equal(result.matchupMatrix[0].cells.length, 3);
 assert.equal(result.selectionAdvice.picks.length, 3);
-assert.equal(result.teamMetrics.winChance, result.winChance);
+assert.equal(result.teamMetrics.matchupIndex, result.matchupIndex);
 assert.ok(result.confidence.value > 0);
 
 const advice4 = recommendBattleSelection([garchomp, dragonite, corviknight, starmie], opponent, double4, helpers);
 assert.equal(advice4.picks.length, 4);
 
-const metrics = scoreTeamPreview([charizard, dragapult, toxapex], [ferrothorn, alakazam, blastoise], { ...helpers, winChance: 61 });
-assert.equal(metrics.winChance, 61);
+const metrics = scoreTeamPreview([charizard, dragapult, toxapex], [ferrothorn, alakazam, blastoise], { ...helpers, matchupIndex: 61 });
+assert.equal(metrics.matchupIndex, 61);
 assert.ok(metrics.previewScore >= 0 && metrics.previewScore <= 100);
 
 const counters = counterRecommendations(ferrothorn, pool, helpers, { limit: 3 });

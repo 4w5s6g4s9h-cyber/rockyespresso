@@ -3,6 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
     <title>Champions Builder</title>
     <link rel="stylesheet" href="styles.css?v=127">
   </head>
@@ -112,7 +114,7 @@
             <span>Kieshulp</span>
           </button>
           <button id="favoritesToggle" class="favorites-toggle-button" type="button" aria-pressed="false" title="Toon favorieten">♡</button>
-          <button id="randomUltraTeam" class="ultra-team-button" type="button">Random</button>
+          <button id="randomUltraTeam" class="ultra-team-button" type="button" aria-label="Bouw het best scorende team">Beste team</button>
           <button id="resetApp" class="reset-button" type="button">Reset</button>
         </div>
       </section>
@@ -127,13 +129,13 @@
         <strong>Even rekenen</strong>
       </div>
 
-      <nav class="view-tabs" aria-label="Weergave">
-        <button id="builderTab" class="view-tab active" type="button">Builder</button>
-        <button id="teamTab" class="view-tab" type="button">Team lab</button>
-        <button id="battleTab" class="view-tab" type="button">Battle sim</button>
+      <nav class="view-tabs" role="tablist" aria-label="Weergave">
+        <button id="builderTab" class="view-tab active" type="button" role="tab" aria-controls="builderView" aria-selected="true">Builder</button>
+        <button id="teamTab" class="view-tab" type="button" role="tab" aria-controls="teamView" aria-selected="false" tabindex="-1">Team lab</button>
+        <button id="battleTab" class="view-tab" type="button" role="tab" aria-controls="battleView" aria-selected="false" tabindex="-1">Battle sim</button>
       </nav>
 
-      <section id="builderView" class="tab-view active" aria-label="Builder">
+      <section id="builderView" class="tab-view active" role="tabpanel" aria-labelledby="builderTab">
         <div class="workspace">
           <nav class="team-quick-nav builder-team-quick-nav" id="builderTeamQuickNav" aria-label="Builder team snelnavigatie" hidden></nav>
           <section class="grid" id="pokemonGrid" aria-label="Pokémon"></section>
@@ -152,7 +154,7 @@
         </div>
       </section>
 
-      <section id="teamView" class="tab-view" aria-label="Team lab">
+      <section id="teamView" class="tab-view" role="tabpanel" aria-labelledby="teamTab" hidden>
         <div class="team-lab">
           <nav class="team-quick-nav" id="teamQuickNav" aria-label="Team snelnavigatie"></nav>
           <section class="team-workbench-panel">
@@ -167,7 +169,7 @@
         </div>
       </section>
 
-      <section id="battleView" class="tab-view" aria-label="Battle sim">
+      <section id="battleView" class="tab-view" role="tabpanel" aria-labelledby="battleTab" hidden>
         <div class="battle-sim" id="battleSim" aria-live="polite"></div>
       </section>
 

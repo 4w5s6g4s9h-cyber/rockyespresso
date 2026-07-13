@@ -1,5 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { assertDataset, validatePokemonDataset } from '../modules/data-schema.js';
+import { fetchJsonResource, fetchTextResource } from './fetch-safe.mjs';
 
 const ROOT = process.cwd();
 const POKEMON_PATH = path.join(ROOT, 'data/champions-pokemon.json');
@@ -9,16 +11,11 @@ const SEREBII_TO_SMOGON_NAMES = {
 };
 
 async function rpc(method, body) {
-  const response = await fetch(`https://www.smogon.com/dex/_rpc/${method}`, {
+  return fetchJsonResource(`https://www.smogon.com/dex/_rpc/${method}`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body),
-  });
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`${method} ${response.status}: ${text.slice(0, 180)}`);
-  }
-  return response.json();
+  }, { label: method });
 }
 
 function decodeHtml(value) {
@@ -90,11 +87,7 @@ function withMegaStoneData(pokemon, basicsByGen) {
 }
 
 async function serebiiRosterEntries() {
-  const response = await fetch(SEREBII_CHAMPIONS_INDEX);
-  if (!response.ok) {
-    throw new Error(`Serebii Champions index ${response.status}`);
-  }
-  const html = await response.text();
+  const html = await fetchTextResource(SEREBII_CHAMPIONS_INDEX, {}, { label: 'Serebii Champions index' });
   return [...html.matchAll(/<option value="\/pokedex-champions\/([^/]+)\/">\s*(\d+)\s+([^<]+)<\/option>/g)]
     .map((match) => ({
       slug: match[1],
@@ -104,10 +97,13 @@ async function serebiiRosterEntries() {
 }
 
 async function hasSerebiiMegaEvolution(slug) {
-  const response = await fetch(`${SEREBII_CHAMPIONS_INDEX}${slug}/`);
-  if (!response.ok) return false;
-  const html = await response.text();
-  return /<b>\s*Mega Evolution\s*<\/b>/i.test(html);
+  try {
+    const html = await fetchTextResource(`${SEREBII_CHAMPIONS_INDEX}${slug}/`, {}, { label: `Serebii ${slug}` });
+    return /<b>\s*Mega Evolution\s*<\/b>/i.test(html);
+  } catch (error) {
+    if (error.status === 404) return false;
+    throw error;
+  }
 }
 
 async function serebiiSupplementalPokemon(existingNames, svPokemon) {
@@ -158,6 +154,7 @@ async function main() {
     pokemon: [...pokemon, ...serebiiAdditions],
   };
 
+  assertDataset('Pokémon-data', validatePokemonDataset(output));
   await fs.writeFile(POKEMON_PATH, `${JSON.stringify(output, null, 2)}\n`);
   console.error(`Synced ${output.pokemon.length} pokemon (${pokemon.length} Smogon Champions, ${serebiiAdditions.length} Serebii fallback) (${generatedAt})`);
 }
